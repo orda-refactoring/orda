@@ -1,0 +1,324 @@
+.index__wrap {
+  padding: 20px 60px;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+  /* padding: 0 100px; */
+}
+
+.post-grid2 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+  padding: 0 40px;
+}
+
+.post-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#loadMoreBtn {
+  margin-top: 20px;
+}
+
+.position--relative {
+  position: relative;
+}
+
+.position--absolute {
+  position: absolute;  
+}
+
+.flex--row {
+  display: flex;
+}
+
+.flex--col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex__align--end {
+  justify-content: end;
+}
+
+.flex__align--between {
+  justify-content: space-between;
+}
+
+.flex__align--center {
+  justify-content: center;
+}
+
+/* .postindex__titlebox {
+  display: flex;
+  flex-direction: row;
+} */
+
+.postindex__Content--title {
+  margin: 16px 0 16px 10px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.postindex__Content--title2 {
+  margin: 16px 0 16px 10px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.postindex__Rankbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+
+.postindex__Rank--item {
+  margin: 0 10px;
+}
+
+.postindex__post {
+  position: relative;
+  display: block;
+  padding-bottom: 30px;
+}
+
+.postindex__post--title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color:  #777777;
+  margin: 5px 0 3px 0;
+}
+
+.postindex__post--imgbox {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.postindex__post--img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* .postindex__post--like {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 2;
+} */
+
+.like__btn {
+  top:10px; 
+  right: 10px; 
+}
+
+.like__btn--style{
+  z-index: 1;
+  font-weight:bold;
+  font-size: 24px;
+  color: var(--red-color)
+}
+
+.postindex__post--user {
+  display: flex;
+  flex-direction: row;
+}
+
+.postindex__post--userimgbox {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: 3px 5px 5px 0px;
+}
+
+.postindex__post--userimg {
+  object-fit: cover;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid #DBDBDB;
+  border-radius: 100%;
+}
+
+.postindex__post--userimgbox .level5--img {
+  position: absolute;
+  width: 21.5px !important;
+  height: 21.5px !important;
+}
+
+.postindex__post--username {
+  display: flex;
+  align-items: center;
+}
+
+.postindex__post--stat {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #b4b4b4;
+}
+
+.postindex__post--likecount {
+  margin-right: 5px;
+}
+
+.title--wrap{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+
+@media (max-width:1280px) {
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    /* padding: 0 100px; */
+  }
+}
+
+@media (max-width:1080px) {
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    /* padding: 0 100px; */
+  }
+}
+
+@media (max-width:720px) {
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 20px;
+    /* padding: 0 100px; */
+  }
+
+  .index__wrap{
+    padding: 20px 30px ;
+  } 
+}
+
+
+/* carousel */
+.owl-carousel {
+ position: relative;
+}
+
+.owl-carousel .owl-stage-outer {
+  position: relative;
+  border: none;
+ }
+
+.owl-carousel .owl-prev,
+.owl-carousel .owl-next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: #000; /* 배경색 설정 */
+  color: #fff; /* 아이콘 색상 설정 */
+  width: 40px; /* 버튼의 너비 */
+  height: 40px; /* 버튼의 높이 */
+  font-size: 24px; /* 아이콘 크기 */
+  line-height: 40px; /* 버튼의 세로 중앙 정렬을 위한 line-height */
+  text-align: center;
+  border: solid 2px #777777 !important; 
+  border-radius: 50%; /* 버튼을 원형으로 만들기 위한 border-radius 설정 */
+}
+
+.owl-carousel .owl-prev {
+  left: 10px;
+}
+
+.owl-carousel .owl-next {
+  right: 10px;
+}
+
+.owl-dots {
+  text-align: center;
+  padding-top: 15px;
+}
+
+.owl-dots button.owl-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #C7EA46;
+  margin: 0 3px;
+}
+
+.owl-dots button.owl-dot.active {
+  background-color: #75a64a;
+}
+
+.owl-dots button.owl-dot:focus {
+  outline: none;
+}
+
+
+
+
+/* search */
+
+.postindex__searchbox {
+  margin: 16px 90px 16px 0;
+}
+
+.postindex__search--title {
+  margin: 16px 0 25px 90px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.postindex__search--title2 {
+  color: var(--main-color);
+}
+
+.highlight {
+  color: var(--main-color);
+}
+
+.postindex__searchbar {
+  width: 60%;
+  margin: 50px auto;
+}
+
+.postindex__nosearching {
+  display: flex;
+  justify-content: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  font-family: sans-serif;
+}
+
+.likes__box {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+

@@ -1,0 +1,994 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% load static %}
+{% load humanize %}
+
+{% block style %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="{% static 'css/mountains_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/level.css' %}">
+<style>
+  {% comment %} /* 모달 스타일 */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  } {% endcomment %}
+
+  {% comment %} .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    margin-top: 100px;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    max-width: 500px; /* 모달창 최대 너비 설정 */
+    max-height: 80%; /* 모달창 최대 높이 설정 */
+    overflow-y: auto; /* 수직 스크롤 표시 */
+  }
+
+  .modal-close { 
+    text-align: right;
+  } {% endcomment %}
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="mountains__detail--warp">
+  <section style="margin-bottom: 50px;">
+    <div class="mountains__detail--infobox">
+      <div style="width: 47%; box-sizing: border-box;">
+        <div class="mountains__detail--imgbox">
+          <img class="mountains__detail--img" src="{% get_static_prefix %}img/mountains/{{ mountain.name }}.png" alt="얍">
+          {% if mountain.top_tags %}
+            <div class="mountain__detail--infotag">
+              {% for tag in mountain.top_tags  %}
+                <span style="margin-right: 5px;">#{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div style="width:6%;"></div>
+      <div class="mountains__detail--info">
+        <div class="mountains__detail--titlebox">
+          <h1 class="mountains__detail--title">{{ mountain.name }}</h1>
+          <p class="mountains__detail--subtitle">{{ mountain.subname }}</p>
+        </div>
+        <table>
+          <tr class="mountains__detail--stat">
+            <th>지 역</th>
+            <td>{{ mountain.region }}</td>
+          </tr>
+          <tr class="mountains__detail--stat">
+            <th>고 도</th>
+            <td>{{ mountain.height }}m</td>
+          </tr>
+          <tr class="mountains__detail--stat">
+            <th>정 보</th>
+            <td>
+              <div class="overflow-hidden flex flex-col items-start">
+                <p class="text-ellipsis line-clamp-3">
+                  {{ mountain.info }}
+                </p>
+                <button class="mt-2 text-gray-500 underline self-end show-info-modal">더보기</button>
+              </div>
+
+              <!-- 모달 -->
+              <div id="info-modal" class="hidden fixed top-0 left-0 w-screen h-screen flex justify-center items-center bg-gray-900 bg-opacity-75" style="z-index: 9999;">
+                <div class="bg-white p-4 max-w-lg flex flex-col items-start">
+                  <p>{{ mountain.info }}</p>
+                  <button class="mt-5 text-gray-500 underline self-end close-info-modal">닫기</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <br>
+        
+        <!-- 베스트 댓글 -->
+        <div class="flex justify-center items-center mountain__detail--bestreview">
+          <button id="viewCommentButton" class="ml-2 text-md text-gray-500" onclick="scrollToComment()">
+            <div class="flex justify-center items-center">
+              <p id="bestReview" class="text-ellipsis line-clamp-2">
+                {% if most_liked_review %}
+                  <span class="text-2xl text-gray-500">"</span>
+                  {{ most_liked_review.content }}
+                  <span class="text-2xl text-gray-500">"</span>
+                {% endif %}
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <br>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="mountain__detail--mapbtn" data-bs-toggle="modal" data-bs-target="#mountainMap">
+          지도보기
+        </button>
+      </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="mountainMap" tabindex="-1" aria-labelledby="mountainMapLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="mountainMapLabel">{{ mountain.name }}</h1>
+            <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="mountain-map"></div>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr style="margin-bottom: 30px;">
+
+  <section style="margin-bottom: 50px;">
+    <div class="d-flex flex-row">
+      <div class="mountains__detail--weather">
+        <a class="mountains__detail--weatherlink" href="{% url 'mountains:weather_forecast' mountain.pk %}">
+          <div class="d-flex flex-row justify-content-between">
+            <div class="weather--wrap">
+              <div class="d-flex flex-row justify-content-center" style="height: 60%; margin-bottom: 14px;">
+                <div class="weather--sky">
+                  {% if now_time in sun %}
+                    {% if sky == '1' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/sunny.png' %}" alt="아침맑음" title="맑음">
+                    {% elif sky == '3' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/suncloudy.png' %}" alt="아침구름많음" title="구름많음">
+                    {% elif sky == '4' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/overcast.png' %}" alt="흐림" title="흐림">
+                    {% endif %}
+                  {% else %}
+                    {% if sky == '1' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/moon.png' %}" alt="저녁맑음" title="맑음">
+                    {% elif sky == '3' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/mooncloudy.png' %}" alt="저녁구름많음" title="구름많음">
+                    {% elif sky == '4' %}
+                      <img class="weather--skyimg" src="{% static 'img/weather/overcast.png' %}" alt="흐림" title="흐림">
+                    {% endif %}
+                  {% endif %}
+                </div>
+                <div class="d-flex flex-row">
+                  <p class="weather--tem">{{ tem }}</p>
+                  <p style="font-size: 2rem; line-height: 140px;">℃</p>
+                </div>
+              </div>
+              <div class="d-flex flex-row justify-content-between">
+                <div class="weather--hvwr">
+                  <p>습도</p>
+                  <p>{{ hum }} %</p>
+                </div>
+                <div style="border-right: 1px solid #DBDBDB;"></div>
+                <div class="weather--hvwr">
+                  <p>바람</p>
+                  <p>{{ vec }} {{ wsd }} m/s</p>
+                </div>
+                <div style="border-right: 1px solid #DBDBDB;"></div>
+                <div class="weather--hvwr">
+                  <p>1시간강수량</p>
+                  {% if rain == '0' %}
+                    <p>- mm</p>
+                  {% else %}
+                    <p>{{ rain }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </div>
+          <div></div>
+          <div class="air--warp">
+            <div class="d-flex flex-column justify-content-between align-items-center">
+              <div class="air--fine_dust">
+                {% for key, value in fine_dust.items %}
+                  {% if key == region %}
+                    <div class="air--imgbox">
+                      {% if value == '좋음' %}
+                        <img class="air--img" src="{% static 'img/air/smile.png' %}" alt="미세먼지좋음">
+                      {% elif value == '보통' %}
+                        <img class="air--img" src="{% static 'img/air/neutral.png' %}" alt="미세먼지보통">
+                      {% else %}
+                        <img class="air--img" src="{% static 'img/air/sad.png' %}" alt="미세먼지나쁨">
+                      {% endif %}
+                    </div>
+                    <p>미세먼지 {{ value }}</p>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <div class="air--ozone">
+                {% for key, value in ozone.items %}
+                  {% if key == region %}
+                  <div class="air--imgbox">
+                    {% if value == '좋음' %}
+                      <img class="air--img" src="{% static 'img/air/smile.png' %}" alt="오존좋음">
+                    {% elif value == '보통' %}
+                      <img class="air--img" src="{% static 'img/air/neutral.png' %}" alt="오존보통">
+                    {% else %}
+                      <img class="air--img" src="{% static 'img/air/sad.png' %}" alt="오존나쁨">
+                    {% endif %}
+                  </div>
+                  <p>오존 {{ value }}</p>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="width: 6%;"></div>
+      <div class="mountains__detail--newslist">
+        <p class="mountains__detail--newstitle">관련 뉴스</p>
+        {% for item in result %}
+          <a class="mountains__detail--newsitem" href="{{ item.link }}"><p title="{{ item.title }}">{{ item.title }}</p></a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  
+  <hr style="margin-bottom: 30px;">
+
+  <section style="position: relative;">
+    <h1 class="mountain__detail--coursetitle">{{ mountain.name }} 코스목록</h1>
+    <ul class="mountain__detail--courselist">
+      {% for course in courses|slice:":3" %}
+        <li class="mountain__detail--course" style="position: relative;">
+          <div href="#" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            {% comment %} <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg" src="/docs/images/blog/image-4.jpg" alt=""> {% endcomment %}
+            <div class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg" id="map2-{{ course.pk }}" style="width: 76%; height: 300px;"></div>
+            <div class="flex flex-col justify-between p-4 leading-normal" style="width: 24%;">
+              <h5 class="mb-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ course.crs_name_detail }}</h5>
+              <ul>
+                <li class="mb-3 font-normal text-gray-700 dark:text-gray-400">총거리: {{ course.distance }}km</li>
+                <li class="mb-3 font-normal text-gray-700 dark:text-gray-400">소요시간: {{ course.duration }}</li>
+                <li class="mb-3 font-normal text-gray-700 dark:text-gray-400">난이도: {{ course.diff }}</li>
+                <form>
+                  {% csrf_token %}
+                  {% if request.user in course.bookmarks.all %}
+                  <button id="bookmark-btn-{{ course.pk }}" type="submit"  class="bi bi-bookmark-fill btn--spot" data-mountain-pk="{{ mountain.pk }}" data-course-pk="{{ course.pk }}"></button>
+                  {% else %}
+                  <button id="bookmark-btn-{{ course.pk }}" type="submit"  class="bi bi-bookmark btn--spot" data-mountain-pk="{{ mountain.pk }}" data-course-pk="{{ course.pk }}"></button>
+                  {% endif %}
+                </form>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <br>
+      {% empty %}
+        <li>No courses available.</li>
+      {% endfor %}
+    </ul>
+
+    {% if courses|length > 3 %}
+      <a class="more--course" href="{% url 'mountains:course_list' mountain.pk %}">더보기</a>
+    {% endif %}
+  </section>
+
+  <hr style="margin-bottom: 30px;">
+
+  <!-- 리뷰 생성 -->
+  <section>
+    <form id="review-form" action="{% url 'mountains:create_review' mountain.pk %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="d-flex flex-row">
+        <div id="review-image" style="position: relative; height: 100%;">
+          <div class="mountain__reviewcrt--imgbox">
+            <i class="bi bi-plus-lg img--plus"></i>
+            {{ form.image }}
+            <img id="preview" class="preview-image" src="#" alt="Preview Image" style="display: none;">
+          </div>
+          <div class="review__submit--btn">
+            <button type="submit" id="submit-button" class="btn btn-outline-success">등록하기</button>
+          </div>
+        </div>
+        <div>
+          <div id="review-tags" class="mountain__reviewcrt--tagbox">
+            {{ form.tags|safe }}
+          </div>
+          <div id="selected-tags" class="selected-tags"></div>
+          <div id="review-content" class="mountain__reviewcrt--contbox">
+            {{ form.content }}
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <hr style="margin-bottom: 30px;">
+
+  <!-- 리뷰 -->
+  <section>
+    <h1 class="mountain__detail--reviewtitle">리뷰<span class="mountain__detail--reviewtitle2">{{ reviews|length }}</span></h1>
+    <ul id="reviewList">
+      {% for review in reviews %}
+      <li id="best-{{ review.pk }}" {% if forloop.counter > 5 %}style="display: none;"{% endif %} class="{% if review == most_liked_review %}mountain__bestreview{% else %}mountain__review{% endif %}">
+        <div class="mountain__detail--reviewbox">
+          <!-- Button trigger modal -->
+          <button type="button" class="mountain__detail--reviewcontimgbtn" data-bs-toggle="modal" data-bs-target="#reviewImg-{{ review.pk }}">
+            <div class="mountain__detail--reviewcontimgbox">
+              {% if review.image %}
+                <img class="mountain__detail--reviewcontimg" src="{{ review.image.url }}" alt="">
+              {% endif %}
+            </div>
+          </button> 
+    
+          <!-- Modal -->
+          <div class="modal fade" id="reviewImg-{{ review.pk }}" tabindex="-1" aria-labelledby="reviewImgLabel-{{ review.pk }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mountain__detail--reviewmodalimgbox">
+                    {% if review.image %}
+                      <img class="mountain__detail--reviewcontimg" src="{{ review.image.url }}" alt="">
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mountain__detail--contentbox">
+            <div class="mountain__detail--reviewinfo">
+              <a href="{% url 'accounts:profile' review.user.pk %}">
+                <div class="mountain__detail--reviewimgbox">
+                  {% if review.user.profile_img %}
+                    <img class="mountain__detail--reviewimg {% if review.user.level == 2 %}level2 {% elif review.user.level == 3 %}level3 {% elif review.user.level == 4 %}level4 {% elif review.user.level == 5 %}level5 {% endif %}" src="{{ review.user.profile_img.url }}" alt="리뷰유저이미지">
+                    {% if review.user.level == 5 %}
+                      <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                    {% endif %}
+                  {% else %}
+                    <img class="mountain__detail--reviewimg {% if review.user.level == 2 %}level2 {% elif review.user.level == 3 %}level3 {% elif review.user.level == 4 %}level4 {% elif review.user.level == 5 %}level5 {% endif %}" src="{% static 'img/profile_no_img.png' %}" alt="대체이미지">
+                    {% if review.user.level == 5 %}
+                      <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </a>
+              <div class="mountain__detail--reviewuserstat">
+                <div class="d-flex flex-row">
+                  <a href="{% url 'accounts:profile' review.user.pk %}">
+                    <p class="mountain__detail--reviewuser">{{ review.user.nickname }}</p>
+                  </a>
+                  <form class="review-like-form mx-3" id="like-form-{{ review.pk }}" data-mountain-id="{{ mountain.pk }}" data-review-id="{{ review.pk }}">
+                    {% csrf_token %}
+                    {% if request.user in review.like_users.all %}
+                      <button type="submit" id="like-{{ review.pk }}"  class="bi bi-hand-thumbs-up-fill like__hover text-primary"></button>
+                    {% else %}
+                      <button type="submit" id="like-{{ review.pk }}" class="bi bi-hand-thumbs-up like__hover"></button>
+                    {% endif %}
+                    <span class="me-3" id="rl_likes_count_{{ review.pk }}">
+                      {{ review.like_users.count }}
+                    </span>
+                  </form>
+                  {% if review == most_liked_review %}
+                    <img class="mx-3" style="width: 20px; height: 20px;" src="{% static 'img/bestreview.png' %}" alt="bestreview">
+                  {% endif %}
+                </div>
+                <div class="mountain__detail--reviewtagbox">
+                  {% for tag in review.tags.all %}
+                    <p style="color: #777777; margin-right: 5px;">#{{tag}}</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <p style="padding: 0 16px;">{{ review.content }}</p>
+          </div>
+          <div class="mountain__detail--reviewcrt">
+            {% if review.created_at|date:"Y-m-d" >= now|date:"Y-m-d" %}
+              {{ review.created_at|naturaltime }}
+            {% else %}
+              {{ review.created_at|date:"Y-m-d" }}
+            {% endif %}
+          </div>
+          {% if review.user == request.user %}
+            <div class="mountain__detail--updatebox">
+              <!-- 수정 버튼 -->
+              <button class="editBtn" data-mountain-id="{{ review.mountain.pk }}" data-review-id="{{ review.pk }}">수정</button>
+              <span> · </span>
+              <form action="{% url 'mountains:review_delete' review.mountain.pk review.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="삭제">
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% if reviews|length > 5 %}
+      <hr>
+    {% endif %}
+    <div class="reviewBtnbox">
+      <button id="reviewloadMoreBtn" class="reviewloadMoreBtn" {% if reviews|length <= 5 %}style="display: none;"{% endif %}>더보기</button>
+      <button id="reviewCloseBtn" class="reviewCloseBtn" style="display: none;">닫 기</button>
+    </div>
+  </section>
+    
+  <hr style="margin-bottom: 30px;">    
+
+  <section>
+    {% comment %} 마이코스 {% endcomment %}
+    <h1 class="mountain__detail--atpoststitle">마이코스<span class="mountain__detail--atpoststitle2">{{ mountain.post_set.all|length }}</span></h1>
+    <div class="mountain__detail--atpostswrap container rounded">
+      {% if mountain.post_set.all %}
+        <div class="owl-carousel">
+          {% comment %} <div class="mountain__detail--atpostsgrid" id="mountainatpostsgird"> {% endcomment %}
+            {% for post in mountain.post_set.all %}
+              <div class="max-w-sm bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
+                <a href="{% url 'posts:detail' post.pk %}"  class="position--relative">
+                  <div class="mountain__detail--atpostsimgbox">
+                    {% with first_image_url=post.content|get_first_image_from_content %}
+                      {% if first_image_url %}
+                        <img class="mountain__detail--atpostsimg" src="{{ first_image_url }}" alt="썸네일">
+                      {% else %}
+                        <img class="mountain__detail--atpostsimg" src="{% static 'img/Noimage.png' %}" alt="대체이미지">
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                  <div class="p-2 flex--col flex__align--between" style="">
+                    <h5 class="text-1xl mb-1 font-bold tracking-tight text-gray-900 dark:text-white title--wrap">{{ post.title }}</h5>
+                    <div class="mountain__detail--atpostsuser mb-2">
+                      <div class="mountain__detail--atpostsuserimgbox">
+                        {% if post.user.profile_img %}
+                          <img class="mountain__detail--atpostsuserimg {% if post.user.level == 2 %}level2 {% elif post.user.level == 3 %}level3 {% elif post.user.level == 4 %}level4 {% elif post.user.level == 5 %}level5 {% endif %}" src="{{ post.user.profile_img.url }}" alt="유저프로필">
+                          {% if post.user.level == 5 %}
+                            <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                          {% endif %}
+                        {% else %}
+                          <img class="mountain__detail--atpostsuserimg {% if post.user.level == 2 %}level2 {% elif post.user.level == 3 %}level3 {% elif post.user.level == 4 %}level4 {% elif post.user.level == 5 %}level5 {% endif %}" src="{% static 'img/profile_no_img.png' %}" alt="대체프로필">
+                          {% if post.user.level == 5 %}
+                            <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                      <p class="mountain__detail--atpostsusername mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ post.user.nickname }}</p>
+                    </div>
+                    <div class="flex--row flex__align--end">
+                      <div class="flex--row">
+                        <div class="flex--row pe-3">
+                          <i class="bi bi-heart-fill pe-1" style="color:var(--red-color)"></i>
+                          <p class="mountain__detail--atpostslikecount" data-like={{ post.pk }}>{{post.like_users.count}}</p>
+                        </div>
+                        <div class="flex--row pe-3">
+                          <i class="bi bi-chat-dots-fill pe-1" style="color:var(--green-btn)"></i>
+                          <p>{{post.postcomment_set.all|length}}</p>
+                        </div>
+                        <div class="flex--row">
+                          <i class="bi bi-eye-fill pe-1" style="color: #777777"></i>
+                          <p>{{post.view_count}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% endfor %}
+          {% comment %} </div> {% endcomment %}
+        </div>
+      {% else %}
+       <p class="mountain__detail--atpostsnonewrite"> 작성된 글이 없습니다. </p>
+      {% endif %}
+    </div>
+  </section>
+</div>
+
+
+<p id="latitude" style="display: none;">{{ mountain.geom.y }}</p>
+<p id="longitude" style="display: none;">{{ mountain.geom.x }}</p>
+
+<div class="mountain__btn__wrap">
+  <div class="flex--d-col flex--between">
+    <button type="submit" id="go-comment-section" class="mountain__btn--style icon--size1" title="조회수"><i class="bi bi-eye-fill like__hover"></i></button>
+    <div class="text-center">{{ mountain.views }}</div>
+  </div>
+  <form class="like-form" data-mountain-id="{{ mountain.pk }}">
+    {% csrf_token %}
+    {% if request.user in mountain.likes.all %}
+      <button type="submit" class="mountain__btn--style bi bi-heart-fill heart--color like__hover icon--size" id="mountain-likes-btn" title="좋아요"></button>
+    {% else %}
+      <button type="submit" class="mountain__btn--style bi bi-heart like__hover icon--size" id="mountain-likes-btn" title="좋아요"></button>
+    {% endif %}
+    <div id="mountain-likes-count" class="text-center">{{ mountain.likes.count }}</div> 
+  </form>   
+  <div class="flex--d-col flex--between">
+    <button type="submit" id="go-review-section" class="mountain__btn--style icon--size" title="리뷰"><i class="bi bi-pencil like__hover"></i></button>
+    <div class="text-center">{{ reviews|length }}</div>
+  </div>
+ </div>
+{% endblock content %}
+
+
+{% block javascript %}
+<script src="{% static 'js/apikey.js' %}"></script>
+<!-- 카카오맵 API 로드 -->
+<script>
+  function loadKakaoMapScript(callback) {
+    if (window.kakao) {
+      // 이미 카카오맵 API가 로드되어 있는 경우
+      callback();
+    } else {
+      // 카카오맵 API 로드
+      const API_KEY = config.apikey;
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`;
+      script.async = true;
+      script.onload = function() {
+        kakao.maps.load(callback);
+      };
+      document.head.appendChild(script);
+    }
+  }
+
+  // 산 좌표를 찍는 카카오 MAP
+  function showMountainMarker(latitude, longitude) {
+    var container = document.getElementById('mountain-map');
+    var options = {
+      center: new kakao.maps.LatLng(latitude, longitude),
+      level: 10
+    };
+    var map = new kakao.maps.Map(container, options);
+  
+    var markerPosition = new kakao.maps.LatLng(latitude, longitude);
+  
+    var marker = new kakao.maps.Marker({
+      position: markerPosition
+    });
+  
+    marker.setMap(map);
+  }
+    
+// 카카오맵 초기화 함수
+function initMap(courseId, course) {
+  var container = document.querySelector('#map2-' + courseId);
+  var options = {
+    center: new kakao.maps.LatLng(37.5665, 126.9780), 
+    level: 7
+  };
+  var map = new kakao.maps.Map(container, options);
+
+  var linePath = [];
+
+  var linePath = course.features[0].geometry.coordinates.map(function(coordinate) {
+    var x = coordinate[0];
+    var y = coordinate[1];
+    return new kakao.maps.LatLng(y, x);
+  });
+
+  // 출발 좌표에 마커 표시
+  var startMarkerPosition = linePath[0];
+  var startMarkerImage = new kakao.maps.MarkerImage(
+    '/static/img/icons/start.png',
+    new kakao.maps.Size(100, 100),
+    { offset: new kakao.maps.Point(50, 80) }
+    );
+  var startMarker = new kakao.maps.Marker({
+    position: startMarkerPosition,
+    map: map,
+    title: "출발지",
+    image: startMarkerImage,
+  });
+
+  // 도착 좌표에 마커 표시
+  var endMarkerPosition = linePath[linePath.length - 1];
+  var endMarkerImage = new kakao.maps.MarkerImage(
+    '/static/img/icons/end.png',
+    new kakao.maps.Size(100, 100),
+    { offset: new kakao.maps.Point(50, 80) }
+    );
+  var endMarker = new kakao.maps.Marker({
+    position: endMarkerPosition,
+    map: map,
+    title: "도착지",
+    image: endMarkerImage,
+  });
+      
+  // 중간 인덱스 계산
+  var middleIndex = Math.floor(linePath.length / 2);
+  var center = linePath[middleIndex];
+
+  // Polyline을 이용하여 선 그리기
+  var polyline = new kakao.maps.Polyline({
+    path: linePath, // linePath에 저장된 좌표들로 설정
+    strokeWeight: 3,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.7,
+    strokeStyle: 'solid'
+  });
+  polyline.setMap(map);
+
+  // 부드럽게 마커가 위치한 곳으로 이동합니다
+  map.panTo(center);
+};
+
+
+  // 카카오맵 API 로드 후 초기화 함수 호출
+  loadKakaoMapScript(function () {
+    // 산의 위치에 마커 표시
+    var mountainLatitude = parseFloat(document.getElementById('latitude').textContent);
+    var mountainLongitude = parseFloat(document.getElementById('longitude').textContent);
+    showMountainMarker(mountainLatitude, mountainLongitude);
+
+    var course_data = {{ courses_data|safe }};
+    {% for course in courses|slice:":3" %}
+      var courseId = {{ course.pk }}
+      var course = JSON.parse(course_data[courseId]);
+      initMap(courseId, course);
+    {% endfor %}
+  });
+</script>
+
+<script>
+  var map;
+
+  function initializeMap() {
+    var container = document.getElementById('mountain-map');
+    var options = {
+      center: new kakao.maps.LatLng(37.5665, 126.9780),
+      level: 7
+    };
+    map = new kakao.maps.Map(container, options);
+  }
+
+  // 모달이 열릴 때 초기화 함수 호출
+  $(document).ready(function() {
+    $('#mountainMap').on('shown.bs.modal', function (e) {
+      initializeMap();
+      console.log
+      console.log('성공')
+
+      var latitude = parseFloat(document.getElementById('latitude').textContent);
+      var longitude = parseFloat(document.getElementById('longitude').textContent);
+      showMountainMarker(latitude, longitude);
+    });
+  });
+</script>
+
+<script>
+  function bookmark(courseId) {
+    const bookmarkBtn = document.getElementById('bookmark-btn-' + courseId);
+    const mountainCsrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    if (bookmarkBtn) {
+      bookmarkBtn.addEventListener('click', () => {
+        event.preventDefault(); // 폼의 기본 동작 중지
+        const mountainPk = bookmarkBtn.getAttribute('data-mountain-pk');
+        const coursePk = bookmarkBtn.getAttribute('data-course-pk');
+        fetch(`/mountains/${mountainPk}/course/${coursePk}/bookmark/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': mountainCsrftoken
+          },
+          body: JSON.stringify({})
+        })
+          .then(response => response.json())
+          .then(data => {
+            const isBookmarked = data.is_bookmarked;
+            // 서버로부터의 응답을 처리
+            if (isBookmarked) {
+              // 북마크 추가 시 동작
+              bookmarkBtn.className = 'bi bi-bookmark-fill btn--spot';
+              alert('북마크가 추가되었습니다.');
+            } else {
+              // 북마크 제거 시 동작
+              bookmarkBtn.className = 'bi bi-bookmark btn--spot';
+              alert('북마크가 제거되었습니다.');
+            }
+          })
+          .catch(error => {
+            // 에러 처리
+            console.error(error);
+          });
+      });
+    }
+  }
+
+  {% for course in courses %}
+    bookmark({{ course.pk }});
+  {% endfor %}
+</script>
+
+<script>
+  const forms = document.querySelectorAll(".like-form");
+  const mountainCsrftokenLike = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+  forms.forEach((form) => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const mountainId = e.target.dataset.mountainId;
+      axios({
+        method: 'post',
+        url: `/mountains/${mountainId}/likes/`,
+        headers: {"X-CSRFToken" : mountainCsrftokenLike},
+      }).then((response) => {
+        const isLiked = response.data.is_liked;
+        const likeBtn = form.querySelector(`#mountain-likes-btn`);
+        if (isLiked){
+          likeBtn.className = 'mountain__btn--style bi bi-heart-fill heart--color like__hover icon--size';
+        } else{
+          likeBtn.className = 'mountain__btn--style bi bi-heart like__hover icon--size';
+        }
+        const likeCountTag = form.querySelector('#mountain-likes-count')
+        const likeCountData = response.data.like_count
+        likeCountTag.textContent = likeCountData
+      })
+      .catch((error) => {
+        console.log(error.response)
+      })
+    })
+  })
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var tagButtons = document.querySelectorAll('#review-tags label input');
+    var selectedTagsContainer = document.getElementById('selected-tags');
+  
+    tagButtons.forEach(function(tagButton) {
+      tagButton.addEventListener('click', function(event) {
+        var label = this.parentElement;
+        label.classList.toggle('selected');
+
+        // 선택한 태그 목록 업데이트
+        var selectedTags = document.querySelectorAll('#review-tags label.selected input');
+        console.log(selectedTags)
+
+        // 선택된 태그 목록 표시
+        var selectedTagsArray = Array.from(selectedTags).map(function(input) {
+          var inputName = '# ' + input.getAttribute('data-tag-name');
+          return '<div class="mountain__reviewcrt--tag selected">' + inputName + '</div>';
+        });
+
+        // 선택된 태그들을 쉼표로 구분한 문자열로 설정하여 selectedTagsContainer 내에 업데이트
+        selectedTagsContainer.innerHTML = selectedTagsArray.join(' ');
+      });
+    });
+  });
+</script>
+  
+<script>
+  // 수정 버튼 클릭 시 새 창 열기
+  var editButtons = document.getElementsByClassName("editBtn");
+
+  for (var i = 0; i < editButtons.length; i++) {
+    var editButton = editButtons[i];
+
+    editButton.addEventListener("click", function () {
+      var reviewId = this.getAttribute("data-review-id");
+      var mountainId = this.getAttribute("data-mountain-id");
+
+      var url = '/mountains/' + mountainId + '/review_update/' + reviewId;
+      var features = 'width=1000,height=380,resizable=yes';
+      window.open(url, '_blank', features);
+    });
+  }
+</script>
+
+<script>
+  
+  document.getElementById('reviewloadMoreBtn').addEventListener('click', function() {
+    var reviewList = document.getElementById('reviewList');    
+    var hiddenItems = reviewList.querySelectorAll('li[style="display: none;"]');
+    var visibleItems = reviewList.querySelectorAll('li:not([style="display: none;"])');
+    console.log(hiddenItems)
+  
+    if (visibleItems.length < reviewList.children.length) {
+      for (var i = 0; i < hiddenItems.length && i < 5; i++) {
+        hiddenItems[i].style.display = 'block';
+      }    
+    }
+
+    var NewhiddenItems = reviewList.querySelectorAll('li[style="display: none;"]');
+
+    if (NewhiddenItems.length === 0) {
+      document.getElementById('reviewloadMoreBtn').style.display = 'none';
+      document.getElementById('reviewCloseBtn').style.display = 'inline-block';
+    }
+  });
+
+  
+  document.getElementById('reviewCloseBtn').addEventListener('click', function() {
+    var reviewList = document.getElementById('reviewList');
+    var items = reviewList.querySelectorAll('li');
+  
+    for (var i = 5; i < items.length; i++) {
+      items[i].style.display = 'none';
+    }
+  
+    this.style.display = 'none';
+    document.getElementById('reviewloadMoreBtn').style.display = 'inline-block';
+  });  
+</script>
+
+<script>
+  function limitCheckboxSelections(checkbox, limit) {
+    var checkedCount = 0;
+    var checkboxes = checkbox.closest('form').querySelectorAll('input[type="checkbox"]');
+    
+    for (var i = 0; i < checkboxes.length; i++) {
+      if (checkboxes[i].checked) {
+        checkedCount++;
+      }
+      if (checkedCount >= limit) {
+        for (var j = 0; j < checkboxes.length; j++) {
+          if (!checkboxes[j].checked) {
+            checkboxes[j].disabled = true;
+          }
+        }
+        break;
+      } else {
+        checkboxes[i].disabled = false;
+      }
+    }
+  }
+</script>
+
+
+<script>
+  var imageInputs = document.querySelectorAll("#review-image input[type=file]");
+
+  // 이미지 파일 변경 시 미리보기 업데이트
+  imageInputs.forEach(function (input) {
+    input.addEventListener("change", function (event) {
+      var preview = input.parentNode.querySelector(".preview-image");
+      var file = event.target.files[0];
+
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = "block";    
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = "";
+        preview.style.display = "none";
+      }
+    });
+  });
+</script>
+
+<script>
+  document.getElementById('go-review-section').addEventListener('click', function() {
+    var element = document.querySelector('.mountain__detail--reviewtitle');
+    element.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+<script>
+  // review 좋아요
+  const reviewLikeForms = document.querySelectorAll('.review-like-form');
+  const rlcsrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  reviewLikeForms.forEach(form => {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault()
+      const mountainId = event.target.dataset.mountainId;
+      const reviewId = event.target.dataset.reviewId;
+      axios({
+        method: 'post',
+        url: `/mountains/${mountainId}/review_likes/${reviewId}/`,
+        headers: {'X-CSRFToken': rlcsrfToken},
+      }).then((response) => {
+        const isLiked = response.data.rl_is_liked
+        const likeBtn = document.querySelector(`#like-${reviewId}`)
+        if (isLiked){
+          console.log('dd')
+          likeBtn.className = "bi bi-hand-thumbs-up-fill like__hover text-primary";
+        } else {
+          likeBtn.className = "bi bi-hand-thumbs-up like__hover";
+        }
+
+        const likesCountData = response.data.rl_likes_count
+        const likesCountTag = document.querySelector(`#rl_likes_count_${reviewId}`)
+        likesCountTag.textContent = likesCountData
+
+      })
+      .catch((error) => {
+        console.error(response.data);
+      });
+    });
+  });
+  ;
+</script>
+
+<script>
+  // JavaScript
+  var imageInput = document.getElementById('id_image');
+  var imgPreview = document.getElementById('preview');
+  var iplus = document.querySelector(".img--plus")
+
+  imageInput.addEventListener('change', function(event) {
+    if (event.target.files && event.target.files[0]) {
+      imgPreview.style.display = 'block';
+      iplus.style.display = "none";
+      document.querySelector('.mountain__reviewcrt--imgbox').style.border = 'none';
+    } else {
+      imgPreview.style.display = 'none';
+      iplus.style.display = "block";
+      document.querySelector('.mountain__reviewcrt--imgbox').style.border = '1px solid #ccc';
+    }
+  });
+</script>
+<script>
+  // mountain info 모달
+  // 더보기 버튼 클릭 시 모달 열기
+  document.querySelector('.show-info-modal').addEventListener('click', function() {
+    document.getElementById('info-modal').classList.remove('hidden');
+  });
+
+  // 모달 닫기 버튼 클릭 시 모달 닫기
+  document.querySelector('.close-info-modal').addEventListener('click', function() {
+    document.getElementById('info-modal').classList.add('hidden');
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const commentElement = document.getElementById('bestReview');
+    const viewCommentButton = document.getElementById('viewCommentButton');
+  
+    if (commentElement.scrollHeight > commentElement.clientHeight) {
+      commentElement.classList.add('clamp'); // 텍스트 클램핑을 위한 클래스 추가
+      viewCommentButton.classList.remove('hidden'); // 버튼을 보이도록 클래스 제거
+    }
+  });  
+
+
+  function scrollToComment() {
+    const bestReviewId = "{{ most_liked_review.pk }}"; // 해당 리뷰의 고유 식별자 가져오기
+    const bestReviewElement = document.getElementById(`best-${bestReviewId}`);
+
+    if (bestReviewElement.style.display === "none") {
+      bestReviewElement.style.display = "block";
+    }
+    
+    bestReviewElement.scrollIntoView({ behavior: 'smooth' }); // 해당 리뷰로 스크롤 이동
+  }
+</script>
+
+<script>
+  $(document).ready(function() {
+    $(".owl-carousel").owlCarousel({
+      // OwlCarousel 옵션 설정
+      items: 4, // 한 번에 표시할 아이템 수
+      loop: false, // 무한 루프 여부
+      margin: 20, // 아이템 간의 간격
+      nav: true, // 네비게이션 버튼 표시 여부
+      navText: ["<", ">"],
+      dots: true, // 도트 표시 여부
+      responsive: {
+        // 반응형 옵션 설정
+        0: {
+          items: 2 // 0px 이상일 때, 1개의 아이템 표시
+        },
+        768: {
+          items: 4 // 768px 이상일 때, 2개의 아이템 표시
+        },
+        1080: {
+          items: 4 // 1080px 이상일 때, 4개의 아이템 표시
+        }
+      }
+    });
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+{% endblock javascript %}

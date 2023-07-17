@@ -1,0 +1,112 @@
+.course__wrap {
+  margin: 30px 5%;
+  padding: 0px 16px;
+  min-width: 370px;
+}
+
+.align__list {
+  margin: 10px 5px; 
+  text-align: end;
+}
+
+.select__box{
+  border-bottom : solid 3px var(--main-color);
+  width: 100px;
+}
+
+.align__btn {
+  background-color : var(--main-color) !important;
+  padding: 2px 10px;
+  color: white;
+}
+
+.li__box {
+  /* padding: 10px 0px; */
+  position: relative;
+}
+
+.text--colormain {
+  color: var(--sub-color);
+}
+
+.bookmark--style{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 40px;
+  color: var(--main-color)
+}
+
+.flex--row {
+  display: flex;
+}
+
+.flex--col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bookmark--style:hover{
+  color: var(--green-btn);
+}
+
+.li__box:hover{
+  /* background-color: rgba(118, 191, 178, 110) !important; */
+  background-color: #fffaed !important;
+  /* background-color: #0B6623 !important; */
+  /* background-color: #C7EA46 !important; */
+  /* background-color: #75a64a!important; */
+}
+
+.page__btn {
+  font-weight: bold; 
+  padding: 3px;
+  font-size: 20px;
+}
+
+.page__btn:hover {
+  color: var(--background-color);
+}
+
+.pagination__link--active{
+  color: var(--green-btn);
+}
+
+.box--minwidth {
+  min-width: 55px !important;
+}
+
+.arrow--rotate {
+  border: 3px solid ;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: var(--sub-color);
+  margin-bottom: 10px;
+  
+}
+
+.arrow--rotate:hover {
+  transform: rotate(75deg);
+  transition: transform 0.75s ease;
+  color: #75a64a;
+}
+
+@media (max-width:1550px) {
+  .course__wrap {
+    margin: 30px 40px;
+    padding: 0px;
+  }
+
+@media (max-width:1080px) {
+  .course__wrap {
+    margin: 30px 0%;
+
+  }
+
+  .bookmark--style{
+    right: 30px;
+  }
+} 
+
+} 

@@ -1,0 +1,269 @@
+:root {
+  --main-color: #A2E04E;
+  --background-color: #AEDF9B;
+  --sub-color: #888888;
+  --sub-color2: #DCDCDC;
+  --green-btn: #47A945;
+  --red-color: rgb(229, 89, 59);
+  /* background-color: rgba(118, 191, 178, 110) !important; */
+  /* background-color: #0B6623 !important; */
+  /* background-color: #C7EA46 !important; */
+  /* background-color: #75a64a!important; */
+} 
+
+body {
+  font-family: 'NanumSquareNeo-Variable';
+}
+
+#wrapper{
+  height: auto;
+  min-height: calc(100vh - 550px);
+}
+
+/* nav */
+.header__navbox {
+  display: flex;
+  flex-direction: row;
+  height: 80px;
+}
+
+.header__nav--warp {
+  display: flex;
+  height: 100px;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0 auto;
+  /* padding: 0 100px 0 100px; */
+}
+
+.header__logo {
+  position: relative;
+
+}
+
+.header__logo--img {
+  height: 100%;
+  min-width: 190px;
+  object-fit: contain;
+}
+
+.header__navbox1 {
+  display: flex;
+  flex-direction: row;
+}
+ 
+.header__nav--list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header__nav--item {
+  margin: 0 20px 0 20px;
+  font-size: 1.2rem;
+}
+
+.header__nav--item > button:hover {
+  color: #A2E04E;
+}
+
+.active-button {
+  color: #A2E04E !important;
+}
+
+.active-button:hover {
+  color: #A2E04E !important;
+}
+
+.header__navbox2 {
+  display: flex;
+  flex-direction: row;
+}
+
+.header__search {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  
+}
+
+.header__search--list {
+  display: flex;
+  align-items: center;
+  width: 200px;
+  height: 40px;
+  background-color: #F2F2F2;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+
+.header__search--text {
+  padding-left:10px;
+  background-color:white;
+  width: 400px
+}
+
+.header__search--text:focus {
+  outline: none !important;
+}
+
+.header__user--list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header__user--item {
+  margin: 0 10px 0 10px;
+  font-size: 1.2rem;
+}
+
+.header__user--item:hover {
+  color: #A2E04E;
+  cursor: pointer;
+}
+
+.header--box {
+  background-color: transparent !important;
+}
+
+.header__profilebox {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.header__profile {
+  border-radius: 100%;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  padding: 1px;
+  border: solid 3px var(--background-color);
+}
+
+.btn--hover:hover {
+  color: #A2E04E !important;
+  cursor: pointer;
+}
+
+.header__btn--margin {
+  margin: 0px 16px;
+}
+
+.hearder__btn--box{
+  margin-right: 36px;
+}
+
+.hearder__search--box{
+  margin-left: 36px;
+}
+
+@media (max-width:1350px) {
+  /* .menu--hidden {
+    display: none !important;
+  } */
+
+  .header__btn--margin {
+    margin: 0px 8px;
+    font-size: 16px;
+    }
+
+  .hearder__btn--box{
+    margin-right: 18px;
+  }
+  
+  .hearder__search--box{
+    margin-left: 18px;
+  }
+
+
+}
+
+@media (max-width:800px) {
+   .small--hidden {
+    display: none !important;
+  }
+} 
+
+/* footer */
+
+.footer--wrap {
+  text-align: center;
+  padding: 40px 0 40px 0;
+}
+
+.footer__flex--wrap {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer__middletitle {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+.footer__middlecontent {
+  font-size: 16px;
+  color: #4b5563 !important;
+  text-align: center;
+}
+
+.footer__middle--warp {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer__box {
+  margin-right: 16px;
+}
+
+@media (max-width:576px) {
+  .footer__flex--wrap {
+    display: block;
+  }
+
+  .footer__middle--warp {
+    flex-direction: column;
+  }
+
+  .footer__flex--aligncenter {
+    /* justify-content: center; */
+    align-self: center;
+  }
+
+  .footer__box {
+    margin-right: 0px;
+  }
+
+  .header__search--text {
+    width: 100%;
+  }
+
+  .header__btn--margin {
+    margin: 0px 5px;
+    font-size: 12px;
+    }
+}
+
+.footer--sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* font */
+@font-face {
+  font-family: 'NanumSquareNeo-Variable';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

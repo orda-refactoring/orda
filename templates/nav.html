@@ -1,0 +1,256 @@
+{% load static %}
+{% load custom_filters %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/level.css' %}">
+<style>
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .list-group,
+  .list-group-item {
+    font-size: 13px;
+  }
+
+  .notification-popup {
+    position: absolute;
+    top: 60px;
+    right: 120px;
+    z-index: 800;
+    background-color: rgba(255, 255, 255, 0);
+    width: 350px;
+    height: 300px;
+  }
+</style>
+<header style="position: sticky; top: 0; z-index: 1000;">
+  <div style="height: 100%; background-color: #FFFFFF; border-bottom:#0B6623 solid 10px;">
+    <div class="mx-auto w-100 p-4 py-3 py-2-lg" style="max-width: 1400px;">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex">
+          <div style="height:75px;">
+            <a href="{% url 'mountains:mountain_list' %}"><img class='header__logo--img small--hidden' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center align-items-xl-end flex-column flex-xl-row">
+          <div class="d-flex align-items-end fs-5 hearder__btn--box" >
+            <a href="{% url 'mountains:search' %}" class="{% if '/search/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">탐색</a>
+            <a href="{% url 'mountains:mountain_list' %}" class="{% if request.resolver_match.url_name == 'mountain_list' %} active-button {% endif %} btn--hover mb-1 header__btn--margin">100대 명산</a>
+            <a href="{% url 'mountains:course_all_list' %}" class="{% if '/courses/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">등산로</a>
+            <a href="{% url 'posts:index' %}" class="{% if request.resolver_match.view_name == 'posts:index' %} active-button {% endif %} btn--hover mb-1 header__btn--margin">마이코스</a>
+            <a href="{% url 'posts:proofshot' %}" class="{% if '/proofshot/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">인증샷</a>
+          </div>
+          <div class="d-flex align-items-end hearder__search--box">
+            <div class="rounded-pill d-flex mb-1" style="border:var(--main-color) 3px solid; background-color:white">
+              <i class="bi bi-search align-self-center ps-3"></i>  
+              <form action="{% url 'mountains:mountain_list' %}" method="POST">
+                {% csrf_token %}
+                <input class="rounded-pill header__search--text py-2 ps-4 pe-5" style="border: 0px"  type="text" name="search_query" placeholder="무엇을 찾으시나요?" >
+                <button type="submit" hidden></button>
+              </form>
+            </div>
+          </div>
+        </div>
+          <div class="d-flex align-items-end">
+            {% if user.is_authenticated %}
+            <div class="fs-5 d-flex">
+              <div class="header__user--item">
+                <button id="notification-button" class="btn--hover me-2" onclick="toggleNotificationPopup()"><span id="notification-count">
+                  {% if request.notification_count %}
+                    <span id="fill"><i class="bi bi-bell-fill" style="color:var(--green-btn); font-size: 38px; margin-right: -15px;"></i><i class="bi bi-dot" style="vertical-align: top; font-size: 30px; color: #CC0000;"></i><div style="display: none;">{{ request.notification_count }}</div></span>
+                  {% else %}
+                    <span id= "empty"><i class="bi bi-bell" style="color:var(--green-btn); font-size: 38px;"></i><div style="display: none;">{{ request.notification_count }}</div></span>
+                  {% endif %}</span>
+                </button>
+                <div id="notification-popup" class="notification-popup" style="display: none;">
+                  <ul class="list-group" id="notification-list">
+                    <div id="notification-container" class="notification-container"></div>
+                  </ul>
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="header__profilebox">
+                    {% if request.user.profile_img  %}
+                      <img class="header__profile {% if request.user.level == 2 %}level2 {% elif request.user.level == 3 %}level3 {% elif request.user.level == 4 %}level4 {% elif request.user.level == 5 %}level5 {% endif %}" src="{{ request.user.profile_img.url }}" alt="{{ post.user }}프로필">
+                      {% if request.user.level == 5 %}
+                        <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                      {% endif %}
+                    {% else %}
+                      <img class="header__profile {% if request.user.level == 2 %}level2 {% elif request.user.level == 3 %}level3 {% elif request.user.level == 4 %}level4 {% elif request.user.level == 5 %}level5 {% endif %}" src="{% static 'img/profile_no_img.png' %}" alt="no">
+                      {% if request.user.level == 5 %}
+                        <img class="level5--img" src="{% static 'img/crown.png' %}" alt="level5">
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item {% if active_button_id == '마이페이지' %}active-button{% endif %}" href="{% url 'accounts:profile' user.pk %}" >마이페이지</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:my_memories' %}">
+                    오른기억</a></li>
+                  <li><a class="dropdown-item" href="#">            
+                    <form action="{% url 'accounts:logout' %}" method="POST">
+                      {% csrf_token %}
+                      <button id="로그아웃" type="submit">로그아웃</button>
+                    </form></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            {% else %}
+              <div class="dropdown">
+                <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img class="header__profile" src="{% static 'img/Noimage.png' %}" alt="no">
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a id="로그인" class="dropdown-item {% if active_button_id == '로그인' %}active-button{% endif %}" href="{% url 'accounts:login' %}">로그인</a></li>
+                  <li><a id="회원가입" class="dropdown-item {% if active_button_id == '회원가입' %}active-button{% endif %}" href="{% url 'accounts:signup' %}">
+                    회원가입</a></li>
+                </ul>
+              </div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  $(document).ready(function() {
+    var notificationContainer = $('#notification-container'); // notification-container 요소를 변수에 저장합니다.
+    var notificationButton = $('#notification-button'); // 알림 버튼을 변수에 저장합니다.
+  
+    notificationButton.click(function(e) {
+      e.preventDefault();
+      if (notificationContainer.html().trim() === '') { // 알림 창이 비어있다면 AJAX 요청을 보냅니다.
+        $.ajax({
+          url: '{% url 'accounts:notification' %}',
+          type: 'GET',
+          success: function(response) {
+            notificationContainer.html(response).show(); // 불러온 창을 표시합니다.
+          },
+          error: function(xhr) {
+            console.log(xhr.responseText);
+          }
+        });
+      } else {
+        notificationContainer.empty().hide(); // 내용을 지우고 숨깁니다.
+      }
+    });
+  });
+  function toggleNotificationPopup() {
+    const notificationPopup = document.getElementById("notification-popup");
+    isNotificationPopupVisible = !isNotificationPopupVisible;
+    notificationPopup.style.display = isNotificationPopupVisible ? "block" : "none";
+    var popup = document.getElementById("notification-popup");
+    if (popup.style.display === "none") {
+      // 팝업이 숨겨져 있다면 AJAX 요청을 통해 알림 데이터를 가져옵니다.
+      $.ajax({
+        url: 'http://127.0.0.1:8000/accounts/notification/',
+        type: 'GET',
+        success: function(response) {
+          // 알림 데이터를 팝업에 추가합니다.
+          $("#notification-list").html(response);
+          // 팝업을 표시합니다.
+          popup.style.display = "block";
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText);
+        }
+      });
+    } else {
+      // 팝업이 표시되어 있다면 숨깁니다.
+      popup.style.display = "none";
+    }
+  }  
+</script>
+<script>
+  function showNotificationPopup() {
+    const notificationPopup = document.getElementById("notification-popup");
+    notificationPopup.style.display = "block";
+  }
+  
+  function hideNotificationPopup() {
+    const notificationPopup = document.getElementById("notification-popup");
+    notificationPopup.style.display = "none";
+  }
+  $(document).ready(function() {
+    var notificationContainer = $('#notification-popup');
+    var notificationButton = $('#notification-button');
+    var isNotificationPopupVisible = false;
+  
+    notificationButton.click(function(e) {
+      e.preventDefault();
+      toggleNotificationPopup();
+    });
+  
+    function toggleNotificationPopup() {
+      isNotificationPopupVisible = !isNotificationPopupVisible;
+      notificationContainer.toggle(isNotificationPopupVisible);
+    }
+  });
+  
+  function markNotificationRead(notificationId) {
+    $.ajax({
+      url: '/accounts/notification/check/' + notificationId + '/',
+      type: 'POST',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success: function(response) {
+        console.log('알림을 읽음으로 표시했습니다.');
+        updateNotificationStatus(notificationId, true);
+        updateNotificationCount(-1);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText);
+      }
+    });
+  }
+  
+  function deleteNotification(notificationId) {
+    $.ajax({
+      url: '/accounts/notification/delete/' + notificationId + '/',
+      type: 'POST',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success: function(response) {
+        console.log('알림을 삭제했습니다.');
+        removeNotificationFromList(notificationId);
+        updateNotificationCount(-1);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText);
+      }
+    });
+  }
+  
+  function updateNotificationStatus(notificationId, isRead) {
+    var statusElement = $('#notification-status-' + notificationId);
+    if (isRead) {
+      statusElement.html('<span>읽음</span>');
+    } else {
+      statusElement.html('<button onclick="markNotificationRead(' + notificationId + ')">읽지 않음</button>');
+    }
+  }
+  
+  function removeNotificationFromList(notificationId) {
+    var notificationElement = $('#notification-' + notificationId);
+    notificationElement.remove();
+    var notificationList = $('#notification-list');
+    if (notificationList.children().length === 0) {
+      notificationList.append('<li class="list-group-item">알림이 없습니다.</li>');
+    }
+  }
+  
+  function updateNotificationCount(change) {
+    var notificationCountElement = $('#notification-count');
+    var notificationCount = parseInt(notificationCountElement.text());
+    notificationCount += change;
+    if (notificationCount > 0) {
+      notificationCountElement.html('<span id="fill"><i class="bi bi-bell-fill" style="color:var(--green-btn); font-size: 38px; margin-right: -15px;"></i><i class="bi bi-dot" style="vertical-align: top; font-size: 30px; color: #CC0000;"></i><div style="display: none;">' + notificationCount + '</div></span>');
+    } else {
+      notificationCountElement.html('<span id="empty"><i class="bi bi-bell" style="color:var(--green-btn); font-size: 38px;"></i><div style="display: none;">' + notificationCount + '</div></span>');
+    }
+  }
+</script>

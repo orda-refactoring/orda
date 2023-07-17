@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+<style>
+</style>
+<link rel="stylesheet" href="{% static 'css/mountains_course.css' %}">
+{% endblock style %}
+
+{% block content %}
+<div class="course__wrap">
+  <div class="title__box">
+    <h1>{{ mountain.name }}의 코스</h1>
+  </div>
+  <hr>
+
+  <form id="sort-form" class="select__form">
+    <select name="sort" id="sort-select" class="select__box focus:outline-none">
+      <option value="">기본</option>
+      <option value="bookmarks">북마크순</option>
+      <option value="diff">난이도순</option>
+      <option value="distance">거리순</option>
+      <option value="hidden_time">소요시간순</option>
+    </select>
+  </form>
+  
+  <ul class="my-4">
+    {% for course in courses %}
+    <li class="flex flex-col bg-white border border-gray-200 rounded-lg shadow md:flex-row grid md:grid-cols-4 li--relative">
+      <!-- 지도 -->
+      <div id="map-{{ course.pk }}" class="borderline col-span-3 " style="width: 100%; height: 300px;"></div>
+      <div class="li--textbox flex--col flex--align">
+        <p class="coursetitle--font">{{ course.crs_name_detail }}</p>
+        <div class="flex--row">
+          <div class="ps-1">
+            <p class="my-2">총거리</p>
+            <p class="my-2">소요시간</p>
+            <p class="my-2">난이도</p>
+            <form class="download-form" data-mountain-id="{{ mountain.pk }}" data-gpx-id="{{course.pk}}">
+              {% csrf_token %}
+              <input class="my-2 font-bold" type="submit" value="GPX 다운로드">
+            </form>
+            <input type="checkbox" id="waypoint-checkbox-{{ course.pk }}" onchange="toggleWaypoints({{ course.pk }})">
+            <label for="waypoint-checkbox-{{ course.pk }}">경유지 표시</label>
+          </div>
+          <div class="ps-3">
+            <p class="my-2">{{ course.distance }}km</p>
+            <p class="my-2">{{ course.duration }}</p>
+            <p class="my-2">{{ course.diff }}</p>
+          </div>
+        </div>
+        <form class="bookmark-form" data-course-id="{{course.pk}}" data-mountain-id="{{mountain.pk}}">
+          {% csrf_token %}
+          {% if request.user in course.bookmarks.all %}
+          <button id="bookmark-btn-{{ course.pk }}" type="submit"  class="bi bi-bookmark-fill btn--spot" data-mountain-pk="{{ mountain.pk }}" data-course-pk="{{ course.pk }}">
+          </button>
+          {% endif %}
+          <button id="bookmark-btn-{{ course.pk }}" type="submit"  class="bi bi-bookmark btn--spot" data-mountain-pk="{{ mountain.pk }}" data-course-pk="{{ course.pk }}">
+          </button>
+        </form>
+      </div>
+    </li>
+      <br>
+      {% empty %}
+        <li>No courses available.</li>
+        {% endfor %}
+      </ul>
+      
+    <!-- 페이지네이션 -->
+    <div class="pagination mt-4">
+      <div class="mx-auto">
+        {% if is_paginated %}
+          {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page__btn ">&lt;&lt;</a>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if num > page_obj.number|add:'-5' and num < page_obj.number|add:'5' %}
+              {% if num == page_obj.number %}
+                <span class="page__btn pagination__link--active">{{ num }}</span>
+              {% else %}
+                <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page__btn ">{{ num }}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page__btn ">&gt;&gt;</a>
+          {% endif %}
+        {% endif %}
+      </div>
+  </div>
+
+
+  </div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{% static 'js/list_order.js' %}"></script>
+<script src="{% static 'js/mountain_course.js' %}"></script>
+<script src="{% static 'js/apikey.js' %}"></script>
+<script>
+
+// 카카오맵 API 로드 후 초기화 함수 호출
+ // 코스별 지도를 저장할 객체
+var mapList = {};
+loadKakaoMapScript(function () {
+  var course_data = {{ courses_data|safe }};
+  var detail_data = {{ detail_data|safe }};
+  {% for course in courses %}
+    var courseId = {{ course.pk }};
+    var courseInfo = JSON.parse(course_data[courseId]);
+    var courseDetail = JSON.parse(detail_data[courseId]);
+    initMap(courseId, courseInfo, courseDetail);
+  {% endfor %}
+});
+</script>
+<script>
+  const downloadForms = document.querySelectorAll('.download-form');
+
+  downloadForms.forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+      const gpxId = e.target.dataset.gpxId;
+      const mountainId = e.target.dataset.mountainId;
+      var confirmation = confirm("메일을 전송하시겠습니까?"); // 확인 창을 띄웁니다.
+
+      if (confirmation) {
+        axios({
+          method: 'post',
+          url: `/mountains/${mountainId}/courses/${gpxId}/download/`,
+          headers: {
+            'X-CSRFToken': this.querySelector('input[name="csrfmiddlewaretoken"]').value
+          }
+        })
+        .then(response => {
+          if (response.status === 200) {
+            // 성공적으로 응답을 받았을 때
+            alert("GPX 파일을 등록한 이메일로 전송했습니다.");
+          }
+        })
+        .catch(error => {
+          // 네트워크 오류 등의 문제로 실패했을 때
+          if (error.response) {
+            // 서버가 오류 응답을 반환한 경우
+            alert("이메일 전송에 실패했습니다. 이메일 등록 여부를 확인하고, 다시 시도해주세요.");
+          } else {
+            // 네트워크 오류 등의 문제로 실패한 경우
+            alert("요청을 처리하는 도중 오류가 발생했습니다.");
+          }
+        });
+      }
+      }
+  )})
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+{% endblock javascript %}
