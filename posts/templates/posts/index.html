@@ -17,7 +17,7 @@
     </a>
   </div>
   {% comment %} 조회순 {% endcomment %}
-  <section style="margin-bottom: 120px;">
+  <section style="margin-bottom: 20px;">
     <h1 class="postindex__Content--title">조회수가 높은 마이코스</h1>
     <div class="owl-carousel owl-theme" style="margin-bottom: 120px;">
       {% for post in view_posts|slice:":8" %}
@@ -88,7 +88,7 @@
   </section>
 
   {% comment %} 좋아요 많은 순 {% endcomment %}
-  <section style="margin-bottom: 120px;">
+  <section style="margin-bottom: 20px;">
     <h1 class="postindex__Content--title">좋아요가 많은 마이코스</h1>
     <div class="owl-carousel owl-theme" style="margin-bottom: 120px; ">
       {% for post in like_posts|slice:":8" %}
@@ -158,11 +158,11 @@
     </div>
   </section>
 
-  <section style="margin-bottom: 120px;">
+  <section style="margin-bottom: 20px;">
     <h1 class="postindex__Content--title2">전체 글<span style="color: var(--main-color); margin-left: 10px;">{{ posts|length }}</span></h1>
     <div class="post-grid" id="postGrid">
       {% for post in posts %}
-        <div class="max-w-md bg-white border border-gray-200 rounded-lg shadow post-item" style="display: block; min-width: 250px;">
+        <div class="max-w-md bg-white border border-gray-200 rounded-lg shadow post-item">
         <!-- 글 내용을 표시하는 부분 -->
           <a href="{% url 'posts:detail' post.pk %}"  class="position--relative">
             <div class="postindex__post--imgbox">
