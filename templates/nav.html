@@ -3,33 +3,15 @@
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
 <link rel="stylesheet" href="{% static 'css/level.css' %}">
 <style>
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .list-group,
-  .list-group-item {
-    font-size: 13px;
-  }
 
-  .notification-popup {
-    position: absolute;
-    top: 60px;
-    right: 120px;
-    z-index: 800;
-    background-color: rgba(255, 255, 255, 0);
-    width: 350px;
-    height: 300px;
-  }
 </style>
 <header style="position: sticky; top: 0; z-index: 1000;">
   <div style="height: 100%; background-color: #FFFFFF; border-bottom:#0B6623 solid 10px;">
     <div class="mx-auto w-100 p-4 py-3 py-2-lg" style="max-width: 1400px;">
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between small--nav">
         <div class="d-flex">
-          <div style="height:75px;">
-            <a href="{% url 'mountains:mountain_list' %}"><img class='header__logo--img small--hidden' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
+          <div style="height:75px;" >
+            <a href="{% url 'mountains:mountain_list' %}"><img class='header__logo--img' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
           </div>
         </div>
         <div class="d-flex justify-content-between align-items-center align-items-xl-end flex-column flex-xl-row">
@@ -54,7 +36,7 @@
           <div class="d-flex align-items-end">
             {% if user.is_authenticated %}
             <div class="fs-5 d-flex">
-              <div class="header__user--item">
+              <div class="header__user--item small--hidden">
                 <button id="notification-button" class="btn--hover me-2" onclick="toggleNotificationPopup()"><span id="notification-count">
                   {% if request.notification_count %}
                     <span id="fill"><i class="bi bi-bell-fill" style="color:var(--green-btn); font-size: 38px; margin-right: -15px;"></i><i class="bi bi-dot" style="vertical-align: top; font-size: 30px; color: #CC0000;"></i><div style="display: none;">{{ request.notification_count }}</div></span>
@@ -68,7 +50,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="dropdown">
+              <div class="dropdown header--profilebox">
                 <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <div class="header__profilebox">
                     {% if request.user.profile_img  %}
@@ -98,7 +80,7 @@
               </div>
             </div>
             {% else %}
-              <div class="dropdown">
+              <div class="dropdown header--profilebox">
                 <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img class="header__profile" src="{% static 'img/Noimage.png' %}" alt="no">
                 </button>
