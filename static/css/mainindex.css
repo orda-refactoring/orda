@@ -195,9 +195,22 @@ a {
     text-align: center;
   }
 }
-@media (max-width:1000px){
-  .paragraph{
-    text-align: start;
+
+@media (max-width:1200px){
+  .content{
+    left: 150px;
+  }
+}
+
+@media (max-width:800px){
+  .content{
+    left: 50px;
+  }
+}    
+
+@media (max-width:450px){
+  .content{
+    padding-left: 0;
   }
 }    
 
