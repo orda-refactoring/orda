@@ -108,6 +108,20 @@ $(document).ready(function() {
 });
 
 
+const viewBtn = document.querySelector('.view__btn');
+const likeBtn = document.querySelector('.like__btn');
+
+const viewContent = document.querySelector('.view__content');
+const likeContent = document.querySelector('.like__content');
+
+viewBtn.addEventListener('click', ()=> {
+  likeContent.style.display = 'none'
+})
+
+
+
+
+
 // const page_elements = document.getElementsByClassName('page-link')
 // Array.from(page_elements).forEach(function(element) {
 //   element.addEventListener('click', function(event) {

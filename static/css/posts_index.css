@@ -16,6 +16,11 @@
   padding: 0 40px;
 }
 
+.courselist__point{
+  border: var(--main-color) solid 5px;
+  padding: 16px 8px;
+}
+
 .post-item {
   display: flex;
   flex-direction: column;
@@ -67,6 +72,20 @@
   font-size: 1.6rem;
   font-weight: bold;
   font-family: sans-serif;
+  border: var(--main-color) 5px solid;
+  border-bottom: 0px;
+  margin: 16px 0 0 0;
+  padding: 8px 16px;
+  background-color: var(--main-color);
+  color: white;
+}
+
+.view__content {
+  display: block;
+}
+
+.like__content {
+  display: none;
 }
 
 .postindex__Content--title2 {
