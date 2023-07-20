@@ -108,14 +108,30 @@ $(document).ready(function() {
 });
 
 
-const viewBtn = document.querySelector('.view__btn');
-const likeBtn = document.querySelector('.like__btn');
+const viewBtn = document.querySelector('.viewlist__btn');
+const likeBtn = document.querySelector('.likelist__btn');
 
 const viewContent = document.querySelector('.view__content');
 const likeContent = document.querySelector('.like__content');
 
 viewBtn.addEventListener('click', ()=> {
   likeContent.style.display = 'none'
+  viewContent.style.display = 'block'
+  viewBtn.style.backgroundColor = 'var(--main-color)'
+  viewBtn.style.border = 'var(--main-color) solid 5px'
+  likeBtn.style.backgroundColor = 'var(--background-color)'
+  likeBtn.style.border = 'var(--background-color) solid 5px'
+})
+
+likeBtn.addEventListener('click', ()=> {
+  viewContent.style.display = 'none'
+  likeContent.style.display = 'block'
+  // likeContent.style.setProperty('display', 'block', 'important');
+  // likeContent.style = 'display: block !important'
+  likeBtn.style.backgroundColor = 'var(--main-color)'
+  likeBtn.style.border = 'var(--main-color) solid 5px'
+  viewBtn.style.backgroundColor = 'var(--background-color)'
+  viewBtn.style.border = 'var(--background-color) solid 5px'
 })
 
 

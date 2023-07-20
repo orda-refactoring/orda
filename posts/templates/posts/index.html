@@ -6,22 +6,15 @@
 <link rel="stylesheet" href="owl/assets/owl.theme.default.min.css">
 <link rel="stylesheet" href="{% static 'css/posts_index.css' %}">
 <link rel="stylesheet" href="{% static 'css/level.css' %}">
-
 {% endblock style %}
 {% block content %}
 <div class="index__wrap">
-  <div class="flex flex-row-reverse">
-    <a href="{% url 'posts:create' %}" class="bg-[#A2E04E] hover:bg-[#47A945] text-white font-bold py-2 px-4 rounded">
-      <i class="bi bi-pencil-square"></i>
-      마이코스 작성하기
-    </a>
-  </div>
   {% comment %} 조회순 {% endcomment %}
-  <section style="margin-bottom: 100px;">
-    <span class="postindex__Content--title rounded-top view__btn">조회수 순</span>
-    <span class="postindex__Content--title rounded-top like__btn">좋아요 순</span>
+  <section style="margin: 50px 0;">
+    <span class="postindex__Content--title rounded-top viewlist__btn">많이 본 글</span>
+    <span class="postindex__Content--title rounded-top likelist__btn">인기글</span>
     <div class="courselist__point">
-      <div class="owl-carousel owl-theme view__content">
+      <div class="owl-carousel owl-theme view__content" style="display: block">
         {% for post in view_posts|slice:":8" %}
         <div class="item">
           <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -157,6 +150,13 @@
     </div>
   </section>
 
+  <div class="flex flex-row-reverse" style="margin-top:150px">
+    <a href="{% url 'posts:create' %}" class="bg-[#A2E04E] hover:bg-[#47A945] text-white font-bold py-3 px-4 rounded mb-3">
+      <i class="bi bi-pencil-square"></i>
+      마이코스 작성하기
+    </a>
+  </div>
+
   <section style="margin-bottom: 20px;">
     <h1 class="postindex__Content--title2">전체 글<span style="color: var(--main-color); margin-left: 10px;">{{ posts|length }}</span></h1>
     <div class="post-grid" id="postGrid">
@@ -202,7 +202,7 @@
                 </div>
                 <p class="postindex__post--username mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ post.user.nickname }}</p>
               </div>
-              <div class="flex--row flex__align--between">
+              <div class="likes__box">
                 <div>
                   <p style="color: #777777;">{{ post.created_at|date:"y. m. d" }}</p>
                 </div>
@@ -226,7 +226,7 @@
         </div>
       {% endfor %}
     </div>
-    <button id="loadMoreBtn" {% if posts|length <= 12 %}style="display: none;"{% endif %}>더 보기</button>
+    <button id="loadMoreBtn" {% if posts|length <= 12 %}style="display: none;"{% endif %}>+ 더 보기</button>
   </section>
 </div>
 
