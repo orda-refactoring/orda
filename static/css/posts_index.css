@@ -71,20 +71,24 @@
   margin: 16px 0 16px 10px;
   font-size: 1.6rem;
   font-weight: bold;
-  font-family: sans-serif;
-  border: var(--main-color) 5px solid;
+  font-family: sans-serif; 
   border-bottom: 0px;
   margin: 16px 0 0 0;
-  padding: 8px 16px;
-  background-color: var(--main-color);
+  padding: 8px 16px 0px;
   color: white;
 }
 
-.view__content {
-  display: block;
+.viewlist__btn {
+  background-color: var(--main-color);
+  border: var(--main-color) 5px solid;
 }
 
-.like__content {
+.likelist__btn {
+  background-color: var(--background-color);
+  border: var(--background-color) 5px solid;
+}
+
+.no-js .owl-carousel, .owl-carousel.owl-loaded {
   display: none;
 }
 
@@ -306,7 +310,7 @@
   justify-content: space-between;
 }
 
-@media (max-width:1280px) {
+@media (max-width:1530px) {
   .post-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -315,7 +319,7 @@
   }
 }
 
-@media (max-width:1080px) {
+@media (max-width:1280px) {
   .post-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -324,7 +328,7 @@
   }
 }
 
-@media (max-width:720px) {
+@media (max-width:760px) {
   .post-grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
@@ -367,5 +371,17 @@
 
   .post-item {
     min-width: 250px;
+  }
+}
+
+@media (max-width: 400px) {
+  .item .likes__box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .post-item .likes__box {
+    flex-direction: column-reverse;
+    text-align: center;
   }
 }
