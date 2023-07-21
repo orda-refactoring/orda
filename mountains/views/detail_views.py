@@ -32,6 +32,11 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         serializer = Serializer()
         courses = mountain.course_set.all()
         data = {}
+        if mountain.top_tags:
+            tags_pk = list(map(int, mountain.top_tags.split(',')))
+            tags = Tag.objects.filter(pk__in=tags_pk)
+        else:
+            tags = []
         for course in courses:
             geojson_data = serializer.serialize([course], geometry_field='geom')
             data[course.pk] = geojson_data
@@ -117,6 +122,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             'mountain': mountain,
             'courses': courses,
             'courses_data': data,
+            'tags': tags,
 
             # 리뷰 관련
             'form': ReviewCreationForm(),

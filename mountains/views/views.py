@@ -44,8 +44,6 @@ def mountain_list(request):
             int_tags = list(map(int, tags))
             filtered_pks = []
             for filtered_mountain in filtered_mountains:
-                # print(f'산:{filtered_mountain.top_tags_pk}')
-                # print(f'태그:{int_tags}')
                 top_tags_pk = filtered_mountain.top_tags_pk
                 if any((tag_pk in top_tags_pk) for tag_pk in int_tags):
                     filtered_pks.append(filtered_mountain.pk)
@@ -60,7 +58,6 @@ def mountain_list(request):
         request.session['filtered_mountains'] = list(mountains.values_list('pk', flat=True))            
 
     elif request.method == 'GET':
-        # GET 요청 처리
         filtered_pks = request.session.get('filtered_mountains', [])
         if filtered_pks:
             mountains = Mountain.objects.filter(pk__in=filtered_pks)

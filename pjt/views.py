@@ -17,10 +17,18 @@ class MainView(ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        # 유저가 방문한 산들의 id 추출
-        visited_mountain_ids = VisitedCourse.objects.filter(user=user).values('mountain_id')
+        # 1. 랜덤 유저의 좋아요 산 리스트
 
-        # 오른기억에 체크한 산을 제외한 나머지 산을 랜덤으로 추출한다.
+
+        # 2. 초보/고수 추천 산 리스트
+
+        # 리뷰에 14, 15, 16, 18 태그가 있는 산만 걸러낸다.
+        filtered_mountains = Mountain.objects.filter(review__tags__pk__in = [14, 15, 16, 18])
+        low_lv_mountains = 1        
+        high_lv_mountains = 1        
+
+        # 3. 로그인한 유저가 방문하지 않은 산 리스트
+        visited_mountain_ids = VisitedCourse.objects.filter(user=user).values('mountain_id')
         not_visited_mountains = Mountain.objects.exclude(id__in=visited_mountain_ids)
         random_not_visited_mountains = random.sample(list(not_visited_mountains), 12)
 
@@ -29,3 +37,4 @@ class MainView(ListView):
         }
 
         return context
+    

@@ -18,10 +18,10 @@ class Mountain(models.Model):
     info = models.TextField(db_column='mntn_info')
     height = models.IntegerField()
     region = models.CharField(max_length=100)
-    diff = models.CharField(max_length=30)
     geom = models.GeometryField()
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_mountains', db_table='mountains_mountain_likes')
     views = models.PositiveIntegerField(default=0)
+    top_tags = models.CharField(max_length=100, blank=True, null=True)
     
     class Meta:
         managed = False
@@ -32,16 +32,25 @@ class Mountain(models.Model):
     def reviews_count(self):
         return self.review_set.count()    
     
-    @property
-    def top_tags(self):
-        tags = self.review_set.values('tags__name').annotate(tag_count=Count('tags__name')).order_by('-tag_count')[:3]
-        return [tag['tags__name'] for tag in tags]
+    # @property
+    # def top_tags(self):
+    #     tags = self.review_set.values('tags__name').annotate(tag_count=Count('tags__name')).order_by('-tag_count')[:3]
+    #     return [tag['tags__name'] for tag in tags]
     
-    @property
-    def top_tags_pk(self):
-        tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
-        return [tag['tags__pk'] for tag in tags]
+    # @property
+    # def top_tags_pk(self):
+    #     tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
+    #     return [tag['tags__pk'] for tag in tags]
     
+    def update_top_tags(self):
+        tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]        
+        top_tags_list = [str(tag['tags__pk']) for tag in tags]
+        self.top_tags_origin = ','.join(top_tags_list)
+
+    def save(self, *args, **kwargs):
+        self.update_top_tags()
+        super(Mountain, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
         
@@ -86,7 +95,7 @@ class CourseDetail(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=200)
-    category = models.CharField(max_length=50, null=True)
+    # category = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return self.name
@@ -111,5 +120,11 @@ class Review(models.Model):
 
     class Meta:
         db_table = 'mountains_review'
+
+    def save(self, *args, **kwargs):
+        super(Review, self).save(*args, **kwargs)
+        mountain = self.mountain
+        mountain.save()
+
     def __str__(self):
         return self.content
