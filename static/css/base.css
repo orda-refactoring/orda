@@ -5,10 +5,6 @@
   --sub-color2: #DCDCDC;
   --green-btn: #47A945;
   --red-color: rgb(229, 89, 59);
-  /* background-color: rgba(118, 191, 178, 110) !important; */
-  /* background-color: #0B6623 !important; */
-  /* background-color: #C7EA46 !important; */
-  /* background-color: #75a64a!important; */
 } 
 
 body {
@@ -332,3 +328,26 @@ a {
   font-style: normal;
 }
 
+
+
+/* 공통 */
+.flex--row {
+  display: flex;
+}
+
+.flex--col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex__align--end {
+  justify-content: end;
+}
+
+.flex__align--between {
+  justify-content: space-between;
+}
+
+.flex__align--center {
+  justify-content: center;
+}
