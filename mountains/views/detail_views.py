@@ -32,6 +32,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         serializer = Serializer()
         courses = mountain.course_set.all()
         data = {}
+
         for course in courses:
             geojson_data = serializer.serialize([course], geometry_field='geom')
             data[course.pk] = geojson_data
