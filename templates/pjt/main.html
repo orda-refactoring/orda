@@ -1,4 +1,32 @@
+
+<hr>
+<p>안 가본 산</p>
 {% for not_visited_mountain in not_visited_mountains %}
   <p>{{ not_visited_mountain.id }}</p>
   <p>{{ not_visited_mountain.name }}</p>
 {% endfor %}
+<hr>
+
+<hr>
+<p>고수 산</p>
+{% for high_lv_mountain in high_lv_mountains %}
+  <p>{{ high_lv_mountain.id }}</p>
+  <p>{{ high_lv_mountain.name }}</p>
+{% endfor %}
+<hr>
+
+<hr>
+<p>초보 산</p>
+{% for low_lv_mountain in low_lv_mountains %}
+  <p>{{ low_lv_mountain.id }}</p>
+  <p>{{ low_lv_mountain.name }}</p>
+{% endfor %}
+<hr>
+
+<hr>
+<p>랜덤 좋아요 유저({{ random_user.nickname }}) 산</p>
+{% for user_like_mountain in user_like_mountains %}
+  <p>{{ user_like_mountain.id }}</p>
+  <p>{{user_like_mountain.name }}</p>
+{% endfor %}
+<hr>

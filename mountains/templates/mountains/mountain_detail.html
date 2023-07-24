@@ -22,8 +22,8 @@
           <img class="mountains__detail--img" src="{% get_static_prefix %}img/mountains/{{ mountain.name }}.png" alt="">
           {% if mountain.top_tags %}
             <div class="mountain__detail--infotag">
-              {% for tag in tags %}
-                <span style="margin-right: 5px;">#{{ tag.name }}</span>
+              {% for tag in mountain.top_tags  %}
+                <span style="margin-right: 5px;">#{{ tag }}</span>
               {% endfor %}
             </div>
           {% endif %}
