@@ -1,8 +1,4 @@
 @charset "UTF-8";
-.index__wrap {
-  padding: 20px 60px;
-}
-
 /* 인기글 */
 .postindex__Content--title {
   margin: 16px 0 0 0;
@@ -222,6 +218,30 @@
   margin: 50px auto;
 }
 
+/* posts_search */
+.postindex__search--title {
+  margin: 16px 0 25px 30px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+.postindex__search--title .postindex__search--title2 {
+  color: var(--main-color);
+}
+
+.highlight {
+  color: var(--main-color);
+}
+
+.postindex__nosearching {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  font-family: sans-serif;
+}
+
 /* 반응형 */
 @media (max-width: 1530px) {
   .post-grid {
@@ -253,6 +273,13 @@
   }
   .post-item {
     min-width: 450px;
+  }
+  /* posts_search */
+  .postindex__search--title {
+    margin: 16px 0 25px 0px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    font-family: sans-serif;
   }
 }
 @media (max-width: 450px) {

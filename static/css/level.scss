@@ -1,0 +1,80 @@
+@mixin level-border($color, $size:3px) {
+  border: solid $color $size !important;
+  z-index: 2;
+}
+
+@mixin level5-img($right:0, $top:0) {
+  @content;
+  position: absolute;
+  right: $right;
+  top: $top;
+  transform: translate(0%, -50%) rotate(28deg);
+}
+
+$level-5-color : linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+
+.levelname {
+  font-size: 12px;
+  color: #777777;
+  margin-bottom: 5px;
+}
+
+.level5name {
+  font-size: 12px;
+  background: $level-5-color;
+  -webkit-background-clip: text; /* 텍스트에 배경 설정 적용 */
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+}
+
+/* level border */
+.level2-lg {
+  @include level-border(yellow)
+}
+
+.level3-lg {
+  @include level-border(green)
+}
+
+.level4-lg {
+  @include level-border(red)
+}
+
+.level5-lg {
+  background: $level-5-color;
+  @include level-border(transparent)
+}
+
+.level2 {
+  @include level-border(yellow, 2px)
+}
+
+.level3 {
+  @include level-border(green, 2px)
+}
+
+.level4 {
+  @include level-border(red, 2px)
+}
+
+.level5 {
+  background: $level-5-color;
+  @include level-border(transparent, 2px)
+}
+
+.levelname--img {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+
+.level5--img-lg {
+  @include level5-img()
+}
+
+.level5--img {
+  width: 21.5px;
+  height: 21.5px;
+  @include level5-img()
+}
