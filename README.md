@@ -121,3 +121,23 @@ Sass 공부
 - 모바일 사용자들의 편의성을 위한 반응형 웹 디자인 정리
   - posts_proofshot
 ```
+
+# 2023/07/25
+- 장하늬 
+```
+- 현 위치와 산 간의 거리 기능 구상 및 구현중
+  - 유저의 좌표를 저장하기 위한 UserLocation 모델 생성
+  - 유저의 현 위치 저장을 위한 JS 및 VIEW 구현
+  - Mountain 모델에 current_location property 작성중
+```
+
+- 최지원
+```
+- 코드 유지보수와 재사용을 생각한 scss 정리
+  - posts_search
+  - level
+  - nav, footer 정리 중
+
+- 가시성을 위한 UI 정리
+  - posts_proofshot
+```

@@ -1,6 +1,4 @@
-@mixin wrap($top-bottom, $side) {
-  padding: $top-bottom $side;
-}
+$main-color: var(--main-color);
 
 @mixin grid($count, $floor, $gap) {
   display: grid;
@@ -19,10 +17,13 @@
   margin: $top $right $bottom $left;
 }
 
+// @mixin wrap($top-bottom, $side) {
+//   padding: $top-bottom $side;
+// }
 
-.index__wrap {
-  @include wrap(20px, 60px);
-}
+// .index__wrap {
+//   @include wrap(20px, 60px);
+// }
 
 /* 인기글 */
 .postindex__Content--title {
@@ -38,8 +39,8 @@
 }
 
 .viewlist__btn {
-  background-color: var(--main-color);
-  border: var(--main-color) 5px solid;
+  background-color: $main-color;
+  border: $main-color 5px solid;
 }
 
 .likelist__btn {
@@ -48,7 +49,7 @@
 }
 
 .courselist__point{
-  border: var(--main-color) solid 5px;
+  border: $main-color solid 5px;
   padding: 16px 8px;
 }
 
@@ -133,7 +134,7 @@
   }
 
   span {
-    color: var(--main-color);
+    color: $main-color;
     @include margin(0, 0, 0, 10px)
   }
 }
@@ -262,6 +263,35 @@
 }
 
 
+/* posts_search */ 
+.postindex__search--title {
+  @include margin(16px, 0, 25px, 30px);
+  font: {
+    size: 1.6rem;
+    weight: bold;
+    family: sans-serif;
+  }
+  .postindex__search--title2 {
+    color: $main-color;
+  }
+}
+
+.highlight {
+  color: $main-color;
+}
+
+.postindex__nosearching {
+  @include flex() {
+    justify-content: center;
+  }
+  padding: 100px 0;
+  font: {
+    size: 1.2rem;
+    family: sans-serif;
+  }
+}
+
+
 /* 반응형 */ 
 
 @mixin xl{
@@ -318,6 +348,16 @@
 
   .post-item {
     min-width: 450px;
+  }
+
+  /* posts_search */ 
+  .postindex__search--title {
+    @include margin(16px, 0, 25px, 0px);
+    font: {
+      size: 1.6rem;
+      weight: bold;
+      family: sans-serif;
+    }
   }
 }
 
