@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <form>
+    {% csrf_token %}
+    <button id="get-location-btn">현위치</button>
+  </form>
+
+  <script>
+    document.getElementById("get-location-btn").addEventListener("click", function() {
+      getCurrentLocation();
+    });
+    
+    const locationCsrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          let latitude = pos.coords.latitude;
+          let longitude = pos.coords.longitude;
+
+          // AJAX를 사용하여 서버로 경도와 위도 정보를 전송
+          sendLocationToServer(latitude, longitude);
+        });
+      } else {
+        alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.");
+      }
+    }
+
+    async function sendLocationToServer(latitude, longitude) {
+      try {
+        let url = "{% url 'accounts:save_location' %}"
+
+        let data = new FormData();
+        data.append('latitude', latitude);
+        data.append('longitude', longitude);
+
+        const response = await fetch(url, {
+          method: 'POST',
+          body: data,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': locationCsrfToken,
+          },
+        });
+
+        const responseData = await response.json();
+
+        console.log(responseData);
+
+        if (response.ok) {
+          console.log('Location data sent successfully');
+        } else {
+          console.error('Error sending location data', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error', error);
+      }
+    }
+
+  </script>
+</body>
+</html>

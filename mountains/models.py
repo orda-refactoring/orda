@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.contrib.gis.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+from math import radians, sin, cos, sqrt, atan2
 
 # Create your models here.
 class Mountain(models.Model):
@@ -27,6 +28,20 @@ class Mountain(models.Model):
         db_table = 'mountains_mountain'
         ordering = ['name']
 
+    def haversine(self, lat1, lon1, lat2, lon2):
+        # 위도와 경도를 도(degree)에서 라디안(radian)으로 변환
+        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+        # Haversine 공식 적용
+        d_lat = lat2 - lat1
+        d_lon = lon2 - lon1
+        a = sin(d_lat/2)**2 + cos(lat1) * cos(lat2) * sin(d_lon/2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        radius = 6371  # 지구의 반지름 (단위: km)
+        distance = radius * c
+
+        return distance
+    
     @property
     def reviews_count(self):
         return self.review_set.count()    
@@ -40,6 +55,21 @@ class Mountain(models.Model):
     def top_tags_pk(self):
         tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
         return [tag['tags__pk'] for tag in tags]
+    
+    @property
+    def current_location(self, request):
+        user_latitude = request.user.userlocation.latitude
+        user_longitude = request.user.userlocation.longitude
+
+        if user_latitude is not None and user_longitude is not None:
+            mountain_latitude = self.geom.y
+            mountain_longitude = self.geom.x
+
+            distance = self.haversine(user_latitude, user_longitude, mountain_latitude, mountain_longitude)
+            return distance
+
+        # 유저의 위치 정보가 없는 경우 None이나 다른 적절한 값을 반환합니다.
+        return None
 
     def __str__(self):
         return self.name
