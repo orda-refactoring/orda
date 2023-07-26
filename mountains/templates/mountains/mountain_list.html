@@ -27,7 +27,7 @@
   </form>
   
   <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mb-4">
-    {% for mountain in page_obj %}
+    {% for mountain, mountain_distance in mountain_data %}
     <div  class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <a href="{% url 'mountains:mountain_detail' mountain.pk %}"  class="position--relative ">
         <div>
@@ -54,6 +54,11 @@
           {% comment %} <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{mountain.review_set.tags.all}}</p> {% endcomment %}
           <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ mountain.region }}</p>
           <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ mountain.height }}m</p>
+          <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">
+            {% if mountain_distance is not None %}
+              나로부터 {{ mountain_distance }}km
+            {% endif %}
+          </p>
           <div class="flex--row flex__align--end">
             <div class="flex--row pe-3">
               <i class="bi bi-heart-fill pe-1" style="color:var(--red-color)"></i>

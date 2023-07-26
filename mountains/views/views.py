@@ -23,6 +23,10 @@ class SearchView(FormView):
 
 def mountain_list(request):
     mountains = Mountain.objects.all()
+    user = request.user
+    user_latitude = user.userlocation.latitude
+    user_longitude = user.userlocation.longitude
+
     if request.method == 'POST':
         tags = request.POST.getlist('tags')
         sido = request.POST.get('sido2')
@@ -79,9 +83,16 @@ def mountain_list(request):
     page= request.GET.get('page', '1')
     per_page = 12
     paginator = Paginator(mountains, per_page)
-    page_obj = paginator.get_page(page)        
+    page_obj = paginator.get_page(page)
+
+    mountain_distances = []
+    for mountain in page_obj:
+        mountain_distance = mountain.current_location(user_latitude, user_longitude)
+        mountain_distances.append(mountain_distance)
+
     context = {
         'page_obj': page_obj,
+        'mountain_data': zip(page_obj, mountain_distances),
     }
     return render(request, 'mountains/mountain_list.html', context)
 

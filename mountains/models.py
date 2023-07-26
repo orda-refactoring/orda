@@ -40,7 +40,18 @@ class Mountain(models.Model):
         radius = 6371  # 지구의 반지름 (단위: km)
         distance = radius * c
 
-        return distance
+        return round(distance, 2)
+    
+    def current_location(self, user_latitude, user_longitude):
+        if user_latitude is not None and user_longitude is not None:
+            mountain_latitude = self.geom.y
+            mountain_longitude = self.geom.x
+
+            distance = self.haversine(user_latitude, user_longitude, mountain_latitude, mountain_longitude)
+            return distance
+
+        # 유저의 위치 정보가 없는 경우 None이나 다른 적절한 값을 반환합니다.
+        return None
     
     @property
     def reviews_count(self):
@@ -56,20 +67,6 @@ class Mountain(models.Model):
         tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
         return [tag['tags__pk'] for tag in tags]
     
-    @property
-    def current_location(self, request):
-        user_latitude = request.user.userlocation.latitude
-        user_longitude = request.user.userlocation.longitude
-
-        if user_latitude is not None and user_longitude is not None:
-            mountain_latitude = self.geom.y
-            mountain_longitude = self.geom.x
-
-            distance = self.haversine(user_latitude, user_longitude, mountain_latitude, mountain_longitude)
-            return distance
-
-        # 유저의 위치 정보가 없는 경우 None이나 다른 적절한 값을 반환합니다.
-        return None
 
     def __str__(self):
         return self.name
