@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from django.http import JsonResponse
 from bs4 import BeautifulSoup
 from mountains.models import Mountain, Course, CourseDetail
-from .models import VisitedCourse
+from .models import *
 from django.contrib.gis.serializers.geojson import Serializer
 from accounts.models import Notification
 from .models import Notification
@@ -393,3 +393,21 @@ def notification_delete(request, notification_id):
     notification = Notification.objects.get(id=notification_id)
     notification.delete()
     return JsonResponse({'success': True}) 
+
+
+@login_required
+def save_location(request):
+    if request.method == 'POST':
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+
+        user = request.user
+        user_location, created = UserLocation.objects.get_or_create(user=user)
+        user_location.latitude = latitude
+        user_location.longitude = longitude
+        user_location.save()
+
+        return JsonResponse({'success': True})
+    else:
+        # 임시로 render함수 사용. 추후, JsonResponse로 수정할 예정
+        return render(request, 'accounts/test_location.html')

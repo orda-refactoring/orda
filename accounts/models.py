@@ -32,6 +32,13 @@ class User(AbstractUser):
         unchecked_notifications = self.notifications.filter(is_checked=False)
         unchecked_notifications.update(is_checked=True)
         return unchecked_notifications
+    
+
+class UserLocation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
 
 class VisitedCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -46,7 +53,8 @@ class VisitedCourse(models.Model):
         self.mountain_name = self.course.mntn_name
         self.mountain_id = self.course.mntn_name.id
         super().save(*args, **kwargs)
-        
+
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     notification_type = models.CharField(max_length=50)

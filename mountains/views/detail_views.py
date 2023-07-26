@@ -29,6 +29,12 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
 
         # 산관련
         mountain = self.get_object()
+        
+        user = self.request.user
+        user_latitude = user.userlocation.latitude
+        user_longitude = user.userlocation.longitude
+        mountain_distance = mountain.current_location(user_latitude, user_longitude)
+        
         serializer = Serializer()
         courses = mountain.course_set.all()
         data = {}
@@ -116,6 +122,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         context = {
             # 산 관련
             'mountain': mountain,
+            'mountain_distance': mountain_distance,
             'courses': courses,
             'courses_data': data,
 
