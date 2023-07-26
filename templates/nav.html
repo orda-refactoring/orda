@@ -1,43 +1,43 @@
 {% load static %}
 {% load custom_filters %}
-<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/base_s.css' %}">
 <link rel="stylesheet" href="{% static 'css/level.css' %}">
 <style>
 
 </style>
-<header style="position: sticky; top: 0; z-index: 1000;">
-  <div style="height: 100%; background-color: #FFFFFF; border-bottom:#0B6623 solid 10px;">
-    <div class="mx-auto w-100 p-4 py-3 py-2-lg" style="max-width: 1400px;">
-      <div class="d-flex justify-content-between small--nav">
-        <div class="d-flex">
+<header class="navbar">
+  <div class="nav__box">
+    <div class="nav__box--wrap py-2-lg">
+      <div class="small--nav">
+        <div class="flex--row">
           <div style="height:75px;" >
             <a href="{% url 'mountains:mountain_list' %}"><img class='header__logo--img' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
           </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center align-items-xl-end flex-column flex-xl-row">
-          <div class="d-flex align-items-end fs-5 hearder__btn--box" >
-            <a href="{% url 'mountains:search' %}" class="{% if '/search/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">탐색</a>
-            <a href="{% url 'mountains:mountain_list' %}" class="{% if request.resolver_match.url_name == 'mountain_list' %} active-button {% endif %} btn--hover mb-1 header__btn--margin">100대 명산</a>
-            <a href="{% url 'mountains:course_all_list' %}" class="{% if '/courses/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">등산로</a>
-            <a href="{% url 'posts:index' %}" class="{% if request.resolver_match.view_name == 'posts:index' %} active-button {% endif %} btn--hover mb-1 header__btn--margin">마이코스</a>
-            <a href="{% url 'posts:proofshot' %}" class="{% if '/proofshot/' in request.path %} active-button {% endif %} btn--hover mb-1 header__btn--margin">인증샷</a>
+        <div class="header__menu">
+          <div class="hearder__btn--box" >
+            <a href="{% url 'mountains:search' %}" class="{% if '/search/' in request.path %} active-button {% endif %} header__btn--margin">탐색</a>
+            <a href="{% url 'mountains:mountain_list' %}" class="{% if request.resolver_match.url_name == 'mountain_list' %} active-button {% endif %} header__btn--margin">100대 명산</a>
+            <a href="{% url 'mountains:course_all_list' %}" class="{% if '/courses/' in request.path %} active-button {% endif %} header__btn--margin">등산로</a>
+            <a href="{% url 'posts:index' %}" class="{% if request.resolver_match.view_name == 'posts:index' %} active-button {% endif %} header__btn--margin">마이코스</a>
+            <a href="{% url 'posts:proofshot' %}" class="{% if '/proofshot/' in request.path %} active-button {% endif %} header__btn--margin">인증샷</a>
           </div>
-          <div class="d-flex align-items-end hearder__search--box">
-            <div class="rounded-pill d-flex mb-1" style="border:var(--main-color) 3px solid; background-color:white">
+          <div class="hearder__search--box">
+            <div class="search--wrap">
               <i class="bi bi-search align-self-center ps-3"></i>  
               <form action="{% url 'mountains:mountain_list' %}" method="POST">
                 {% csrf_token %}
-                <input class="rounded-pill header__search--text py-2 ps-4 pe-5" style="border: 0px"  type="text" name="search_query" placeholder="무엇을 찾으시나요?" >
+                <input class="header__search--text"   type="text" name="search_query" placeholder="무엇을 찾으시나요?" >
                 <button type="submit" hidden></button>
               </form>
             </div>
           </div>
         </div>
-          <div class="d-flex align-items-end">
+          <div class="header__personalbox">
             {% if user.is_authenticated %}
-            <div class="fs-5 d-flex">
+            <div class="personal--wrap">
               <div class="header__user--item small--hidden">
-                <button id="notification-button" class="btn--hover me-2" onclick="toggleNotificationPopup()"><span id="notification-count">
+                <button id="notification-button" onclick="toggleNotificationPopup()"><span id="notification-count">
                   {% if request.notification_count %}
                     <span id="fill"><i class="bi bi-bell-fill" style="color:var(--green-btn); font-size: 38px; margin-right: -15px;"></i><i class="bi bi-dot" style="vertical-align: top; font-size: 30px; color: #CC0000;"></i><div style="display: none;">{{ request.notification_count }}</div></span>
                   {% else %}
@@ -67,7 +67,7 @@
                   </div>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item {% if active_button_id == '마이페이지' %}active-button{% endif %}" href="{% url 'accounts:profile' user.pk %}" >마이페이지</a></li>
+                  <li><a class="dropdown-item" href="{% url 'accounts:profile' user.pk %}">마이페이지</a></li>
                   <li><a class="dropdown-item" href="{% url 'accounts:my_memories' %}">
                     오른기억</a></li>
                   <li><a class="dropdown-item" href="#">            
@@ -85,8 +85,8 @@
                     <img class="header__profile" src="{% static 'img/Noimage.png' %}" alt="no">
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a id="로그인" class="dropdown-item {% if active_button_id == '로그인' %}active-button{% endif %}" href="{% url 'accounts:login' %}">로그인</a></li>
-                  <li><a id="회원가입" class="dropdown-item {% if active_button_id == '회원가입' %}active-button{% endif %}" href="{% url 'accounts:signup' %}">
+                  <li><a id="로그인" class="dropdown-item" href="{% url 'accounts:login' %}">로그인</a></li>
+                  <li><a id="회원가입" class="dropdown-item" href="{% url 'accounts:signup' %}">
                     회원가입</a></li>
                 </ul>
               </div>
