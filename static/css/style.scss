@@ -1,0 +1,25 @@
+@mixin padding ($top-bottom, $side) {
+  padding: $top-bottom $side;
+}
+
+@mixin flex($direction:row){
+  display: flex;
+  flex-direction: $direction;
+  @content;
+}
+
+@mixin margin($top:0, $right:0, $bottom:0, $left:0){
+  margin: $top $right $bottom $left;
+}
+
+@mixin margin2($top-bottom, $side){
+  margin: $top-bottom $side;
+}
+
+@mixin button($color, $px, $border:solid){
+  border: $color, $px, $border;
+  background-color: $color !important;
+}
+
+$justify-between: space-between;
+$main-color: var(--main-color);

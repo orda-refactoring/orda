@@ -1,0 +1,59 @@
+@import 'style.scss';
+
+$padding-size: 10px 30px;
+$margin-size: 15px 0px;
+
+.wrap {
+  @include flex {
+    justify-self: center;
+  }
+}
+
+.btn__wrap{
+  @include flex {
+    justify-content: $justify-between;
+  }
+}
+
+#cke_id_content {
+  width: 100% !important;
+  max-width: 835px !important;
+}
+
+.btn--back{
+  @include button(var(--sub-color), 1px);
+  width: 150px;
+  font-weight: bold;
+  padding: $padding-size;
+  margin: $margin-size;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+
+.btn--submit{
+  @include button(var(--main-color), 1px);
+  color: white;
+  width: 150px;
+  font-weight: bold;
+  padding: $padding-size;
+  margin: $margin-size;
+  
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+@mixin xl{
+  @media (max-width: 1020px){ 
+    @content;
+  }
+}
+
+@include xl {
+  #cke_id_content {
+    width: 80%;
+  }
+}

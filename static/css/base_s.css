@@ -173,10 +173,24 @@ a {
   height: 300px;
 }
 
+.header__profile {
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 100%;
+  height: 100%;
+  padding: 1px;
+  border: solid 3px var(--background-color);
+}
+
 .header__profilebox {
   position: relative;
   width: 50px;
   height: 50px;
+}
+
+.dropdown-menu[data-bs-popper] {
+  left: -100px;
 }
 
 .dropdown-item:hover {
@@ -189,13 +203,70 @@ a {
   min-height: calc(100vh - 550px);
 }
 
-.footer__box {
+.footer {
   background-color: #DCDCDC;
   height: 2rem;
 }
-.footer__box .footer--wrap {
+.footer .footer--wrap {
   text-align: center;
   padding: 40px 0;
+}
+
+.footer__flex--wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.footer__flex--wrap .footer__logo {
+  width: 100px;
+  height: 100px;
+}
+
+.footer__middle--warp {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.footer__middle--warp .footer__box {
+  margin-right: 16px;
+}
+.footer__middle--warp .footer__box ul {
+  padding: 0;
+  color: #4b5563;
+  font-size: 16px;
+  text-align: center;
+}
+.footer__middle--warp .footer__box ul li {
+  margin-bottom: 4px;
+}
+
+.footer__middletitle {
+  font-weight: 600p;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.footer__bottom {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.footer--sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.footer__bottom--icon {
+  color: #4b5563;
+  margin-right: 16px;
 }
 
 /* 반응형 */
@@ -242,6 +313,9 @@ a {
   .wrap {
     padding: 20px 0;
   }
+  .footer__logo--wrap {
+    margin-bottom: 48px;
+  }
 }
 @media (max-width: 576px) {
   .header__btn--margin {
@@ -252,9 +326,21 @@ a {
   .header__search--text {
     width: 100%;
   }
-  .footer__box {
-    margin-right: 0px;
-    margin-bottom: 8px;
+  .footer__flex--wrap {
+    display: block;
+  }
+  .footer__flex--wrap .footer__logo {
+    margin: auto;
+  }
+  .footer__middle--warp {
+    display: flex;
+    flex-direction: column;
+  }
+  .footer__middle--warp .footer__box {
+    margin: 0 0 8px 0;
+  }
+  .footer__bottom {
+    text-align: center;
   }
 }
 /* 폰트 */
