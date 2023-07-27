@@ -21,7 +21,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
-
+from .config import level_dict
 
 def login(request):
     if request.user.is_authenticated:
@@ -61,6 +61,9 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
+
+            UserLocation.objects.create(user=user)
+
             return redirect('mountains:mountain_list')
     else:
         form = CustomUserCreationForm()
@@ -82,56 +85,22 @@ def profile(request, user_pk):
     liked_mountains = person.liked_mountains.only('name').all()
     bookmark_course = person.bookmarks.only('crs_name', 'crs_name_detail').all()
 
-    # Calculate the user's level and score
     score = posts.count() * 30 + reviews.count() * 20 + visited_courses * 10 + posts_comments * 5
+    level = person.level
 
-    if score < 200:
-        level = 1
-        min_score = 0
-        max_score = 200
-        need_score = 200
-    elif score < 500:
-        level = 2
-        min_score = 200
-        max_score = 500
-        need_score = 300
-    elif score < 900:
-        level = 3
-        min_score = 500
-        max_score = 900
-        need_score = 400
-    elif score < 1400:
-        level = 4
-        min_score = 900
-        max_score = 1400
-        need_score = 500
-    elif score >= 1400:
-        level = 5
-        need_score = 0
-        min_score = 1400
-        max_score = 'MAX'
-
-    # Calculate the experience bar and remaining experience
-    if max_score == 'MAX':
+    if level_dict[level]['max_score'] == 'MAX':
         expbar = 100
         restexp = 0
     else:
-        now_score = score - min_score
-        expbar = (now_score / need_score) * 100
-        restexp = need_score - now_score
-
-    if person.level != level:
-        person.level = level
-        person.save()
-
-    level_dict = {1: '등산새싹', 2: '등산샛별', 3: '등산인', 4: '등산고수', 5: '등산왕'}
+        now_score = score - level_dict[level]['min_score']
+        expbar = (now_score / level_dict[level]['need_score']) * 100
+        restexp = level_dict[level]['need_score'] - now_score
 
     context = {
         'person': person,
         'posts': posts,
         'reviews': reviews,
-        'level_name': level_dict[level],
-        'max_score': max_score,
+        'max_score': level_dict[level]['max_score'] ,
         'liked_posts': liked_posts,
         'liked_mountains': liked_mountains,
         'bookmark_course': bookmark_course,
@@ -359,6 +328,9 @@ def my_memories(request):
                 mountain_name=course.mntn_name,
                 mountain_id=course.mntn_name.id,
             )
+
+            request.user.adjust_user_level()
+
             is_visited = True
         context = {
             'is_visited' : is_visited,

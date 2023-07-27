@@ -33,7 +33,33 @@ class User(AbstractUser):
         unchecked_notifications.update(is_checked=True)
         return unchecked_notifications
     
+    def adjust_user_level(self):
+        post_cnt = self.post_set.count()
+        review_cnt = self.review_set.count()
+        visited_course_cnt = self.visitedcourse_set.count()
+        post_comment_cnt = self.postcomment_set.count()
 
+        score = post_cnt * 30 + review_cnt * 20 + visited_course_cnt * 10 + post_comment_cnt * 5
+
+        if score < 200:
+            level = 1
+
+        elif score < 500:
+            level = 2
+
+        elif score < 900:
+            level = 3
+
+        elif score < 1400:
+            level = 4
+
+        elif score >= 1400:
+            level = 5
+
+        self.level = level
+
+        self.save()
+    
 class UserLocation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     latitude = models.FloatField(null=True, blank=True)

@@ -18,6 +18,8 @@ def create_review(request, pk):
             review.save()
             form.save_m2m()
 
+            request.user.adjust_user_level()
+
             return redirect('mountains:mountain_detail', pk)
     else:
         form = ReviewCreationForm()
