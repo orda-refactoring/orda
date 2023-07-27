@@ -144,8 +144,7 @@ body { cursor: ns-resize }
 }
 
 .black__text,
-.footer__middlecontent > a,
-.hearder__btn--box > .header__btn--margin{
+.footer__middlecontent > a{
   color: black;
   font-weight: bold;
 }

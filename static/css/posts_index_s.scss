@@ -17,13 +17,6 @@ $main-color: var(--main-color);
   margin: $top $right $bottom $left;
 }
 
-// @mixin wrap($top-bottom, $side) {
-//   padding: $top-bottom $side;
-// }
-
-// .index__wrap {
-//   @include wrap(20px, 60px);
-// }
 
 /* 인기글 */
 .postindex__Content--title {
