@@ -79,6 +79,9 @@ def create(request):
             post.user = request.user
             post.mountain = Mountain.objects.get(pk=request.POST.get('mountain'))
             post.save()
+
+            request.user.adjust_user_level()
+
             return redirect('posts:detail', post.pk)
     else:
         form = PostForm()
@@ -149,6 +152,8 @@ def comment_create(request, post_pk):
         postcomment.post = post
         postcomment.user = request.user
         postcomment.save()
+
+        request.user.adjust_user_level()
         # return redirect('posts:detail', post.pk)
         return JsonResponse({'success': True})
     else:

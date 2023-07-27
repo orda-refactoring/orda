@@ -1,5 +1,6 @@
 import gpxpy, gpxpy.gpx, os, datetime
 from mountains.models import *
+from accounts.models import *
 from mountains.forms import SearchForm
 from utils.weather import get_weather
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
@@ -24,8 +25,17 @@ class SearchView(FormView):
 def mountain_list(request):
     mountains = Mountain.objects.all()
     user = request.user
-    user_latitude = user.userlocation.latitude
-    user_longitude = user.userlocation.longitude
+    
+    if user.is_authenticated:
+        try:
+            user_latitude = user.userlocation.latitude
+            user_longitude = user.userlocation.longitude
+        except UserLocation.DoesNotExist:
+            user_latitude = None
+            user_longitude = None
+    else:
+        user_latitude = None
+        user_longitude = None
 
     if request.method == 'POST':
         tags = request.POST.getlist('tags')
