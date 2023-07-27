@@ -159,3 +159,25 @@ Sass 공부
   - nav 완성
   - footer 정리 중
 ```
+
+# 2023/07/27
+- 장하늬 
+```
+- 레벨 기능 문제점 보완(문제점: 프로필 페이지를 들어가야 level이 변동됨)
+  - User모델에 adjust_user_level 메서드 추가
+  - 리뷰, 포스트(마이코스) 등 레벨업 관련 view 수정
+  - profile view 코드 정리
+- 버그 픽스
+  - 회원가입 시, userLocation DB도 생성되게 수정함
+  - userLocation 관련 오류 발생시, try-except로 관련 필드 none값 할당
+- 기계적 가입 방지를 위해 reCAPTCHA 도입 결정
+  - 구글 reCAPTCHA 공식문서 읽음
+```
+
+- 최지원
+```
+- 코드 유지보수와 재사용을 생각한 scss 정리
+  - footer 완성
+  - nav 오류수정
+- mainindex 코드 수정
+```
