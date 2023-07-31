@@ -21,3 +21,8 @@
   color: var(--green-btn)
 }
 
+@media (max-width: 516px){
+  .btn__gotop{
+    right: 10px;
+  }
+}

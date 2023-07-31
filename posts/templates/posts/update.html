@@ -9,26 +9,28 @@
 <link rel="stylesheet" href="{% static 'css/posts_create.css' %}">
 {% endblock style %}
 {% block content %}
-  <div class="create__wrap">
-    <form action="{% url 'posts:update' post.pk %}" method="POST" enctype="multipart/form-data">
-      {% csrf_token %} 
-      {{ form.media }}  
-      {{ form.title }}
-      <div>
-        <label for="mountain">다녀온 산:</label>
-        <select name="mountain" id="mountain" required>
-          <option value="" {% if form.instance.mountain is None %}selected{% endif %}>선택</option>
-          {% for mountain in mountains %}
-            <option value="{{ mountain.pk }}" {% if form.instance.mountain_id == mountain.pk %}selected{% endif %}>{{ mountain.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      {{ form.content }}
-      <div class="btn__wrap">
-        <input type="button" value="뒤로가기" class="btn--back rounded" onclick="window.history.back()">
-        <input type="submit" value="작성" class="btn--submit rounded">
-      </div>
-    </form>
+  <div class="wrap">
+    <div style="margin: auto;">
+      <form action="{% url 'posts:update' post.pk %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %} 
+        {{ form.media }}  
+        {{ form.title }}
+        <div>
+          <label for="mountain">다녀온 산:</label>
+          <select name="mountain" id="mountain" required>
+            <option value="" {% if form.instance.mountain is None %}selected{% endif %}>선택</option>
+            {% for mountain in mountains %}
+              <option value="{{ mountain.pk }}" {% if form.instance.mountain_id == mountain.pk %}selected{% endif %}>{{ mountain.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {{ form.content }}
+        <div class="btn__wrap">
+          <input type="button" value="뒤로가기" class="btn--back rounded" onclick="window.history.back()">
+          <input type="submit" value="작성" class="btn--submit rounded">
+        </div>
+      </form>
+    </div>
   </div>
 {% endblock content %}
 {% block javascript %}
