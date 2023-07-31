@@ -22,6 +22,7 @@ from django.utils.safestring import mark_safe
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
 from .config import level_dict
+from django.contrib import messages
 
 def login(request):
     if request.user.is_authenticated:
@@ -65,7 +66,13 @@ def signup(request):
             UserLocation.objects.create(user=user)
 
             return redirect('mountains:mountain_list')
-    else:
+        else:
+            for key, error in list(form.errors.items()):
+                print(key, error)
+                if key == 'captcha' and error[0] == '필수 항목입니다.':
+                    messages.error(request, 'reCAPTCHA 테스트를 통과하셔야 됩니다.')
+                messages.error(request, error)
+    else:   
         form = CustomUserCreationForm()
     context = {
         'form': form

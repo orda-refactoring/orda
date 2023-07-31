@@ -1,4 +1,6 @@
 from django import forms
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, PasswordChangeForm
 
@@ -95,6 +97,12 @@ class CustomUserCreationForm(UserCreationForm):
             }
         )
     )
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox(
+        attrs={
+            'lang': 'ko',
+        }
+    ))
+
     class Meta:
         model = get_user_model()
         fields = ("username", "password1", "password2", "nickname", "email", "profile_img")

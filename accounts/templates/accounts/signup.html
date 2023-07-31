@@ -27,12 +27,17 @@
           </p>
           <label for="{{ field.label }}" class="form__field__imgbtn rounded-full">{{ field.label }}</label>
         {% else %}
-          <label for="{{ field.label }}">{{ field.label }}</label>
-          <p class="form__field">{{ field }}</p>
+          {% if field.name == 'captcha' %}
+            <p class="form__field">{{ field }}</p>
+            <p>{{ field.errors }}</p>
+          {% else %}
+            <label for="{{ field.label }}">{{ field.label }}</label>
+            <p class="form__field">{{ field }}</p>
+          {% endif %}
         {% endif %}
-    {% endfor %}
-    <hr>
-    <input type="submit" class="form__submitbtn rounded-2" value="회원가입">
+      {% endfor %}
+      <hr>
+      <input type="submit" class="form__submitbtn rounded-2" value="회원가입">
     </form>
   {% endblock content %}
   {% block javascript %}
