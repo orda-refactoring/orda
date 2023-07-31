@@ -257,3 +257,59 @@ form.addEventListener("submit", function (event) {
     }
   });
 });
+
+// 댓글 수정
+$(document).ready(function() {
+  $('.edit-comment-button').click(function() {
+    var commentId = $(this).data('comment-id');
+    $('#comment-edit-form-' + commentId).toggle();
+    $('#comment-' + commentId + ' .comment-content').toggle();
+    $(this).toggle(); // Add this line to hide the edit button
+  });
+
+  $('.edit-comment-form w-full flex--d-row flex--between py-2 px-1').submit(function(event) {
+    event.preventDefault();
+    var commentId = $(this).data('comment-id');
+    var content = $(this).find('input[name=content]').val();
+    var form = $(this);
+
+    $.ajax({
+      type: 'POST',
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function(response) {
+        // Update the comment content
+        $('#comment-' + commentId + ' .comment-content').text(content);
+        // Show the edit button again
+        $('.edit-comment-button[data-comment-id=' + commentId + ']').toggle();
+        // Hide the edit form
+        $('#comment-edit-form-' + commentId).toggle();
+        $('#comment-' + commentId + ' .comment-content').toggle();
+      },
+      error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+      }
+    });
+  });
+});
+
+ClassicEditor
+.create(document.querySelector('#content'), {
+  language: 'ko',
+})
+.then(editor => {
+  editor.model.document.on('change:data', () => {
+    document.querySelector('#content').value = editor.getData();
+  });
+})
+.catch(error => {
+  console.error(error);
+});
+
+document.getElementById("delete-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  var confirmDelete = confirm("삭제하시겠습니까?");
+  if (confirmDelete) {
+    this.submit();
+  }
+});

@@ -8,11 +8,16 @@
   @content;
 }
 
+@mixin grid(){
+  display: grid;
+  @content;
+}
+
 @mixin margin($top:0, $right:0, $bottom:0, $left:0){
   margin: $top $right $bottom $left;
 }
 
-@mixin margin2($top-bottom, $side){
+@mixin margin2($top-bottom:0, $side:0){
   margin: $top-bottom $side;
 }
 
@@ -21,5 +26,16 @@
   background-color: $color !important;
 }
 
+@mixin w-h($w:100%, $h:100%){
+  width: $w;
+  height: $h;
+}
+
+@mixin border($color, $size: 1px) {
+  border: solid $color $size !important;  
+}
+
 $justify-between: space-between;
 $main-color: var(--main-color);
+$back-color: var(--background-color);
+$rounded: 0.25rem
