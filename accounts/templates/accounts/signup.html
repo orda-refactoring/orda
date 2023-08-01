@@ -19,20 +19,30 @@
     <form action="{% url 'accounts:signup' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {% for field in form %}
-        {% comment %} 이미지 따로 빼기 {% endcomment %}
         {% if field.name == 'profile_img' %}
           <p class="">
             <img id="profile-preview" src="#" alt="프로필 이미지" class="form__field__img">
             {{ field }}
           </p>
           <label for="{{ field.label }}" class="form__field__imgbtn rounded-full">{{ field.label }}</label>
+        {% elif field.name == 'captcha' %}
+          <p class="form__field">{{ field }}</p>
+          {% if field.errors %}
+            <ul class="errorlist text-danger">
+              {% for error_msg in field.errors %}
+                <li>{{ error_msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         {% else %}
-          {% if field.name == 'captcha' %}
-            <p class="form__field">{{ field }}</p>
-            <p>{{ field.errors }}</p>
-          {% else %}
-            <label for="{{ field.label }}">{{ field.label }}</label>
-            <p class="form__field">{{ field }}</p>
+          <label for="{{ field.label }}">{{ field.label }}</label>
+          <p class="form__field">{{ field }}</p>
+          {% if field.errors %}
+            <ul class="errorlist text-danger">
+              {% for error_msg in field.errors %}
+                <li>{{ error_msg }}</li>
+              {% endfor %}
+            </ul>
           {% endif %}
         {% endif %}
       {% endfor %}

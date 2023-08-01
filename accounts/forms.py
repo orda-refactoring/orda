@@ -1,9 +1,9 @@
+from typing import Any, Dict
 from django import forms
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, PasswordChangeForm
-
 
 class CustomUserAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
@@ -50,8 +50,10 @@ class CustomUserCreationForm(UserCreationForm):
                 'style': 'width: 96%',
                 'placeholder': '비밀번호를 입력하세요',
                 'id': "비밀번호",
+                'pattern': '^(?=.*\d)(?=.*[a-zA-Z]).{8,}$'
             }
-        )
+        ),
+        help_text="최소 8자 이상의 비밀번호를 입력해주세요. 숫자와 영문 대소문자를 포함해야 합니다."
     )
     password2 = forms.CharField(
         label="비밀번호 확인",
@@ -62,7 +64,7 @@ class CustomUserCreationForm(UserCreationForm):
                 'placeholder': '비밀번호를 확인하세요',
                 'id': "비밀번호 확인",
             }
-        )
+        ),
     )
     nickname = forms.CharField(
         label="닉네임",
@@ -84,6 +86,7 @@ class CustomUserCreationForm(UserCreationForm):
                 'style': 'width: 96%',
                 'placeholder': '이메일을 입력하세요',
                 'id': "이메일",
+                'pattern': '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',
             }
         )
     )
@@ -97,11 +100,23 @@ class CustomUserCreationForm(UserCreationForm):
             }
         )
     )
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox(
-        attrs={
-            'lang': 'ko',
-        }
-    ))
+    captcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox(
+            attrs={
+                'lang': 'ko',
+            }
+        )
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('비밀번호가 일치하지 않습니다.')
+
+        return cleaned_data
 
     class Meta:
         model = get_user_model()
@@ -118,7 +133,8 @@ class CustomUserChangeForm(UserChangeForm):
                 'placeholder': '닉네임를 입력하세요',
                 'id': "닉네임",
             }
-        ))
+        )
+    )
     email = forms.EmailField(
         label="이메일", 
         required=False,
@@ -129,8 +145,8 @@ class CustomUserChangeForm(UserChangeForm):
                 'placeholder': '이메일을 입력하세요',
                 'id': "이메일",
             }
-          )
         )
+    )
     message = forms.CharField(
         label="상태메시지", 
         required=False,
@@ -142,7 +158,7 @@ class CustomUserChangeForm(UserChangeForm):
                 'id': "상태메세지",
             }
         )
-        )
+    )
     profile_img = forms.ImageField(
         label="프로필 이미지", 
         required=False,
@@ -151,7 +167,9 @@ class CustomUserChangeForm(UserChangeForm):
                 "class" : "d-none ",
                 'id': "프로필 이미지",
             }
-        ))
+        )
+    )
+
     class Meta:
         model = get_user_model()
         fields = ("nickname", "email", "message", "profile_img",)
