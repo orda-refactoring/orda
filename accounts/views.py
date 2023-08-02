@@ -23,6 +23,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
 from .config import level_dict
 from django.contrib import messages
+import pdb
 
 def login(request):
     if request.user.is_authenticated:
@@ -57,6 +58,7 @@ def logout(request):
 def signup(request):
     if request.user.is_authenticated:
         return redirect('mountains:mountain_list')
+    
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -69,15 +71,25 @@ def signup(request):
         else:
             for key, error in list(form.errors.items()):
                 print(key, error)
-                if key == 'captcha' and error[0] == '필수 항목입니다.':
-                    messages.error(request, 'reCAPTCHA 테스트를 통과하셔야 됩니다.')
-                messages.error(request, error)
     else:   
         form = CustomUserCreationForm()
+
     context = {
         'form': form
     }
     return render(request, 'accounts/signup.html', context)
+
+
+def check_username(request):
+    print(request.POST)
+    if request.method == 'POST':
+        
+        username = request.POST.get('username')
+        print(username)
+        if username:
+            exists = User.objects.filter(username=username).exists()
+            return JsonResponse({'exists': exists})
+    return JsonResponse({'exists': False})
 
 
 def profile(request, user_pk):
