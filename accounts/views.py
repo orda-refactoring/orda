@@ -4,18 +4,13 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.core.files import File
-from urllib.request import urlopen
-from posts.models import Post
 import requests
 import os
 from dotenv import load_dotenv
 from django.http import JsonResponse
 from bs4 import BeautifulSoup
-from mountains.models import Mountain, Course, CourseDetail
+from mountains.models import Mountain, Course
 from .models import *
-from django.contrib.gis.serializers.geojson import Serializer
-from accounts.models import Notification
 from .models import Notification
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -23,7 +18,6 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
 from .config import level_dict
 from django.contrib import messages
-import pdb
 
 def login(request):
     if request.user.is_authenticated:
@@ -81,11 +75,8 @@ def signup(request):
 
 
 def check_username(request):
-    print(request.POST)
-    if request.method == 'POST':
-        
+    if request.method == 'POST':        
         username = request.POST.get('username')
-        print(username)
         if username:
             exists = User.objects.filter(username=username).exists()
             return JsonResponse({'exists': exists})
