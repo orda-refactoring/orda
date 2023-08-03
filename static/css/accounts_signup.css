@@ -57,22 +57,36 @@
   margin: 0px 35px 
 }
 
-.form__submitbtn {
-  border: 1px solid var(--main-color);
-  background-color: brown;
-  background-color: var(--main-color) !important;
-  color: white;
-  width: 100%;
-  padding: 10px 50px;
-  margin: 15px 0px;
-}
+  /* 비활성화 상태일 때의 CSS */
+  .form__submitbtn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    color: #777;
+    border: 1px solid var(--main-color);
+    background-color: #ddd;
+    background-color: var(--main-color) !important;
+    width: 100%;
+    padding: 10px 50px;
+    margin: 15px 0px;
+  }
+
+  /* 활성화 상태일 때의 CSS */
+  .form__submitbtn:not(.disabled) {
+    border: 1px solid var(--main-color);
+    background-color: brown;
+    background-color: var(--main-color) !important;
+    color: white;
+    width: 100%;
+    padding: 10px 50px;
+    margin: 15px 0px;
+  }
 
 .form__field__imgbtn:hover {
   background-color: var(--main-color);
   color: white;
 }
 
-.form__submitbtn:hover {
+.form__submitbtn:hover:not(.disabled) {
   border: 1px solid var(--main-color);
   color: black;
   background-color: white !important;
