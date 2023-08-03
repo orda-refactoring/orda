@@ -1,5 +1,6 @@
 import json, urllib.request, requests, datetime, math, os
 from mountains.models import *
+from accounts.models import *
 from mountains.forms import ReviewCreationForm
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode, quote_plus, unquote
@@ -15,6 +16,18 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        user = self.request.user
+
+        if user.is_authenticated:
+            try:
+                user_latitude = user.userlocation.latitude
+                user_longitude = user.userlocation.longitude
+            except UserLocation.DoesNotExist:
+                user_latitude = None
+                user_longitude = None
+        else:
+            user_latitude = None
+            user_longitude = None
 
         if not request.session.get('mountain_viewed_{}'.format(self.object.pk), False):
             Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
