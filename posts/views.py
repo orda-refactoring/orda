@@ -1,18 +1,11 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from .models import Post, PostComment
 from .forms import PostForm, PostCommentForm
-from django.db.models import Q, Count
-from django.conf import settings
-from bs4 import BeautifulSoup
-from django.http import JsonResponse
-import os
-from django.http import JsonResponse
 from mountains.models import Mountain
-
-
-# Create your views here.
-
+from bs4 import BeautifulSoup
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q, Count
+from django.http import JsonResponse
 
 def index(request):
     query = request.GET.get('q')
@@ -120,7 +113,6 @@ def update(request, post_pk):
 def delete(request, post_pk):
     post = Post.objects.get(pk=post_pk)
     if request.user == post.user:
-  
         post.delete()
     return redirect('posts:index')
 
@@ -139,7 +131,6 @@ def likes(request, post_pk):
         'like_count':post.like_users.count()
     }
     return JsonResponse(context)
-    # return redirect('posts:detail', post.pk)
 
 
 @login_required
@@ -154,16 +145,10 @@ def comment_create(request, post_pk):
         postcomment.save()
 
         request.user.adjust_user_level()
-        # return redirect('posts:detail', post.pk)
+
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False, 'errors': postcomment_form.errors})
-    #     postcomment_form = PostCommentForm()
-    # context = {
-    #     'post': post,
-    #     'postcomment_form': postcomment_form,
-    # }
-    # return render(request, 'posts/detail.html', context)
 
 
 @login_required
@@ -195,7 +180,6 @@ def comment_delete(request, post_pk, comment_pk):
         return JsonResponse({'status': 'ok','post_comments': post_comments})
     else:
         return JsonResponse({'status': 'error', 'message': '권한이 없습니다.'})
-    # return redirect('posts:detail', post_pk)
 
 
 @login_required
@@ -213,7 +197,6 @@ def comment_likes(request, post_pk, comment_pk):
         'cl_likes_count' : cl_likes_count,
     }
     return JsonResponse(context)
-    # return redirect('posts:detail', post_pk)
 
 
 @login_required
@@ -231,7 +214,6 @@ def comment_dislikes(request, post_pk, comment_pk):
         'cd_likes_count' : cd_likes_count,
     }
     return JsonResponse(context)
-    # return redirect('posts:detail', post_pk)
 
 
 def search(request):

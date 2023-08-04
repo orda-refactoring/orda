@@ -1,20 +1,18 @@
 import gpxpy, gpxpy.gpx, os, datetime
-from utils.distance import mountains_distance
 from mountains.models import *
 from accounts.models import *
 from mountains.forms import SearchForm
 from utils.weather import get_weather
+from utils.distance import mountains_distance
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Count, When, Case, Q
-from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.core.mail import EmailMessage
-from django.views.generic import ListView, FormView, View
+from django.views.generic import ListView, FormView, View, DetailView
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
 from django.contrib.gis.serializers.geojson import Serializer
 
 class SearchView(FormView):
@@ -27,17 +25,6 @@ def mountain_list(request):
     mountains = Mountain.objects.all()
     user = request.user
     
-    if user.is_authenticated:
-        try:
-            user_latitude = user.userlocation.latitude
-            user_longitude = user.userlocation.longitude
-        except UserLocation.DoesNotExist:
-            user_latitude = None
-            user_longitude = None
-    else:
-        user_latitude = None
-        user_longitude = None
-
     if request.method == 'POST':
         tags = request.POST.getlist('tags')
         sido = request.POST.get('sido2')
@@ -114,7 +101,7 @@ class CourseListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         mountain_pk = self.kwargs['mountain_pk']
         mountain = Mountain.objects.get(pk=mountain_pk)
-        sort = self.request.GET.get('sort', '')  # 정렬 옵션 가져오기
+        sort = self.request.GET.get('sort', '')
 
         queryset = Course.objects.filter(mntn_name=mountain)
 
@@ -125,7 +112,6 @@ class CourseListView(LoginRequiredMixin, ListView):
         elif sort == 'hidden_time':
             queryset = queryset.order_by('hidden_time')
         elif sort == 'diff':
-            # 난이도 정렬을 추가
             queryset = queryset.annotate(
                 diff_order=Case(
                     When(diff='하', then=1),
@@ -141,9 +127,8 @@ class CourseListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         mountain_pk = self.kwargs['mountain_pk']
         mountain = Mountain.objects.get(pk=mountain_pk)
-        queryset = self.get_queryset()  # get_queryset 메서드 호출
+        queryset = self.get_queryset()
             
-        # 페이지네이션
         paginator = Paginator(queryset, self.paginate_by)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -174,7 +159,7 @@ def course_all_list(request):
     courses = Course.objects.all()
 
     if request.method == 'POST':
-        sido = request.POST.get('sido1', '')  # 선택한 시/도 값 가져오기
+        sido = request.POST.get('sido1', '')
         gugun = request.POST.get('gugun1', '')
 
         if sido and gugun:
@@ -295,9 +280,9 @@ class gpxDownloadView(LoginRequiredMixin, View):
         gpx_data = self.create_gpx(geom, name)
 
         # 이메일 전송
-        email = request.user.email  # 유저의 이메일 주소를 가져옵니다.
+        email = request.user.email
         if email:
-            self.send_email(email, gpx_data, name)  # 이메일로 GPX 파일을 전송합니다.
+            self.send_email(email, gpx_data, name)
             return HttpResponse(status=200)
         else:
             return HttpResponse(status=400)
@@ -311,7 +296,6 @@ class gpxDownloadView(LoginRequiredMixin, View):
         gpx_segment = gpxpy.gpx.GPXTrackSegment()
         gpx_track.segments.append(gpx_segment)
 
-        # LineString의 좌표들을 가져와서 GPX 세그먼트에 추가합니다.
         for point in geom.coords:
             gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(latitude=point[1], longitude=point[0]))
 
@@ -320,7 +304,6 @@ class gpxDownloadView(LoginRequiredMixin, View):
         return gpx_data    
 
     def send_email(self, email, gpx_data, name):
-        # 이메일을 전송하는 로직을 구현합니다.
         email_subject = f'[오르다] {name} 등산 코스 GPX 파일'
         email_body = render_to_string('mountains/email.html', {'name': name})
         email_attachment = (f"{name.replace(' ', '_')}_course.gpx", gpx_data, "application/gpx+xml")
@@ -386,9 +369,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'course'
 
     def get_object(self, queryset=None):
-        # mountain_pk = self.kwargs['mountain_pk']
         course_pk = self.kwargs['pk']
-        # mountain = get_object_or_404(Mountain, pk=mountain_pk)
         course = get_object_or_404(Course, pk=course_pk)
         return course
 

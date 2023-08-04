@@ -2,13 +2,13 @@ import json, urllib.request, requests, datetime, math, os
 from mountains.models import *
 from accounts.models import *
 from mountains.forms import ReviewCreationForm
+from utils.distance import mountain_distance
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode, quote_plus, unquote
 from django.db.models import F
 from django.views.generic import DetailView
 from django.contrib.gis.serializers.geojson import Serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
-from utils.distance import mountain_distance
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
     template_name = 'mountains/mountain_detail.html'

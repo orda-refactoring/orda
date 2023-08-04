@@ -17,8 +17,8 @@ urlpatterns = [
     path('naver/login/', views.naver_login, name='naver_login'),
     path('naver/callback/', views.naver_callback, name='naver_callback'),
     path('my_memories/', views.my_memories, name='my_memories'),
-    path('notification/', views.notification, name='notification'),
-    path('notification/check/<int:notification_id>/', views.notification_check, name='notification_check'),
-    path('notification/delete/<int:notification_id>/', views.notification_delete, name='notification_delete'),
     path('save_location/', views.save_location, name='save_location'),
+    path('notification/', views.notification, name='notification'),
+    path('notification/check/<int:notification_pk>/', views.notification_check, name='notification_check'),
+    path('notification/delete/<int:notification_pk>/', views.notification_delete, name='notification_delete'),
 ]
