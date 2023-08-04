@@ -8,6 +8,7 @@ from django.db.models import F
 from django.views.generic import DetailView
 from django.contrib.gis.serializers.geojson import Serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
+from utils.distance import mountain_distance
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
     template_name = 'mountains/mountain_detail.html'
@@ -16,18 +17,6 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        user = self.request.user
-
-        if user.is_authenticated:
-            try:
-                user_latitude = user.userlocation.latitude
-                user_longitude = user.userlocation.longitude
-            except UserLocation.DoesNotExist:
-                user_latitude = None
-                user_longitude = None
-        else:
-            user_latitude = None
-            user_longitude = None
 
         if not request.session.get('mountain_viewed_{}'.format(self.object.pk), False):
             Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
@@ -44,10 +33,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         mountain = self.get_object()
         
         user = self.request.user
-        user_latitude = user.userlocation.latitude
-        user_longitude = user.userlocation.longitude
-        mountain_distance = mountain.current_location(user_latitude, user_longitude)
-        
+        distance = mountain_distance(user, mountain)
         serializer = Serializer()
         courses = mountain.course_set.all()
         data = {}
@@ -135,7 +121,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         context = {
             # 산 관련
             'mountain': mountain,
-            'mountain_distance': mountain_distance,
+            'mountain_distance': distance,
             'courses': courses,
             'courses_data': data,
 

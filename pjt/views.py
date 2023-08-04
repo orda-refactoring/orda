@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from mountains.models import *
 from accounts.models import *
+from utils.distance import mountains_distance
 import random
 
 def index(request):
@@ -19,14 +20,23 @@ class MainView(ListView):
 
         # 1. 랜덤 유저의 좋아요 산 리스트
         all_users = User.objects.exclude(pk=user.pk)
-        if all_users:
+        random_user_like_mountains = None
+        random_user = None
+
+        while all_users:
             random_user = random.choice(all_users)
             user_like_mountains = Mountain.objects.filter(likes=random_user)
-            if len(user_like_mountains) < 12:
-                random_user_like_mountains = user_like_mountains
-            else:
-                random_user_like_mountains = random.sample(list(user_like_mountains), 12)
-        else:
+            
+            if user_like_mountains.exists():
+                if len(user_like_mountains) < 12:
+                    random_user_like_mountains = user_like_mountains
+                else:
+                    random_user_like_mountains = random.sample(list(user_like_mountains), 12)
+                break
+
+            all_users = all_users.exclude(pk=random_user.pk)
+
+        if not all_users:
             random_user_like_mountains = None
             random_user = None
 
@@ -57,11 +67,18 @@ class MainView(ListView):
         else:
             random_not_visited_mountains = random.sample(list(not_visited_mountains), 12)
 
+
+        # user_distacne 계산
+        low_lv_mountains_distance = mountains_distance(user, low_lv_mountains)    
+        high_lv_mountains_distance = mountains_distance(user, high_lv_mountains)    
+        not_visited_mountains_distance = mountains_distance(user, random_not_visited_mountains)    
+        user_like_mountains_distance = mountains_distance(user, random_user_like_mountains)    
+
         context = {
-            'low_lv_mountains': random_low_lv_mountains,
-            'high_lv_mountains': random_high_lv_mountains,
-            'not_visited_mountains': random_not_visited_mountains,
-            'user_like_mountains': random_user_like_mountains,
+            'low_lv_mountains': zip(random_low_lv_mountains, low_lv_mountains_distance),
+            'high_lv_mountains': zip(random_high_lv_mountains, high_lv_mountains_distance),
+            'not_visited_mountains': zip(random_not_visited_mountains, not_visited_mountains_distance),
+            'user_like_mountains': zip(random_user_like_mountains, user_like_mountains_distance),
             'random_user': random_user,
         }
 
