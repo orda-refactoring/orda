@@ -1,5 +1,6 @@
 import json, urllib.request, requests, datetime, math, os
 from mountains.models import *
+from accounts.models import *
 from mountains.forms import ReviewCreationForm
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode, quote_plus, unquote
@@ -7,6 +8,7 @@ from django.db.models import F
 from django.views.generic import DetailView
 from django.contrib.gis.serializers.geojson import Serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
+from utils.distance import mountain_distance
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
     template_name = 'mountains/mountain_detail.html'
@@ -31,10 +33,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         mountain = self.get_object()
         
         user = self.request.user
-        user_latitude = user.userlocation.latitude
-        user_longitude = user.userlocation.longitude
-        mountain_distance = mountain.current_location(user_latitude, user_longitude)
-        
+        distance = mountain_distance(user, mountain)
         serializer = Serializer()
         courses = mountain.course_set.all()
         data = {}
@@ -122,7 +121,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         context = {
             # 산 관련
             'mountain': mountain,
-            'mountain_distance': mountain_distance,
+            'mountain_distance': distance,
             'courses': courses,
             'courses_data': data,
 

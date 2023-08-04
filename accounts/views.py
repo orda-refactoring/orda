@@ -4,24 +4,20 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.core.files import File
-from urllib.request import urlopen
-from posts.models import Post
 import requests
 import os
 from dotenv import load_dotenv
 from django.http import JsonResponse
 from bs4 import BeautifulSoup
-from mountains.models import Mountain, Course, CourseDetail
+from mountains.models import Mountain, Course
 from .models import *
-from django.contrib.gis.serializers.geojson import Serializer
-from accounts.models import Notification
 from .models import Notification
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
-from .config import level_dict
+from utils.level import level_dict
+from django.contrib import messages
 
 def login(request):
     if request.user.is_authenticated:
@@ -56,6 +52,7 @@ def logout(request):
 def signup(request):
     if request.user.is_authenticated:
         return redirect('mountains:mountain_list')
+    
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -65,12 +62,25 @@ def signup(request):
             UserLocation.objects.create(user=user)
 
             return redirect('mountains:mountain_list')
-    else:
+        else:
+            for key, error in list(form.errors.items()):
+                print(key, error)
+    else:   
         form = CustomUserCreationForm()
+
     context = {
         'form': form
     }
     return render(request, 'accounts/signup.html', context)
+
+
+def check_username(request):
+    if request.method == 'POST':        
+        username = request.POST.get('username')
+        if username:
+            exists = User.objects.filter(username=username).exists()
+            return JsonResponse({'exists': exists})
+    return JsonResponse({'exists': False})
 
 
 def profile(request, user_pk):
