@@ -1,4 +1,5 @@
 import gpxpy, gpxpy.gpx, os, datetime
+from utils.distance import mountains_distance
 from mountains.models import *
 from accounts.models import *
 from mountains.forms import SearchForm
@@ -95,14 +96,11 @@ def mountain_list(request):
     paginator = Paginator(mountains, per_page)
     page_obj = paginator.get_page(page)
 
-    mountain_distances = []
-    for mountain in page_obj:
-        mountain_distance = mountain.current_location(user_latitude, user_longitude)
-        mountain_distances.append(mountain_distance)
+    distances = mountains_distance(user, page_obj)
 
     context = {
         'page_obj': page_obj,
-        'mountain_data': zip(page_obj, mountain_distances),
+        'mountain_data': zip(page_obj, distances),
     }
     return render(request, 'mountains/mountain_list.html', context)
 

@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
-from .config import level_dict
+from utils.level import level_dict
 from django.contrib import messages
 
 def login(request):
