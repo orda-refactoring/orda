@@ -22,10 +22,10 @@ class MainView(ListView):
         if all_users:
             random_user = random.choice(all_users)
             user_like_mountains = Mountain.objects.filter(likes=random_user)
-            if len(user_like_mountains) < 12:
+            if len(user_like_mountains) < 6:
                 random_user_like_mountains = user_like_mountains
             else:
-                random_user_like_mountains = random.sample(list(user_like_mountains), 12)
+                random_user_like_mountains = random.sample(list(user_like_mountains), 6)
         else:
             random_user_like_mountains = None
             random_user = None

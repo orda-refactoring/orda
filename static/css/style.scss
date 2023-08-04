@@ -1,4 +1,4 @@
-@mixin padding ($top-bottom, $side) {
+@mixin padding ($top-bottom:0, $side:0) {
   padding: $top-bottom $side;
 }
 

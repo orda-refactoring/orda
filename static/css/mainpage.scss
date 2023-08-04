@@ -1,0 +1,229 @@
+@import 'style.scss';
+
+
+.title {
+  font: {
+    size: 25px;
+    weight: bold;
+    family: 'Cafe24Ssurround';
+  }
+  @include margin(32px,0,24px,);
+
+  span{
+    color: var(--green-btn);
+  }
+}
+
+.card-list {
+  display: inline-block;
+  @include margin2(30px, 10px);
+  box-shadow: 1px 4px 8px 1px var(--sub-color2);
+  @include border(white, 0);
+  border-radius: 1.25rem;
+  width: 90%;
+
+  img{
+    @include w-h(250px, 250px);
+    @include border(white, 0);
+    border-radius: 1.25rem 1.25rem 0 0;
+    margin-bottom: 20px;
+  }
+
+  .mnt--info-1{
+    @include flex();
+    @include margin2(0, 8px);
+
+    .mtnname{
+      font: {
+        weight: bold;
+        size: 18px;
+      }
+      margin-right: 8px;
+    }
+
+    .course--cnt{
+      padding-top: 4px;
+      color: var(--green-btn);
+      font-weight: 500;
+    }
+  }
+
+  .mnt--info-2{
+    @include flex();
+    @include margin2(8px, 8px);
+    margin-bottom: 20px;
+    color: var(--sub-color);
+
+    .emndnname{
+      margin-right: 8px;
+    }
+
+    .user--distance{
+      margin-left: 8px;
+    }
+  }
+}
+
+.complete{
+  text-align: center;
+  font: {
+    size: 25px;
+    weight: bold;
+    family: 'Cafe24Ssurround';
+  }
+  @include margin2(100px, );
+
+  span{
+    color: var(--green-btn);
+  }
+}
+
+.recommended-mtn{
+  @include grid(){
+    grid-template-columns: repeat(6, 1fr);
+    place-items: center; 
+  };
+  
+  img{
+    @include w-h(100%, 250px);
+  }
+}
+
+
+
+/* carousel */
+// .no-js .owl-carousel, .owl-carousel.owl-loaded {
+//   display: none;
+// }
+
+.owl-carousel {
+  position: relative;
+ }
+ 
+ .owl-carousel .owl-stage-outer {
+   position: relative;
+   border: none;
+  }
+ 
+ .owl-carousel .owl-prev,
+ .owl-carousel .owl-next {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   margin: auto;
+   background-color: #000; /* 배경색 설정 */
+   color: #fff; /* 아이콘 색상 설정 */
+   width: 40px; /* 버튼의 너비 */
+   height: 40px; /* 버튼의 높이 */
+   font-size: 24px; /* 아이콘 크기 */
+   line-height: 40px; /* 버튼의 세로 중앙 정렬을 위한 line-height */
+   text-align: center;
+   border: solid 2px #777777 !important; 
+   border-radius: 50%; /* 버튼을 원형으로 만들기 위한 border-radius 설정 */
+ }
+ 
+ .owl-carousel .owl-prev {
+   left: 10px;
+ }
+ 
+ .owl-carousel .owl-next {
+   right: 10px;
+ }
+ 
+ .owl-dots {
+   text-align: center;
+   @include padding(15px,);
+   @include border(white, 0);
+ }
+ 
+ .owl-dots button.owl-dot {
+   width: 15px;
+   height: 15px;
+   border-radius: 50%;
+   display: inline-block;
+   background: #C7EA46;
+   margin: 0 8px;
+ }
+ 
+ .owl-dots button.owl-dot.active {
+   background-color: #75a64a;
+ }
+ 
+ .owl-dots button.owl-dot:focus {
+   outline: none;
+ }
+
+ .item{
+  width: 100%;
+  text-align: center;
+ }
+ 
+
+
+
+/* 반응형 */
+@mixin xl{
+  @media(max-width: 1530px){
+    @content;
+  }
+}
+@mixin lg{
+  @media(max-width: 1280px){
+    @content;
+  }
+}
+@mixin md{
+  @media(max-width: 760px){
+    @content;
+  }
+}
+@mixin sm{
+  @media(max-width: 450px){
+    @content;
+  }
+}
+
+@include xl{
+  .recommended-mtn{
+    @include grid(){
+      grid-template-columns: repeat(3, 1fr);
+      place-items: center; 
+    };
+  }
+}
+  
+@include lg{
+  .recommended-mtn{
+    @include grid(){
+      grid-template-columns: repeat(2, 1fr);
+      place-items: center; 
+    };
+  }
+
+}
+@include md{
+  .wrap {
+    @include padding(20px, )
+  }
+}
+@include sm{
+
+  .owl-dots button.owl-dot {
+    margin: 0 5px;
+  }
+
+  .recommended-mtn{
+    @include grid(){
+      grid-template-columns: repeat(1, 1fr);
+      place-items: center; 
+    };
+  }
+  
+
+}
+
+
+@font-face {
+  font-family: 'Cafe24Ssurround';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+}
