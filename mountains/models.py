@@ -22,6 +22,7 @@ class Mountain(models.Model):
     geom = models.GeometryField()
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_mountains', db_table='mountains_mountain_likes')
     views = models.PositiveIntegerField(default=0)
+    emndn_name = models.TextField(db_column='emndn_nm')
     
     class Meta:
         managed = False

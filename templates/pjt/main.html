@@ -1,32 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+{% block style %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="owl/assets/owl.theme.default.min.css">
+  <link rel="stylesheet" href="{% static 'css/mainpage.css' %}">
+{% endblock style %}
+{% block content %}
+<div class="wrap">
+{% if not_visited_mountains|length != 0 %}
+  <h5 class="title"><span>{{request.user}}</span>님! 이 산을 <span>정복</span>해 보세요!</h5>
+    <div class="owl-carousel owl-theme">
+      {% for mountain, distance in not_visited_mountains %}
+       <div class="item">
+         <a href="{% url 'mountains:mountain_detail' mountain.pk %}" class="card-list">
+           <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
+           <div class="mnt--info-1">
+             <p class="mtnname">{{ mountain.name }}</p>
+             <p class="course--cnt">{{mountain.course_set.count}}개의 코스</p>
+            </div>
+            <div class="mnt--info-2">
+              <p class="emndnname">{{ mountain.emndn_name }}</p>
+              <p> | </p>
+              <p class="user--distance"> {{ distance }}km </p>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="complete">
+      <p>완전 정복!</p>
+      <p>이 구역의 등산왕은 <span>나야 나!</span> 👩‍🌾</p>
+    </div>
+  {% endif %}
+  
+  
 
-<hr>
-<p>안 가본 산</p>
-{% for not_visited_mountain in not_visited_mountains %}
-  <p>{{ not_visited_mountain.id }}</p>
-  <p>{{ not_visited_mountain.name }}</p>
-{% endfor %}
-<hr>
+  {% if mountains|length != 0 %}
+    <h5 class="title">도전정신 UP! <span>어려운 코스</span></h5>
+    <div class="owl-carousel owl-theme">
+      {% for mountain, distance in high_lv_mountains %}
+      <div class="item">
+        <a href="{% url 'mountains:mountain_detail' mountain.pk %}" class="card-list">
+          <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
+          <div class="mnt--info-1">
+            <p class="mtnname">{{ mountain.name }}</p>
+            <p class="course--cnt">{{mountain.course_set.count}}개의 코스</p>
+            </div>
+            <div class="mnt--info-2">
+              <p class="emndnname">{{ mountain.emndn_name }}</p>
+              <p> | </p>
+              <p class="user--distance"> {{ distance }}km </p>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+      
+  {% if mountains|length != 0 %}
+    <h5 class="title">가볍게 <span>트레킹 코스</span>어떠세요?</h5>
+    <div class="owl-carousel owl-theme">
+      {% for mountain, distance in low_lv_mountains %}
+      <div class="item">
+        <a href="{% url 'mountains:mountain_detail' mountain.pk %}" class="card-list">
+          <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
+          <div class="mnt--info-1">
+            <p class="mtnname">{{ mountain.name }}</p>
+            <p class="course--cnt">{{ mountain.course_set.count}}개의 코스</p>
+            </div>
+            <div class="mnt--info-2">
+              <p class="emndnname">{{ mountain.emndn_name }}</p>
+              <p> | </p>
+              <p class="user--distance"> {{ distance }}km </p>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
-<hr>
-<p>고수 산</p>
-{% for high_lv_mountain in high_lv_mountains %}
-  <p>{{ high_lv_mountain.id }}</p>
-  <p>{{ high_lv_mountain.name }}</p>
-{% endfor %}
-<hr>
 
-<hr>
-<p>초보 산</p>
-{% for low_lv_mountain in low_lv_mountains %}
-  <p>{{ low_lv_mountain.id }}</p>
-  <p>{{ low_lv_mountain.name }}</p>
-{% endfor %}
-<hr>
+  {% if  random_user.count != 0 %}
+    <h5 class="title"><span>{{ random_user.nickname }}</span>님이 <span>추천</span>하는 산!</h5>
+    <div class="recommended-mtn">
+      {% for mountain, distance in user_like_mountains %}
+        <a href="{% url 'mountains:mountain_detail' mountain.pk %}" class="card-list">
+          <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
+          <div class="mnt--info-1">
+            <p class="mtnname">{{ mountain.name }}</p>
+            <p class="course--cnt">{{ mountain.course_set.count}}개의 코스</p>
+          </div>
+          <div class="mnt--info-2">
+            <p class="emndnname">{{ mountain.emndn_name }}</p>
+            <p> | </p>
+            <p class="user--distance"> {{ distance }}km </p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock content %}
 
-<hr>
-<p>랜덤 좋아요 유저({{ random_user.nickname }}) 산</p>
-{% for user_like_mountain in user_like_mountains %}
-  <p>{{ user_like_mountain.id }}</p>
-  <p>{{user_like_mountain.name }}</p>
-{% endfor %}
-<hr>
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock javascript %}
