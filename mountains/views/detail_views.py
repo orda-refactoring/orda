@@ -3,6 +3,7 @@ from mountains.models import *
 from accounts.models import *
 from mountains.forms import ReviewCreationForm
 from utils.distance import mountain_distance
+from utils.weather import parse_data, get_direction
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode, quote_plus, unquote
 from django.db.models import F
@@ -11,112 +12,42 @@ from django.contrib.gis.serializers.geojson import Serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
+    model = Mountain
     template_name = 'mountains/mountain_detail.html'
     context_object_name = 'mountain'
-    model = Mountain
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if not request.session.get('mountain_viewed_{}'.format(self.object.pk), False):
             Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
-            request.session['mountain_viewed_{}'.format(self.object.pk)] = True
+            request.session[f'mountain_viewed_{self.object.pk}'] = True
 
         context = self.get_context_data(object=self.object)
-        context.update(self.news())
+        context.update(self.get_news())
         return self.render_to_response(context)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # 산관련
+        # 산
         mountain = self.get_object()
-        
         user = self.request.user
         distance = mountain_distance(user, mountain)
-        serializer = Serializer()
         courses = mountain.course_set.all()
-        data = {}
+        data = self.serialize_courses(courses)
 
-        for course in courses:
-            geojson_data = serializer.serialize([course], geometry_field='geom')
-            data[course.pk] = geojson_data
-
-        # 리뷰 관련
+        # 리뷰
         reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
         most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
 
-        # 기타
+        # 날씨
         now_weather_data = self.get_weather_forecast()
-
-        tem = now_weather_data['기온']
-        hum = now_weather_data['습도']
-        sky = now_weather_data['하늘상태']
-        rain = now_weather_data['강수량']
-        vec = now_weather_data['풍향']
-        wsd = now_weather_data['풍속']
-        now_time = now_weather_data['현재시각']
-
-        sun = ['0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900']
-        moon = ['2000', '2100', '2200', '2300', '0000', '0100', '0200', '0300', '0400', '0500', '0600']
         
+        # 미세 먼지 및 오존
         air_data = self.get_air()
-
-        def parse_data(data_str):
-            parsed_data = {}
-            entries = data_str.split(',')
-            for entry in entries:
-                key, value = entry.split(':')
-                parsed_data[key.strip()] = value.strip()
-            return parsed_data
-        
-        fine_dust = parse_data(air_data['미세먼지'])
-        ozone = parse_data(air_data['오존'])
-
-        fine_dust['서울특별시'] = fine_dust.pop('서울')
-        fine_dust['제주도'] = fine_dust.pop('제주')
-        fine_dust['전라남도'] = fine_dust.pop('전남')
-        fine_dust['전라북도'] = fine_dust.pop('전북')
-        fine_dust['광주광역시'] = fine_dust.pop('광주')
-        fine_dust['경상남도'] = fine_dust.pop('경남')
-        fine_dust['경상북도'] = fine_dust.pop('경북')
-        fine_dust['울산광역시'] = fine_dust.pop('울산')
-        fine_dust['대구광역시'] = fine_dust.pop('대구')
-        fine_dust['부산광역시'] = fine_dust.pop('부산')
-        fine_dust['충청남도'] = fine_dust.pop('충남')
-        fine_dust['충청북도'] = fine_dust.pop('충북')
-        fine_dust['세종특별자치시'] = fine_dust.pop('세종')
-        fine_dust['대전광역시'] = fine_dust.pop('대전')
-        fine_dust['강원도'] = fine_dust.pop('영동')
-        fine_dust['경기도'] = fine_dust.pop('경기남부')
-        fine_dust['인천광역시'] = fine_dust.pop('인천')
-
-        ozone['서울특별시'] = ozone.pop('서울')
-        ozone['제주도'] = ozone.pop('제주')
-        ozone['전라남도'] = ozone.pop('전남')
-        ozone['전라북도'] = ozone.pop('전북')
-        ozone['광주광역시'] = ozone.pop('광주')
-        ozone['경상남도'] = ozone.pop('경남')
-        ozone['경상북도'] = ozone.pop('경북')
-        ozone['울산광역시'] = ozone.pop('울산')
-        ozone['대구광역시'] = ozone.pop('대구')
-        ozone['부산광역시'] = ozone.pop('부산')
-        ozone['충청남도'] = ozone.pop('충남')
-        ozone['충청북도'] = ozone.pop('충북')
-        ozone['세종특별자치시'] = ozone.pop('세종')
-        ozone['대전광역시'] = ozone.pop('대전')
-        ozone['강원도'] = ozone.pop('영동')
-        ozone['경기도'] = ozone.pop('경기남부')
-        ozone['인천광역시'] = ozone.pop('인천')
-
-
-        split_region = (mountain.region).split()
-        region = split_region[0]
-
-        special_chars = [',', '/']
-        for char in special_chars:
-            if region.endswith(char):
-                region = region[:-1]
+        fine_dust, ozone = self.process_air_data(air_data)
+        region = self.get_formatted_region(mountain.region)
 
         context = {
             # 산 관련
@@ -131,15 +62,15 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             'most_liked_review': most_liked_review,
 
             # 날씨
-            'tem': tem,
-            'hum': hum,
-            'sky': sky,
-            'rain': rain,
-            'vec': vec,
-            'wsd': wsd,
-            'now_time': now_time,
-            'sun': sun,
-            'moon': moon,
+            'tem': now_weather_data['기온'],
+            'hum': now_weather_data['습도'],
+            'sky': now_weather_data['하늘상태'],
+            'rain': now_weather_data['강수량'],
+            'vec': now_weather_data['풍향'],
+            'wsd': now_weather_data['풍속'],
+            'now_time': now_weather_data['현재시각'],
+            'sun': ['0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'],
+            'moon': ['2000', '2100', '2200', '2300', '0000', '0100', '0200', '0300', '0400', '0500', '0600'],
 
             # 미세먼지, 오존
             'region': region,
@@ -149,7 +80,17 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         
         return context
     
-    def news(self):
+    def serialize_courses(self, courses):
+        serializer = Serializer()
+        course_data = {}
+
+        for course in courses:
+            geojson_data = serializer.serialize([course], geometry_field='geom')
+            course_data[course.pk] = geojson_data
+
+        return course_data
+    
+    def get_news(self):
         client_id = os.environ['NAVER_NEWS_CLIENT_ID']
         client_secret = os.environ['NAVER_NEWS_SECRET']
         query = self.get_object().name
@@ -296,23 +237,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
                 now_weather_data['강수량'] = item['fcstValue']
             # 풍향
             if item['category'] == 'VEC' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-                def get_direction(deg):
-                    if '22.5' <= deg < '67.5':
-                        return '북동'
-                    elif '67.5' <= deg < '112.5':
-                        return '동'
-                    elif '112.5' <= deg < '157.5':
-                        return '남동'
-                    elif '157.5' <= deg < '202.5':
-                        return '남'
-                        return '남서'
-                    elif '247.5' <= deg < '292.5':
-                        return '서'
-                    elif '292.5' <= deg < '337.5':
-                        return '북서'
-                    else:
-                        return '북'
-                now_weather_data['풍향'] = get_direction(item['fcstValue'])
+                now_weather_data['풍향'] = get_direction(item['fcstValue']) # utils 참조
             # 풍속
             if item['category'] == 'WSD' and item['fcstDate'] == today and item['fcstTime'] == now_time:
                 now_weather_data['풍속'] = item['fcstValue']
@@ -322,37 +247,74 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         return now_weather_data
 
     def get_air(self):
-        mountain = self.get_object()
         today = datetime.today().strftime("%Y-%m-%d")
-        y = date.today() - timedelta(days=1)
-        yesterday = y.strftime("%Y-%m-%d")
-        # API 요청을 위한 URL과 파라미터 설정
-        url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMinuDustFrcstDspth"
+        yesterday = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
 
+        url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMinuDustFrcstDspth"
         serviceKey = os.environ['AIR_KEY']
         serviceKeyDecoded = unquote(serviceKey, 'UTF-8')
 
         queryParams = '?' + urlencode({ 
-              quote_plus('serviceKey') : serviceKeyDecoded,
-              quote_plus('returnType') : 'json',
-              quote_plus('numOfRows') : '100',
-              quote_plus('searchDate') : yesterday,
-              quote_plus('InformCode') : 'PM10',
-              })
+            quote_plus('serviceKey') : serviceKeyDecoded,
+            quote_plus('returnType') : 'json',
+            quote_plus('numOfRows') : '100',
+            quote_plus('searchDate') : yesterday,
+            quote_plus('InformCode') : 'PM10',
+            })
 
         # API 요청 보내기
         response = requests.get(url + queryParams, verify=False)
         items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
-        formatted_items = json.dumps(items, indent=4, ensure_ascii=False)  # 데이터를 JSON 형식으로 깔끔하게 출력
 
-        air = dict()
-
+        air_data = {}
         for item in items:
             # 미세먼지
             if item['informCode'] == 'PM10' and item['informData'] == today:
-                air['미세먼지'] = item['informGrade']
+                air_data['미세먼지'] = item['informGrade']
             # 오존
             if item['informCode'] == 'O3' and item['informData'] == today:
-                air['오존'] = item['informGrade']
+                air_data['오존'] = item['informGrade']
 
-        return air
+        return air_data
+
+    def process_air_data(self, air_data):
+        location_mapping = {
+            '서울특별시': '서울',
+            '제주도': '제주',
+            '전라남도': '전남',
+            '전라북도': '전북',
+            '광주광역시': '광주',
+            '경상남도': '경남',
+            '경상북도': '경북',
+            '울산광역시': '울산',
+            '대구광역시': '대구',
+            '부산광역시': '부산',
+            '충청남도': '충남',
+            '충청북도': '충북',
+            '세종특별자치시': '세종',
+            '대전광역시': '대전',
+            '강원도': '영동',
+            '경기도': '경기남부',
+            '인천광역시': '인천'
+        }
+
+        fine_dust = parse_data(air_data['미세먼지'])
+        ozone = parse_data(air_data['오존'])
+
+        for key, value in location_mapping.items():
+            fine_dust[key] = fine_dust.pop(value, 0)
+            ozone[key] = ozone.pop(value, 0)
+
+        return fine_dust, ozone
+    
+    def get_formatted_region(self, region):
+        split_region = (region).split()
+        region = split_region[0]
+
+        special_chars = [',', '/']
+        for char in special_chars:
+            if region.endswith(char):
+                region = region[:-1]
+        return region
+    
+

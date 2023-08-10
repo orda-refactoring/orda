@@ -50,7 +50,6 @@ class Mountain(models.Model):
             distance = self.haversine(user_latitude, user_longitude, mountain_latitude, mountain_longitude)
             return distance
 
-        # 유저의 위치 정보가 없는 경우 None이나 다른 적절한 값을 반환합니다.
         return None
     
     @property
@@ -67,7 +66,6 @@ class Mountain(models.Model):
         tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
         return [tag['tags__pk'] for tag in tags]
     
-
     def __str__(self):
         return self.name
         
@@ -112,15 +110,16 @@ class CourseDetail(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=200)
-    # category = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return self.name
 
 
 class Review(models.Model):
+
     def image_path(instance, filename):
         return f'reviews/{instance.mountain.name}/{filename}'
+    
     mountain = models.ForeignKey(Mountain, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
     content = models.TextField()
