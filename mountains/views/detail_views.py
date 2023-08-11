@@ -1,15 +1,22 @@
-import json, urllib.request, requests, datetime, math, os
-from mountains.models import *
-from accounts.models import *
-from mountains.forms import ReviewCreationForm
-from utils.distance import mountain_distance
-from utils.weather import parse_data, get_direction
+import os
+import json
+import math
+import urllib.request
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode, quote_plus, unquote
+
+from accounts.models import *
+from mountains.models import *
+from mountains.forms import ReviewCreationForm
+from utils.distance import mountain_distance
+from utils.weather import get_direction, process_air_data
+from utils.helpers import serialize_courses 
+
+import requests
 from django.db.models import F
 from django.views.generic import DetailView
-from django.contrib.gis.serializers.geojson import Serializer
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
     model = Mountain
@@ -19,7 +26,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        if not request.session.get('mountain_viewed_{}'.format(self.object.pk), False):
+        if not request.session.get(f'mountain_viewed_{self.object.pk}', False):
             Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
             request.session[f'mountain_viewed_{self.object.pk}'] = True
 
@@ -29,13 +36,13 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
 
         # 산
         mountain = self.get_object()
-        user = self.request.user
-        distance = mountain_distance(user, mountain)
         courses = mountain.course_set.all()
-        data = self.serialize_courses(courses)
+        data = serialize_courses(courses, 'geom')
+        distance = mountain_distance(user, mountain)
 
         # 리뷰
         reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
@@ -46,7 +53,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         
         # 미세 먼지 및 오존
         air_data = self.get_air()
-        fine_dust, ozone = self.process_air_data(air_data)
+        fine_dust, ozone = process_air_data(air_data)
         region = self.get_formatted_region(mountain.region)
 
         context = {
@@ -79,17 +86,17 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         }
         
         return context
-    
-    def serialize_courses(self, courses):
-        serializer = Serializer()
-        course_data = {}
+        
+    def get_formatted_region(self, region):
+        split_region = (region).split()
+        region = split_region[0]
 
-        for course in courses:
-            geojson_data = serializer.serialize([course], geometry_field='geom')
-            course_data[course.pk] = geojson_data
-
-        return course_data
-    
+        special_chars = [',', '/']
+        for char in special_chars:
+            if region.endswith(char):
+                region = region[:-1]
+        return region
+        
     def get_news(self):
         client_id = os.environ['NAVER_NEWS_CLIENT_ID']
         client_secret = os.environ['NAVER_NEWS_SECRET']
@@ -115,7 +122,6 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
                     item['title'] = item['title'].replace('<b>', "")
                     item['title'] = item['title'].replace('</b>', "")
                 result.extend(items)
-                # result_set.update(json.loads(response_body)["items"])
         
         result = [dict(t) for t in {tuple(d.items()) for d in result}]
 
@@ -220,7 +226,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         # API 요청 보내기
         response = requests.get(url + queryParams, verify=False)
         items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
-        now_weather_data = dict()
+        now_weather_data = {}
     
         for item in items['item']:
             # 기온
@@ -262,7 +268,6 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             quote_plus('InformCode') : 'PM10',
             })
 
-        # API 요청 보내기
         response = requests.get(url + queryParams, verify=False)
         items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
 
@@ -276,45 +281,6 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
                 air_data['오존'] = item['informGrade']
 
         return air_data
-
-    def process_air_data(self, air_data):
-        location_mapping = {
-            '서울특별시': '서울',
-            '제주도': '제주',
-            '전라남도': '전남',
-            '전라북도': '전북',
-            '광주광역시': '광주',
-            '경상남도': '경남',
-            '경상북도': '경북',
-            '울산광역시': '울산',
-            '대구광역시': '대구',
-            '부산광역시': '부산',
-            '충청남도': '충남',
-            '충청북도': '충북',
-            '세종특별자치시': '세종',
-            '대전광역시': '대전',
-            '강원도': '영동',
-            '경기도': '경기남부',
-            '인천광역시': '인천'
-        }
-
-        fine_dust = parse_data(air_data['미세먼지'])
-        ozone = parse_data(air_data['오존'])
-
-        for key, value in location_mapping.items():
-            fine_dust[key] = fine_dust.pop(value, 0)
-            ozone[key] = ozone.pop(value, 0)
-
-        return fine_dust, ozone
     
-    def get_formatted_region(self, region):
-        split_region = (region).split()
-        region = split_region[0]
-
-        special_chars = [',', '/']
-        for char in special_chars:
-            if region.endswith(char):
-                region = region[:-1]
-        return region
     
 

@@ -4,6 +4,7 @@ from accounts.models import *
 from mountains.forms import SearchForm
 from utils.weather import get_weather, get_direction
 from utils.distance import mountains_distance
+from utils.helpers import serialize_courses
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Count, When, Case, Q
@@ -133,6 +134,7 @@ class CourseListView(LoginRequiredMixin, ListView):
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        # course_detail = CourseDetail.objects.filter(crs_name_detail=course)
         serializer = Serializer()
         detail_serializer = Serializer()
         data = {}
@@ -359,18 +361,15 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         course = self.object
         mountain = course.mntn_name
-        detail = CourseDetail.objects.filter(crs_name_detail=course)
+        course_detail = CourseDetail.objects.filter(crs_name_detail=course)
 
-        serializer = Serializer()
-        detail_serializer = Serializer()
-
-        data = {course.pk: serializer.serialize([course], geometry_field='geom')}
-        detail_data = {course.pk: detail_serializer.serialize(detail, fields=('geom', 'waypoint_name', 'waypoint_category'))}
+        course_data = serialize_courses([course], 'geom')
+        detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
 
         context.update({
             'mountain': mountain,
             'course': course,
-            'course_data': data,
+            'course_data': course_data,
             'detail_data': detail_data,
         })
         return context
