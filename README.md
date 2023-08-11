@@ -296,6 +296,18 @@ Sass 공부
 ```
 
 - 최지원
-```
+``
+-scss를 이용한 코드 재사용성 강화 및 유지보수 강화와 페이지 통일성 증가 / 모바일 유저들을 위한 반응형 웹 디자인
+  - accounts_delete
+  - accounts_login
+  - accounts_passwordchange
+  - accounts_update
+  - 
+- 코드 정리
+  - accounts_update
+  - accounts_form.scss
 
+-가시성을 증가 (현위치 조회 / 산과의 거리)
+  - nav
+  - mountain_list
 ```
