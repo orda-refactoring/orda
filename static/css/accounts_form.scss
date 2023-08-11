@@ -1,0 +1,86 @@
+@mixin box($color, $px:4px, $p-y:4px, $p-x:10px) {
+  border: $color $px solid;
+  @include padding($p-y, $p-x);
+}
+
+.select__box--wrap {
+  @include margin2(0, 100px);
+  @include flex(){
+    justify-content: start;
+  }
+  margin-top: 50px;
+
+  .select__box{
+    @include box($back-color);
+    font-weight: bold;
+    color: white;
+    background-color: $back-color;
+  }
+  .select__box1{
+    @include box($back-color);
+  }
+}
+
+.title__box {
+  @include margin2(0, 100px);
+  @include padding(20px, 0px);
+  background-color: $back-color;
+  min-width: 360px; 
+  .title {
+    font: {
+      weight: bold;
+      size: 30px;
+    }
+    text-align: center;
+    color: white
+  }
+}
+
+.form__box {
+  @include box($back-color, 8px, 50px, 70px);
+  margin: 0px 100px 100px;
+  min-width: 360px;
+}
+
+label{
+  margin-top: 20px;
+}
+.form__field {
+  border-bottom: 2px solid var(--main-color);
+}
+
+.line{
+  margin: 30px 0;
+}
+
+@mixin xl{
+  @media (max-width: 1200px){ 
+    @content;
+  }
+}
+
+
+@mixin md{
+  @media (max-width: 760px){ 
+    @content;
+  }
+}
+
+
+@include xl {
+  .form__box{
+    margin: 0px 0px 50px;
+  }
+  .select__box--wrap {
+    margin: 25px 0px 0px;
+  }
+  .title__box {
+    margin: 0px 0px;
+  }
+}
+
+@include md {
+  .form__box{
+    padding: 30px 30px;
+  }
+}

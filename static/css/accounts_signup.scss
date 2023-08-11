@@ -1,0 +1,80 @@
+@import 'style.scss';
+@import 'accounts_form.scss';
+
+
+.form__box {
+  .id__wrap {
+    @include flex();
+
+    p{
+      flex-grow: 3;
+    }
+    #username-check-btn{
+      flex-grow: 1;
+      background-color: $back-color;
+      border-radius: 0.25rem;
+      font-size: small;
+
+      &:hover{
+        background-color: $main-color;
+      }
+    }
+  }
+}
+
+.form__field__img {
+  display: none;
+  width: 150px;
+  margin: 10px 16px 
+}
+
+.form__field__imgbtn {
+  @include box($main-color, 1px, 10px, 50px);
+  margin: 15px 0px;
+  border-radius: 9999px;
+
+  &:hover{
+    background-color: $main-color;
+    color: white;
+  }
+}
+
+
+.form__submitbtn {
+  border: 1px solid var(--main-color);
+  background-color: var(--main-color) !important;
+  color: white;
+  width: 100%;
+  padding: 10px 50px;
+  margin: 15px 0px;
+  &:hover:not(.disabled){
+    border: 1px solid var(--main-color);
+    color: black;
+    background-color: white !important; 
+  }
+
+}
+
+.disabled {
+  opacity: 0.6;
+  color: #777;
+  &:hover{
+    cursor: not-allowed;
+  }
+}
+
+li{
+  @include margin2(8px)
+}
+
+
+
+@include md {
+  .form__box{
+    .id__wrap{
+      #username-check-btn {
+        font-size: 10px;
+      }
+    }
+  }
+}

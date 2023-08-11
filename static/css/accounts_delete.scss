@@ -1,0 +1,23 @@
+@import 'style.scss';
+@import 'accounts_form.scss';
+
+.form__submitbtn {
+  @include box($main-color, 1px, 10px, 50px);
+  background-color: $main-color !important;
+  color: white;
+  width: 100%;
+  margin: 15px 0px;
+
+  &:hover{
+    background-color: white !important;
+    color: black;
+  }
+}
+
+.warning{
+  text-align: center;
+  margin-bottom: 20px;
+  img{
+    @include margin(0, auto, 40px, auto);
+  }
+}

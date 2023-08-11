@@ -7,8 +7,8 @@
 {% endblock style %}
 {% block content %}
 <div class="wrap">
-{% if not_visited_mountains|length != 0 %}
   <h5 class="title"><span>{{request.user}}</span>님! 이 산을 <span>정복</span>해 보세요!</h5>
+  {% if not_visited_mountains.count != 0 %}
     <div class="owl-carousel owl-theme">
       {% for mountain, distance in not_visited_mountains %}
        <div class="item">
@@ -21,7 +21,11 @@
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
               <p> | </p>
-              <p class="user--distance"> {{ distance }}km </p>
+              {% if distance is not None %}
+                <p class="user--distance"> 🚗 {{ distance }} km </p>
+              {% else %}
+                <p> &nbsp 위치 설정 필요</p>
+              {% endif %}
             </div>
           </a>
         </div>
@@ -36,7 +40,7 @@
   
   
 
-  {% if mountains|length != 0 %}
+  {% if high_lv_mountains.count != 0 %}
     <h5 class="title">도전정신 UP! <span>어려운 코스</span></h5>
     <div class="owl-carousel owl-theme">
       {% for mountain, distance in high_lv_mountains %}
@@ -50,7 +54,11 @@
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
               <p> | </p>
-              <p class="user--distance"> {{ distance }}km </p>
+              {% if distance is not None %}
+                <p class="user--distance"> 🚗 {{ distance }} km </p>
+              {% else %}
+                <p> &nbsp 위치 설정 필요</p>
+              {% endif %}
             </div>
           </a>
         </div>
@@ -58,7 +66,7 @@
     </div>
   {% endif %}
       
-  {% if mountains|length != 0 %}
+  {% if low_lv_mountains.count != 0 %}
     <h5 class="title">가볍게 <span>트레킹 코스</span>어떠세요?</h5>
     <div class="owl-carousel owl-theme">
       {% for mountain, distance in low_lv_mountains %}
@@ -72,7 +80,11 @@
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
               <p> | </p>
-              <p class="user--distance"> {{ distance }}km </p>
+              {% if distance is not None %}
+                <p class="user--distance"> 🚗 {{ distance }} km </p>
+              {% else %}
+                <p> &nbsp 위치 설정 필요</p>
+              {% endif %}
             </div>
           </a>
         </div>
@@ -94,7 +106,11 @@
           <div class="mnt--info-2">
             <p class="emndnname">{{ mountain.emndn_name }}</p>
             <p> | </p>
-            <p class="user--distance"> {{ distance }}km </p>
+            {% if distance is not None %}
+              <p class="user--distance"> 🚗 {{ distance }} km </p>
+            {% else %}
+              <p> &nbsp 위치 설정 필요</p>
+            {% endif %}
           </div>
         </a>
       {% endfor %}

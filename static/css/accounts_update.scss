@@ -1,0 +1,55 @@
+@import 'style.scss';
+@import 'accounts_form.scss';
+
+.form__field__imgbtn {
+  @include box($main-color, 1px, 10px, 50px);
+  margin: 15px 0px;
+  border-radius: 9999px;
+
+  &:hover{
+    background-color: $main-color;
+    color: white;
+  }
+}
+
+.form__field__img {
+  display: none;
+  width: 150px;
+  margin: 0px 35px 
+}
+
+.form__submitbtn {
+  @include box($main-color, 1px, 10px, 50px);
+  background-color: $main-color !important;
+  color: white;
+  width: 100%;
+  margin: 15px 0px;
+
+  &:hover{
+    background-color: white !important;
+    color: black;
+  }
+}
+
+  /* 모달 스타일 */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      margin-top: 100px;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%;
+      max-width: 500px; /* 모달창 최대 너비 설정 */
+      max-height: 80%; /* 모달창 최대 높이 설정 */
+      overflow-y: auto; /* 수직 스크롤 표시 */
+    }
+  }
+

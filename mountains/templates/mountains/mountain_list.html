@@ -50,15 +50,19 @@
           {% endfor %}
         </div>
         <div class="p-4 flex--col flex__align--between" style="height: 180px;">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ mountain.name }}</h5>      
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ mountain.name }}</h5>      
           {% comment %} <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{mountain.review_set.tags.all}}</p> {% endcomment %}
-          <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ mountain.region }}</p>
-          <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{ mountain.height }}m</p>
-          <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">
-            {% if mountain_distance is not None %}
-              나로부터 {{ mountain_distance }}km
-            {% endif %}
-          </p>
+          <p class="mb-1 font-normal text-sm text-gray-700">{{ mountain.region }}</p>
+          <div class="flex--row flex__align--between">
+            <p class="mb-1 font-normal text-sm text-gray-700">{{ mountain.height }}m</p>
+            <p class="mb-1 font-normal text-sm text-gray-700">
+              {% if mountain_distance is not None %}
+                🚗 {{ mountain_distance }}km
+              {% else %}
+                위치 설정 필요
+              {% endif %}
+            </p>
+          </div>
           <div class="flex--row flex__align--end">
             <div class="flex--row pe-3">
               <i class="bi bi-heart-fill pe-1" style="color:var(--red-color)"></i>

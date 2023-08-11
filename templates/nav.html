@@ -11,7 +11,13 @@
       <div class="small--nav">
         <div class="flex--row">
           <div style="height:75px;" >
-            <a href="{% url 'main' %}"><img class='header__logo--img' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
+            <a 
+            {% if user.is_authenticated %}
+            href="{% url 'main' %}"
+            {% else %}
+            href="{% url 'mountains:mountain_list' %}"
+            {% endif %}
+            ><img class='header__logo--img' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
           </div>
         </div>
         <div class="header__menu">
@@ -70,6 +76,8 @@
                   <li><a class="dropdown-item" href="{% url 'accounts:profile' user.pk %}">마이페이지</a></li>
                   <li><a class="dropdown-item" href="{% url 'accounts:my_memories' %}">
                     오른기억</a></li>
+                  <li> <a class="dropdown-item" href="#">
+                     {% include 'accounts/test_location.html' %} </a></li>
                   <li><a class="dropdown-item" href="#">            
                     <form action="{% url 'accounts:logout' %}" method="POST">
                       {% csrf_token %}

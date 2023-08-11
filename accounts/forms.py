@@ -11,7 +11,7 @@ class CustomUserAuthenticationForm(AuthenticationForm):
     widget=forms.TextInput(
         attrs={
             'class': 'appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none ',
-            'style': 'width: 96%',
+            'style': 'width: 95%',
             'placeholder': '아이디를 입력하세요',
             'id': "아이디",
             }          
@@ -22,7 +22,7 @@ class CustomUserAuthenticationForm(AuthenticationForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '비밀번호를 입력하세요',
                 'id': "비밀번호",
             }
@@ -36,7 +36,7 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 92%',
                 'placeholder': '아이디를 입력하세요',
                 'id': "아이디",
             }
@@ -47,7 +47,7 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '비밀번호를 입력하세요',
                 'id': "비밀번호",
                 'pattern': '^(?=.*\d)(?=.*[a-zA-Z]).{8,}$'
@@ -60,7 +60,7 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '비밀번호를 확인하세요',
                 'id': "비밀번호 확인",
             }
@@ -71,7 +71,7 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '닉네임를 입력하세요',
                 'id': "닉네임",
             }
@@ -83,7 +83,7 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.EmailInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '이메일을 입력하세요',
                 'id': "이메일",
                 'pattern': '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',
@@ -129,7 +129,7 @@ class CustomUserChangeForm(UserChangeForm):
         widget=forms.TextInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '닉네임를 입력하세요',
                 'id': "닉네임",
             }
@@ -141,7 +141,7 @@ class CustomUserChangeForm(UserChangeForm):
         widget=forms.EmailInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '이메일을 입력하세요',
                 'id': "이메일",
             }
@@ -153,7 +153,7 @@ class CustomUserChangeForm(UserChangeForm):
         widget=forms.Textarea(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%; height:100px',
+                'style': 'width: 95%; height:100px',
                 'placeholder': '상태메세지를 입력하세요',
                 'id': "상태메세지",
             }
@@ -181,7 +181,7 @@ class CustomUserPasswordChangeForm(PasswordChangeForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '기존 비밀번호를 입력하세요',
                 'id': "기존 비밀번호 입력",
             }
@@ -192,7 +192,7 @@ class CustomUserPasswordChangeForm(PasswordChangeForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '새 비밀번호를 입력하세요',
                 'id': "새 비밀번호 입력",
             }
@@ -203,7 +203,7 @@ class CustomUserPasswordChangeForm(PasswordChangeForm):
         widget=forms.PasswordInput(
             attrs={
                 'class': '"appearance-none bg-transparent border-none text-gray-700  py-1 px-2 leading-tight focus:outline-none',
-                'style': 'width: 96%',
+                'style': 'width: 95%',
                 'placeholder': '새 비밀번호를 확인하세요',
                 'id': "새 비밀번호 확인",
             }
