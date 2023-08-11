@@ -284,3 +284,18 @@ Sass 공부
 - main.html
   - 유저의 가시성을 위한 페이지 정리 (현 위치와 산과의 거리)
 ```
+
+# 2023/08/11
+- 장하늬 
+```
+- 리팩토링
+  - mountain detail View: weather에 관련되지만 부수적인 함수의 경우, utils.weather.py에 넣고, view에는 중요 함수만 기재하여 가독성을 높임
+  -  serializing geodata: 가독성 및 유지보수 편의를 위해, 공간데이터를 직렬화시키는 함수를 생성(모듈화)하여 중복 코드를 줄임(ing)
+    - detail View
+    - coursedetail View
+```
+
+- 최지원
+```
+
+```
