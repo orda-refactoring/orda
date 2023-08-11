@@ -1,8 +1,7 @@
-.profile__container {
+.wrap {
   display: flex;
   flex-direction: row;
   width: 1280px;
-  padding: 30px 60px;
   margin: auto;
 }
 
@@ -526,12 +525,12 @@
 
 
 @media (max-width:1080px) {
-  .profile__container {
+  .wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 30px 60px;
+    /* padding: 30px 60px; */
     margin: auto;
   }
 

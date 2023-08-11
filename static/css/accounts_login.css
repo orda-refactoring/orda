@@ -1,31 +1,29 @@
 .select__box--wrap {
-  margin: 0px 200px;
+  margin: 0 100px;
   display: flex;
+  flex-direction: row;
   justify-content: start;
-  margin-top: 70px;
+  margin-top: 50px;
 }
-
-.select__box{
-  border: 4px solid var(--background-color);
-  background-color: var(--background-color);
+.select__box--wrap .select__box {
+  border: var(--background-color) 4px solid;
   padding: 4px 10px;
   font-weight: bold;
   color: white;
+  background-color: var(--background-color);
 }
-
-.select__box1{
-  border: 4px solid var(--background-color);
+.select__box--wrap .select__box1 {
+  border: var(--background-color) 4px solid;
   padding: 4px 10px;
 }
 
 .title__box {
-  margin: 0px 200px;
+  margin: 0 100px;
   padding: 20px 0px;
   background-color: var(--background-color);
-  min-width: 360px; 
+  min-width: 360px;
 }
-
-.title {
+.title__box .title {
   font-weight: bold;
   font-size: 30px;
   text-align: center;
@@ -33,22 +31,50 @@
 }
 
 .form__box {
-  border: 8px solid var(--background-color);
-  /* background-color: var(--background-color); */
-  padding: 30px 70px 30px 70px;
-  margin: 0px 200px 100px;
-  min-width: 360px;    
+  border: var(--background-color) 8px solid;
+  padding: 50px 70px;
+  margin: 0px 100px 100px;
+  min-width: 360px;
 }
 
+label {
+  margin-top: 20px;
+}
+
+.form__field {
+  border-bottom: 2px solid var(--main-color);
+}
+
+.line {
+  margin: 30px 0;
+}
+
+@media (max-width: 1200px) {
+  .form__box {
+    margin: 0px 0px 50px;
+  }
+  .select__box--wrap {
+    margin: 25px 0px 0px;
+  }
+  .title__box {
+    margin: 0px 0px;
+  }
+}
+@media (max-width: 760px) {
+  .form__box {
+    padding: 30px 30px;
+  }
+}
 .form__submitbtn {
-  border: 1px solid var(--main-color);
-  background-color: brown;
+  border: var(--main-color) 1px solid;
+  padding: 10px 50px 10px;
   background-color: var(--main-color) !important;
   color: white;
   width: 100%;
-  font-weight: bold;
-  padding: 10px 50px;
-  margin: 15px 0px;
+}
+.form__submitbtn:hover {
+  color: black;
+  background-color: white !important;
 }
 
 .login__btn--kakao {
@@ -57,14 +83,16 @@
   background-color: rgb(254, 229, 0);
   display: flex;
   align-items: center;
-  padding: 0px 30px;
-  margin-bottom: 15px;
+  padding: 0 30px;
+  margin: 15px 0;
 }
-
-.login__btn--kakaotext {
-  color:rgb(25, 21, 2);
+.login__btn--kakao p {
+  color: rgb(25, 21, 2);
   font-weight: bold;
   margin: auto;
+}
+.login__btn--kakao:hover {
+  filter: brightness(1.1);
 }
 
 .login__btn--naver {
@@ -73,43 +101,13 @@
   background-color: rgb(3, 199, 90);
   display: flex;
   align-items: center;
-  padding: 0px 30px;
+  padding: 0 30px;
 }
-
-.login__btn--navertext {
+.login__btn--naver p {
   color: white;
   font-weight: bold;
   margin: auto;
 }
-
-@media (max-width:660px) {
-  .form__box{
-    margin: 0px 0px 50px;
-    padding: 30px 40px;
-
-  }
-  .select__box--wrap {
-    margin: 50px 0px 0px;
-  }
-
-  .title__box {
-    margin: 0px 0px;
-  }
-
-}
-
-.form__field {
-  border-bottom: 2px solid var(--main-color);
-  margin: 0px 0px 20px 0px;    
-}
-
-.form__submitbtn:hover {
-  border: 1px solid var(--main-color);
-  color: black;
-  background-color: white !important;
-}
-
-.login__btn--naver:hover,
-.login__btn--kakao:hover{
+.login__btn--naver:hover {
   filter: brightness(1.1);
-}
+}/*# sourceMappingURL=accounts_login.css.map */

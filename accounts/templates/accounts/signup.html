@@ -6,126 +6,69 @@
 <link rel="stylesheet" href="{% static 'css/accounts_signup.css' %}">
 {% endblock style %}
 {% block content %}
-  <div class="select__box--wrap">
-    <div class="rounded-t-lg select__box1"><a href="{% url 'accounts:login' %}">로그인</a></div>
-    <div class="rounded-t-lg select__box"><a href="{% url 'accounts:signup' %}">회원가입</a></div>
-  </div>
+  <div class="wrap">
+    <div class="select__box--wrap">
+      <div class="rounded-t-lg select__box1"><a href="{% url 'accounts:login' %}">로그인</a></div>
+      <div class="rounded-t-lg select__box"><a href="{% url 'accounts:signup' %}">회원가입</a></div>
+    </div>
 
-  <div class='title__box rounded-tr-lg'>
-    <h1 class="title">회원가입</h1>
-  </div>
+    <div class='title__box rounded-tr-lg'>
+      <h1 class="title">회원가입</h1>
+    </div>
 
-  <div class="form__box rounded-b-lg">
-    <form action="{% url 'accounts:signup' %}" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      {% for field in form %}
-        {% if field.name == 'username' %}  {# 아이디 입력란 추가 #}
-          <label for="{{ field.label }}">{{ field.label }}</label>
-          <p class="form__field" name="username" id="id_username">
-            {{ field }}
-          </p>   
-          {% if field.errors %}
-            <ul class="errorlist text-danger">
-              {% for error_msg in field.errors %}
-                <li>{{ error_msg }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}    
-          <span id="username-validation-msg"></span>  {# 검증 결과를 표시할 영역 #}
-          <button type="button" id="username-check-btn">중복 검사</button>  {# 중복 검사 버튼 추가 #}
-        {% elif field.name == 'profile_img' %}
-          <p class="">
-            <img id="profile-preview" src="#" alt="프로필 이미지" class="form__field__img">
-            {{ field }}
-          </p>
-          <label for="{{ field.label }}" class="form__field__imgbtn rounded-full">{{ field.label }}</label>
-        {% elif field.name == 'captcha' %}
-          <p class="form__field">{{ field }}</p>
-          {% if field.errors %}
-            <ul class="errorlist text-danger">
-              {% for error_msg in field.errors %}
-                <li>{{ error_msg }}</li>
-              {% endfor %}
-            </ul>
+    <div class="form__box rounded-b-lg">
+      <form action="{% url 'accounts:signup' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+          {% if field.name == 'username' %}  {# 아이디 입력란 추가 #}
+            <label for="{{ field.label }}">{{ field.label }}</label>
+            <div class="id__wrap">
+              <p class="form__field" name="username" id="id_username">
+                {{ field }}
+              </p>   
+              <button type="button" id="username-check-btn">중복 검사</button>  {# 중복 검사 버튼 추가 #}
+            </div>
+            <div>
+              <span id="username-validation-msg"></span>  {# 검증 결과를 표시할 영역 #}
+            </div>
+          {% elif field.name == 'profile_img' %}
+            <p>
+              <img id="profile-preview" src="#" alt="프로필 이미지" class="form__field__img">
+              {{ field }}
+            </p>
+            <label for="{{ field.label }}" class="form__field__imgbtn">{{ field.label }}</label>
+          {% elif field.name == 'captcha' %}
+            <p class="form__field" style="margin-bottom: 20px;">{{ field }}</p>
+            {% if field.errors %}
+              <ul class="errorlist text-danger">
+                {% for error_msg in field.errors %}
+                  <li>{{ error_msg }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% else %}
+            <label for="{{ field.label }}">{{ field.label }}</label>
+            <p class="form__field">{{ field }}</p>
+            {% if field.errors %}
+              <ul class="errorlist text-danger">
+                {% for error_msg in field.errors %}
+                  <li>{{ error_msg }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           {% endif %}
-        {% else %}
-          <label for="{{ field.label }}">{{ field.label }}</label>
-          <p class="form__field">{{ field }}</p>
-          {% if field.errors %}
-            <ul class="errorlist text-danger">
-              {% for error_msg in field.errors %}
-                <li>{{ error_msg }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      <hr>
-      <input id="submit-btn" type="submit" class="form__submitbtn rounded-2" value="회원가입" disabled>
-    </form>
+        {% endfor %}
+        <hr class="line">
+        <input id="submit-btn" type="submit" class="form__submitbtn rounded-2 disabled" value="회원가입" disabled>
+      </form>
+    </div>
+  </div>
   {% endblock content %}
   {% block javascript %}
     <script>
-      let usernameValidationPassed = false;
-
-      function checkUsername() {
-        const username = document.getElementById('id_username').querySelector('input').value;       
-        if (username) {
-          const formData = new FormData();
-          formData.append('username', username);
-          const checkCsrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-          axios({
-            method: 'POST',
-            url: '/accounts/signup/check_username/',
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'X-CSRFToken': checkCsrftoken,
-            },
-            data: formData,
-          })
-          .then((response) => {
-            const data = response.data;
-            const validationMsg = document.getElementById('username-validation-msg');
-            if (data.exists) {
-              validationMsg.textContent = '이미 사용 중인 아이디입니다.';
-              usernameValidationPassed = false;
-            } else {
-              validationMsg.textContent = '가능한 아이디입니다.';
-              usernameValidationPassed = true;
-              // 필요한 경우 다른 input 활성화 등 추가 작업 수행
-            }
-            updateSubmitButtonState(); // 중복검사 결과에 따라 버튼 상태 업데이트 호출
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            usernameValidationPassed = false;
-            updateSubmitButtonState(); // 버튼 상태 업데이트 호출
-          });
-        }
-      }
-
-      function updateSubmitButtonState() {
-        const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = !usernameValidationPassed; // 중복검사 통과하지 않으면 버튼 비활성화
-
-        // 버튼의 상태에 따라 CSS 클래스를 추가하거나 제거
-        if (submitBtn.disabled) {
-          submitBtn.classList.add('disabled');
-        } else {
-          submitBtn.classList.remove('disabled');
-        }
-      }
-          
-
-      // 버튼 클릭 시 중복 검사 수행
-      document.getElementById('username-check-btn').addEventListener('click', checkUsername);
-
-      // 입력란에 글자를 입력할 때마다 중복 검사 수행 (옵션)
-      // document.getElementById('id_username').addEventListener('input', checkUsername);
-
-
     </script>
     <script src={% static 'js/accounts_input_image.js' %}></script>
     <script src={% static 'js/accounts_input_delete.js' %}></script>
+    <script src={% static 'js/accounts_signup.js' %}></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   {% endblock javascript %}

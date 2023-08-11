@@ -6,18 +6,19 @@
   <title>Document</title>
 </head>
 <body>
-  
+
   <form>
-    {% csrf_token %}
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
     <button id="get-location-btn">현위치</button>
   </form>
 
   <script>
-    document.getElementById("get-location-btn").addEventListener("click", function() {
+    document.getElementById("get-location-btn").addEventListener("click", function(event) {
+      event.preventDefault();
       getCurrentLocation();
     });
-    
-    const locationCsrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const locationCsrfToken = document.getElementById("csrf-token").value;
 
     function getCurrentLocation() {
       if (navigator.geolocation) {
@@ -30,7 +31,7 @@
         });
       } else {
         alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.");
-      }
+      } 
     }
 
     async function sendLocationToServer(latitude, longitude) {
@@ -56,6 +57,7 @@
 
         if (response.ok) {
           console.log('Location data sent successfully');
+          location.reload();
         } else {
           console.error('Error sending location data', response.status, response.statusText);
         }

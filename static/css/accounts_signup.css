@@ -1,31 +1,29 @@
 .select__box--wrap {
-  margin: 0px 200px;
+  margin: 0 100px;
   display: flex;
+  flex-direction: row;
   justify-content: start;
-  margin-top: 70px;
+  margin-top: 50px;
 }
-
-.select__box{
-  border: 4px solid var(--background-color);
-  background-color: var(--background-color);
+.select__box--wrap .select__box {
+  border: var(--background-color) 4px solid;
   padding: 4px 10px;
   font-weight: bold;
   color: white;
+  background-color: var(--background-color);
 }
-
-.select__box1{
-  border: 4px solid var(--background-color);
+.select__box--wrap .select__box1 {
+  border: var(--background-color) 4px solid;
   padding: 4px 10px;
 }
 
 .title__box {
-  margin: 0px 200px;
+  margin: 0 100px;
   padding: 20px 0px;
   background-color: var(--background-color);
-  min-width: 360px; 
+  min-width: 360px;
 }
-
-.title {
+.title__box .title {
   font-weight: bold;
   font-size: 30px;
   text-align: center;
@@ -33,76 +31,102 @@
 }
 
 .form__box {
-  border: 8px solid var(--background-color);
-  /* background-color: var(--background-color); */
-  padding: 50px 70px 50px 70px;
-  margin: 0px 200px 100px;
-  min-width: 360px;    
+  border: var(--background-color) 8px solid;
+  padding: 50px 70px;
+  margin: 0px 100px 100px;
+  min-width: 360px;
+}
+
+label {
+  margin-top: 20px;
 }
 
 .form__field {
   border-bottom: 2px solid var(--main-color);
-  margin: 0px 0px 20px 0px;    
 }
 
-.form__field__imgbtn {
-  border: 1px solid var(--main-color);
-  padding: 10px 50px;
-  margin: 15px 0px;
+.line {
+  margin: 30px 0;
+}
+
+@media (max-width: 1200px) {
+  .form__box {
+    margin: 0px 0px 50px;
+  }
+  .select__box--wrap {
+    margin: 25px 0px 0px;
+  }
+  .title__box {
+    margin: 0px 0px;
+  }
+}
+@media (max-width: 760px) {
+  .form__box {
+    padding: 30px 30px;
+  }
+}
+.form__box .id__wrap {
+  display: flex;
+  flex-direction: row;
+}
+.form__box .id__wrap p {
+  flex-grow: 3;
+}
+.form__box .id__wrap #username-check-btn {
+  flex-grow: 1;
+  background-color: var(--background-color);
+  border-radius: 0.25rem;
+  font-size: small;
+}
+.form__box .id__wrap #username-check-btn:hover {
+  background-color: var(--main-color);
 }
 
 .form__field__img {
   display: none;
   width: 150px;
-  margin: 0px 35px 
+  margin: 10px 16px;
 }
 
-  /* 비활성화 상태일 때의 CSS */
-  .form__submitbtn.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    color: #777;
-    border: 1px solid var(--main-color);
-    background-color: #ddd;
-    background-color: var(--main-color) !important;
-    width: 100%;
-    padding: 10px 50px;
-    margin: 15px 0px;
-  }
-
-  /* 활성화 상태일 때의 CSS */
-  .form__submitbtn:not(.disabled) {
-    border: 1px solid var(--main-color);
-    background-color: brown;
-    background-color: var(--main-color) !important;
-    color: white;
-    width: 100%;
-    padding: 10px 50px;
-    margin: 15px 0px;
-  }
-
+.form__field__imgbtn {
+  border: var(--main-color) 1px solid;
+  padding: 10px 50px;
+  margin: 15px 0px;
+  border-radius: 9999px;
+}
 .form__field__imgbtn:hover {
   background-color: var(--main-color);
   color: white;
 }
 
+.form__submitbtn {
+  border: 1px solid var(--main-color);
+  background-color: var(--main-color) !important;
+  color: white;
+  width: 100%;
+  padding: 10px 50px;
+  margin: 15px 0px;
+}
 .form__submitbtn:hover:not(.disabled) {
   border: 1px solid var(--main-color);
   color: black;
   background-color: white !important;
 }
 
-
-@media (max-width:660px) {
-  .form__box{
-    margin: 0px 0px 50px;
-    padding: 30px 40px;
-  }
-  .select__box--wrap {
-    margin: 50px 0px 0px;
-  }
-
-  .title__box {
-    margin: 0px 0px;
-  }
+.disabled {
+  opacity: 0.6;
+  color: #777;
 }
+.disabled:hover {
+  cursor: not-allowed;
+}
+
+li {
+  margin: 8px 0;
+}
+
+@media (max-width: 760px) {
+  .form__box .id__wrap #username-check-btn {
+    font-size: 10px;
+  }
+}/*# sourceMappingURL=accounts_signup.css.map */

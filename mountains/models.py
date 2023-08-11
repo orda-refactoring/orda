@@ -41,7 +41,7 @@ class Mountain(models.Model):
         radius = 6371  # 지구의 반지름 (단위: km)
         distance = radius * c
 
-        return round(distance, 2)
+        return round(distance, 1)
     
     def current_location(self, user_latitude, user_longitude):
         if user_latitude is not None and user_longitude is not None:
