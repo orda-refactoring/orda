@@ -134,22 +134,17 @@ class CourseListView(LoginRequiredMixin, ListView):
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        # course_detail = CourseDetail.objects.filter(crs_name_detail=course)
-        serializer = Serializer()
-        detail_serializer = Serializer()
-        data = {}
+        courses_data = serialize_courses(page_obj, 'geom')
         detail_data = {}
         for course in page_obj:
-            detail = CourseDetail.objects.filter(crs_name_detail=course)
-            geojson_detail_data = detail_serializer.serialize(detail, fields=('geom', 'waypoint_name', 'waypoint_category'))
-            geojson_data = serializer.serialize([course], geometry_field='geom')
-            data[course.pk] = geojson_data
-            detail_data[course.pk] = geojson_detail_data
+            course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+            detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
+        print(detail_data)
 
         context.update({
             'mountain': mountain,
             'courses': page_obj,
-            'courses_data': data,
+            'courses_data': courses_data,
             'detail_data': detail_data,
             'is_paginated': page_obj.has_other_pages(),
             'page_obj': page_obj,
