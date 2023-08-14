@@ -328,4 +328,5 @@ Sass 공부
 - scss를 이용한 코드 재사용성 강화 및 유지보수 / 모바일 유저들을 위한 반응형 웹 디자인
   - mountains_mountainsList
   - mountains_search(진행중)
+-> 지도 부분의 반응형의 고민 중 :  현재 코드 상태로 보아 감당이 안될 것 같아 특정 크기까지 작아지면 지도 부분을 display:none을 적용하는 것을 논의함
 ```
