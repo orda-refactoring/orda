@@ -330,3 +330,18 @@ Sass 공부
   - mountains_search(진행중)
 -> 지도 부분의 반응형의 고민 중 :  현재 코드 상태로 보아 감당이 안될 것 같아 특정 크기까지 작아지면 지도 부분을 display:none을 적용하는 것을 논의함
 ```
+
+# 2023/08/16
+- 장하늬 
+```
+- 리팩토링
+  - reset view resource(mountains, courses)에 따라 분할하여 오류 방지
+  - sort 함수를 생성하여, 재사용 / 코드 간결화
+- filtering and sorting 수정 중
+  - 세션으로 pk값을 저장하여 sorting에 대입하는 게 아닌, get으로 url을 쌓아올리는 방법 고민 중  
+  
+```
+
+- 최지원
+```
+```
