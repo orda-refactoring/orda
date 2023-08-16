@@ -1,23 +1,18 @@
-from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserAuthenticationForm, CustomUserPasswordChangeForm
-from django.contrib.auth import get_user_model, update_session_auth_hash
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.decorators import login_required
-import requests
-import os
-from dotenv import load_dotenv
-from django.http import JsonResponse
-from bs4 import BeautifulSoup
-from mountains.models import Mountain, Course
+import os, requests
+from .forms import *
 from .models import *
-from .models import Notification
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.core.files.temp import NamedTemporaryFile
-from django.core.files.base import ContentFile
+from mountains.models import Mountain, Course
 from utils.level import level_dict
-from django.contrib import messages
+from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from django.urls import reverse
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.utils.safestring import mark_safe
+from django.core.files.base import ContentFile
+from django.contrib.auth import get_user_model, update_session_auth_hash, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -199,7 +194,7 @@ NAVER_CLIENT_SECRET = os.environ.get('NAVER_CLIENT_SECRET')
 
 def kakao_login(request):
     client_id = KAKAO_CLIENT_ID
-    redirect_uri = 'http://orda.duckdns.org/accounts/kakao/callback/'
+    redirect_uri = 'http://127.0.0.1:8000/accounts/kakao/callback/'
     url = f'https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code'
     return redirect(url)
 
@@ -212,7 +207,7 @@ def kakao_callback(request):
         data = {
             'grant_type': 'authorization_code',
             'client_id': KAKAO_CLIENT_ID,
-            'redirect_uri': 'http://orda.duckdns.org/accounts/kakao/callback/',
+            'redirect_uri': 'http://127.0.0.1:8000/accounts/kakao/callback/',
             'code': code,
         }
         response = requests.post(url, data=data)
@@ -252,7 +247,7 @@ def kakao_callback(request):
 
 def naver_login(request):
     client_id = NAVER_CLIENT_ID
-    redirect_uri = 'http://orda.duckdns.org/accounts/naver/callback/'
+    redirect_uri = 'http://127.0.0.1:8000/accounts/naver/callback/'
     url = f'https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&state=STATE_STRING'
     return redirect(url)
 
@@ -266,7 +261,7 @@ def naver_callback(request):
             'grant_type': 'authorization_code',
             'client_id': NAVER_CLIENT_ID,
             'client_secret': NAVER_CLIENT_SECRET,
-            'redirect_uri': 'http://orda.duckdns.org/accounts/naver/callback/',
+            'redirect_uri': 'http://127.0.0.1:8000/accounts/naver/callback/',
             'code': code,
         }
         response = requests.post(url, data=data)
@@ -323,7 +318,7 @@ def my_memories(request):
         .values_list('mountain_name', flat=True)
         .distinct()
     )
-    if request.method == 'POST': # and request.is_ajax():
+    if request.method == 'POST':
         course_id = request.POST.get('course_id')
         course = Course.objects.get(id=course_id)
 
@@ -342,12 +337,13 @@ def my_memories(request):
             request.user.adjust_user_level()
 
             is_visited = True
+
         context = {
             'is_visited' : is_visited,
             'message': 'Visited course toggled successfully.',
         }
+
         return JsonResponse(context)
-        # return redirect('accounts:my_memories')
 
     context = {
         'mountains': mountains,
@@ -364,15 +360,15 @@ def notification(request):
     return render(request, 'accounts/notification.html', {'notifications': notifications, 'notification_count': notification_count})
 
 
-def notification_check(request, notification_id):
-    notification = Notification.objects.get(id=notification_id)
+def notification_check(request, notification_pk):
+    notification = Notification.objects.get(pk=notification_pk)
     notification.is_read = True
     notification.save()
     return JsonResponse({'success': True})  
 
 
-def notification_delete(request, notification_id):
-    notification = Notification.objects.get(id=notification_id)
+def notification_delete(request, notification_pk):
+    notification = Notification.objects.get(pk=notification_pk)
     notification.delete()
     return JsonResponse({'success': True}) 
 
