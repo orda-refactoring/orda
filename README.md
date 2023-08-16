@@ -344,4 +344,11 @@ Sass 공부
 
 - 최지원
 ```
+- scss를 이용한 코드 재사용성 강화 및 유지보수
+	- mountains_search(완성)
+	- mountains_list 보수
+	- mountains_detail(진행중)
+- 모바일 유저들을 위한 반응형 웹 디자인
+	- mountains_search(완성)
+-> mountains_detail 다소 불필요한 코드가 있다고 판단, 내가 짠 코드가 아니라서 코드를 이해하고 줄여나가는 과정 및 반응형에대한 고민을 해봐야겠다.
 ```
