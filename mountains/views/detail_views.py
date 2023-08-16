@@ -13,8 +13,11 @@ from utils.weather import get_direction, process_air_data
 from utils.helpers import serialize_courses 
 
 import requests
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.db.models import F
 from django.views.generic import DetailView
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -283,4 +286,32 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         return air_data
     
     
+@login_required
+def mountain_likes(request, mountain_pk):
+    mountain = get_object_or_404(Mountain, pk=mountain_pk)
+    user = request.user
+    if user in mountain.likes.all():
+        mountain.likes.remove(user)
+        is_liked = False
+    else:
+        mountain.likes.add(user)
+        is_liked = True
 
+    return JsonResponse({'is_liked': is_liked, 'like_count':mountain.likes.count()})    
+
+
+@login_required
+def bookmark(request, mountain_pk, course_pk):
+    course = Course.objects.get(pk=course_pk)
+    user = request.user
+    is_bookmarked = user.bookmarks.filter(pk=course_pk).exists()
+    if is_bookmarked:
+        user.bookmarks.remove(course)
+        is_bookmarked = False
+    else:
+        user.bookmarks.add(course)
+        is_bookmarked = True
+    context = {
+        'is_bookmarked' : is_bookmarked,
+    }
+    return JsonResponse(context)

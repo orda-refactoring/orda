@@ -5,7 +5,7 @@ from mountains.forms import SearchForm
 from utils.weather import get_weather, get_direction
 from utils.distance import mountains_distance
 from utils.helpers import serialize_courses
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Count, When, Case, Q
 from django.core.paginator import Paginator
@@ -14,12 +14,28 @@ from django.views.generic import ListView, FormView, View, DetailView
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.gis.serializers.geojson import Serializer
 
 class SearchView(FormView):
     template_name = 'mountains/search.html'
     form_class = SearchForm
     success_url = 'mountains/mountain_list.html'
+
+
+def reset_filter(request):
+    if 'filtered_courses' in request.session:
+        # 세션에서 'filtered_courses' 키 제거
+        request.session.pop('filtered_courses')
+        # 세션을 수정한 것을 알림
+        request.session.modified = True  
+        return redirect('mountains:course_all_list')
+    
+    elif 'filtered_mountains' in request.session:
+        request.session.pop('filtered_mountains')
+        request.session.modified = True  
+        return redirect('mountains:mountain_list')
+    
+    else:
+        return HttpResponseBadRequest("Bad Request")
 
 
 def mountain_list(request):
@@ -139,7 +155,6 @@ class CourseListView(LoginRequiredMixin, ListView):
         for course in page_obj:
             course_detail = CourseDetail.objects.filter(crs_name_detail=course)
             detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
-        print(detail_data)
 
         context.update({
             'mountain': mountain,
@@ -214,52 +229,32 @@ def course_all_list(request):
     return render(request, 'mountains/course_all_list.html', context)
 
 
-def reset_filter(request):
-    if 'filtered_courses' in request.session:
-        # 세션에서 'filtered_courses' 키 제거
-        request.session.pop('filtered_courses')
-        # 세션을 수정한 것을 알림
-        request.session.modified = True  
-        return redirect('mountains:course_all_list')
-    
-    elif 'filtered_mountains' in request.session:
-        request.session.pop('filtered_mountains')
-        request.session.modified = True  
-        return redirect('mountains:mountain_list')
-    
-    else:
-        return HttpResponseBadRequest("Bad Request")
+class CourseDetailView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'mountains/course_detail.html'
+    context_object_name = 'course'
 
+    def get_object(self, queryset=None):
+        course_pk = self.kwargs['pk']
+        course = get_object_or_404(Course, pk=course_pk)
+        return course
 
-@login_required
-def mountain_likes(request, mountain_pk):
-    mountain = get_object_or_404(Mountain, pk=mountain_pk)
-    user = request.user
-    if user in mountain.likes.all():
-        mountain.likes.remove(user)
-        is_liked = False
-    else:
-        mountain.likes.add(user)
-        is_liked = True
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = self.object
+        mountain = course.mntn_name
+        course_detail = CourseDetail.objects.filter(crs_name_detail=course)
 
-    return JsonResponse({'is_liked': is_liked, 'like_count':mountain.likes.count()})    
+        course_data = serialize_courses([course], 'geom')
+        detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
 
-
-@login_required
-def bookmark(request, mountain_pk, course_pk):
-    course = Course.objects.get(pk=course_pk)
-    user = request.user
-    is_bookmarked = user.bookmarks.filter(pk=course_pk).exists()
-    if is_bookmarked:
-        user.bookmarks.remove(course)
-        is_bookmarked = False
-    else:
-        user.bookmarks.add(course)
-        is_bookmarked = True
-    context = {
-        'is_bookmarked' : is_bookmarked,
-    }
-    return JsonResponse(context)
+        context.update({
+            'mountain': mountain,
+            'course': course,
+            'course_data': course_data,
+            'detail_data': detail_data,
+        })
+        return context
 
 
 class gpxDownloadView(LoginRequiredMixin, View):
@@ -342,29 +337,3 @@ def weather_forecast(request, pk):
     return render(request, 'mountains/weather_forecast.html', context)
 
 
-class CourseDetailView(LoginRequiredMixin, DetailView):
-    model = Course
-    template_name = 'mountains/course_detail.html'
-    context_object_name = 'course'
-
-    def get_object(self, queryset=None):
-        course_pk = self.kwargs['pk']
-        course = get_object_or_404(Course, pk=course_pk)
-        return course
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        course = self.object
-        mountain = course.mntn_name
-        course_detail = CourseDetail.objects.filter(crs_name_detail=course)
-
-        course_data = serialize_courses([course], 'geom')
-        detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
-
-        context.update({
-            'mountain': mountain,
-            'course': course,
-            'course_data': course_data,
-            'detail_data': detail_data,
-        })
-        return context

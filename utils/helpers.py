@@ -19,7 +19,6 @@ def serialize_courses(obj_list, *fields, attach=True):
             for obj in obj_list:
                 geojson_data = serializer.serialize([obj], fields=fields)
                 course_data[obj.pk] = geojson_data
-
             return course_data
         elif isinstance(obj_list[0], CourseDetail):
             geojson_data = serializer.serialize(obj_list, fields=fields)
