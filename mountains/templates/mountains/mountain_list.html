@@ -19,8 +19,8 @@
         <option value="id">가나다순</option>
     </select>
   </form>
-  <form action="{% url 'mountains:reset' %}" method="GET" id="reset-form">
-    {% if 'filtered_courses' in request.session or 'filtered_mountains' in request.session %}
+  <form action="{% url 'mountains:mountains_reset' %}" method="GET" id="reset-form">
+    {% if 'filtered_mountains' in request.session %}
       <input type="hidden" name="reset" value="true">
       <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate"></button>
     {% endif %}
