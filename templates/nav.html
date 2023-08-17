@@ -184,7 +184,7 @@
   
   function markNotificationRead(notificationId) {
     $.ajax({
-      url: '/accounts/notification/check/' + notificationId + '/',
+      url: '/accounts/notification/' + notificationId + '/check/',
       type: 'POST',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success: function(response) {
@@ -200,7 +200,7 @@
   
   function deleteNotification(notificationId) {
     $.ajax({
-      url: '/accounts/notification/delete/' + notificationId + '/',
+      url: '/accounts/notification/' + notificationId + '/delete/',
       type: 'POST',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success: function(response) {
