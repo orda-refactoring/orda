@@ -19,11 +19,8 @@
         <option value="id">가나다순</option>
     </select>
   </form>
-  <form action="{% url 'mountains:mountains_reset' %}" method="GET" id="reset-form">
-    {% if 'filtered_mountains' in request.session %}
-      <input type="hidden" name="reset" value="true">
-      <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate"></button>
-    {% endif %}
+  <form action="{% url 'mountains:mountain_list' %}" method="GET" id="reset-form">
+    <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate"></button>
   </form>
   
   <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mb-4">
@@ -116,6 +113,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{% static 'js/mountains_likes.js' %}"></script>
 <script src="{% static 'js/list_order.js' %}"></script>
+<script src="{% static 'js/category.js' %}"></script>
 
 <script>
   

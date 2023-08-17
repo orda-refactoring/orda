@@ -9,17 +9,13 @@
 {% block content %}
 <div class="course__wrap">
   <div class="flex--row mt-2">
-    <form action="{% url 'mountains:course_all_list' %}" method="POST">
-      {% csrf_token %}
-      <select class="select__box focus:outline-none focus:border-gray-200 peer" name="sido1" id="sido1"></select>
-      <select class="select__box focus:outline-none focus:border-gray-200 peer" name="gugun1" id="gugun1"></select>
+    <form action="{% url 'mountains:course_all_list' %}" method="GET">
+      <select class="select__box focus:outline-none focus:border-gray-200 peer" name="sido" id="sido"></select>
+      <select class="select__box focus:outline-none focus:border-gray-200 peer" name="gugun" id="gugun"></select>
       <button type="submit" class="rounded-full px-3 pt-2 pb-1 text-white bg-[#47A945] hover:bg-[#A2E04E]"><i class="bi bi-geo-alt-fill"></i></button>
     </form>
-    <form action="{% url 'mountains:courses_reset' %}" method="GET" id="reset-form">
-      {% if 'filtered_courses' in request.session %}
-        <input type="hidden" name="reset" value="true">
-        <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate "></button>
-      {% endif %}
+    <form action="{% url 'mountains:course_all_list' %}" method="GET" id="reset-form">
+      <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate "></button>
     </form>
   </div>
 
@@ -162,6 +158,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{% static 'js/list_order.js' %}"></script>
 <script src="{% static 'js/mountains_courselist.js' %}"></script>
+<script src="{% static 'js/category.js' %}"></script>
 <script>
 
 </script>
