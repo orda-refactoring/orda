@@ -21,83 +21,53 @@ class SearchView(FormView):
     success_url = 'mountains/mountain_list.html'
 
 
-def reset_filter(request):
-    if 'filtered_courses' in request.session:
-        # 세션에서 'filtered_courses' 키 제거
-        request.session.pop('filtered_courses')
-        # 세션을 수정한 것을 알림
-        request.session.modified = True  
-        return redirect('mountains:course_all_list')
-    
-    elif 'filtered_mountains' in request.session:
-        request.session.pop('filtered_mountains')
-        request.session.modified = True  
-        return redirect('mountains:mountain_list')
-    
-    else:
-        return HttpResponseBadRequest("Bad Request")
-
-
 def mountain_list(request):
     mountains = Mountain.objects.all()
     user = request.user
     
-    if request.method == 'POST':
-        tags = request.POST.getlist('tags')
-        sido = request.POST.get('sido2')
-        gugun = request.POST.get('gugun2')
-        search_query = request.POST.get('search_query')
-        filter_condition = Q()
+    tags = request.GET.getlist('tags')
+    sido = request.GET.get('sido')
+    gugun = request.GET.get('gugun')
+    search_query = request.GET.get('search_query')
+    sort = request.GET.get('sort', None)
 
-        if sido and gugun:
-            if ('광역시' in sido) or ('특별시' in sido):
-                filter_condition.add(Q(region__contains=sido), filter_condition.AND)
-            else:
-                if '전체' in gugun:
-                    filter_condition.add(Q(region__contains=sido), filter_condition.AND)
-                else:
-                    filter_condition.add(Q(region__contains=sido) & Q(region__contains=gugun), filter_condition.AND)
+    filter_condition = Q()
 
-        if tags:
-            filtered_mountains = mountains.filter(review__tags__pk__in=tags).distinct()
-            int_tags = list(map(int, tags))
-            filtered_pks = []
-            for filtered_mountain in filtered_mountains:
-                top_tags_pk = filtered_mountain.top_tags_pk
-                if any((tag_pk in top_tags_pk) for tag_pk in int_tags):
-                    filtered_pks.append(filtered_mountain.pk)
-            mountains = mountains.filter(pk__in=filtered_pks)
+    if sido and gugun:
+        region_filter = Q(region__contains=sido)
+        if '전체' not in gugun:
+            region_filter &= Q(region__contains=gugun)
+        filter_condition &= region_filter
 
-        if search_query:
-            mountains = mountains.filter(name__icontains=search_query)
+    if tags:
+        filtered_mountains = mountains.filter(review__tags__pk__in=tags).distinct()
+        int_tags = list(map(int, tags))
+        filtered_pks = []
+        for filtered_mountain in filtered_mountains:
+            top_tags_pk = filtered_mountain.top_tags_pk
+            if any((tag_pk in top_tags_pk) for tag_pk in int_tags):
+                filtered_pks.append(filtered_mountain.pk)
+        mountains = mountains.filter(pk__in=filtered_pks)
 
-        mountains = mountains.filter(filter_condition)
+    if search_query:
+        mountains = mountains.filter(name__icontains=search_query)
 
-        # 필터링된 객체를 세션에 저장
-        request.session['filtered_mountains'] = list(mountains.values_list('pk', flat=True))            
+    mountains = mountains.filter(filter_condition)
+        
+    if sort== 'likes':
+        mountains = mountains.annotate(likes_count=Count('likes')).order_by('-likes_count')  # 좋아요순으로 정렬
+    elif sort == 'reviews':
+        mountains = mountains.annotate(reviews_count2=Count('review')).order_by('-reviews_count2') # 리뷰순으로 정렬
+    elif sort == 'id':
+        mountains = mountains.order_by('id')  # 가나다순으로 정렬
+    elif sort== 'views':
+        mountains = mountains.order_by('-views')  # 조회순으로 정렬
+    elif sort == 'height':
+        mountains = mountains.order_by('height') # 고도순으로 정렬
 
-    elif request.method == 'GET':
-        filtered_pks = request.session.get('filtered_mountains', [])
-        if filtered_pks:
-            mountains = Mountain.objects.filter(pk__in=filtered_pks)
-        else:
-            mountains = Mountain.objects.all()
-        sort = request.GET.get('sort', None)
-            
-        if sort== 'likes':
-            mountains = mountains.annotate(likes_count=Count('likes')).order_by('-likes_count')  # 좋아요순으로 정렬
-        elif sort == 'reviews':
-            mountains = mountains.annotate(reviews_count2=Count('review')).order_by('-reviews_count2') # 리뷰순으로 정렬
-        elif sort == 'id':
-            mountains = mountains.order_by('id')  # 가나다순으로 정렬
-        elif sort== 'views':
-            mountains = mountains.order_by('-views')  # 조회순으로 정렬
-        elif sort == 'height':
-            mountains = mountains.order_by('height') # 고도순으로 정렬
-
-    page= request.GET.get('page', '1')
     per_page = 12
     paginator = Paginator(mountains, per_page)
+    page= request.GET.get('page', '1')
     page_obj = paginator.get_page(page)
 
     distances = mountains_distance(user, page_obj)
@@ -119,24 +89,8 @@ class CourseListView(LoginRequiredMixin, ListView):
         mountain_pk = self.kwargs['mountain_pk']
         mountain = Mountain.objects.get(pk=mountain_pk)
         sort = self.request.GET.get('sort', '')
-
         queryset = Course.objects.filter(mntn_name=mountain)
-
-        if sort== 'bookmarks':
-            queryset = queryset.annotate(num_bookmarks=Count('bookmarks')).order_by('-num_bookmarks')
-        elif sort == 'distance':
-            queryset = queryset.order_by('distance')
-        elif sort == 'hidden_time':
-            queryset = queryset.order_by('hidden_time')
-        elif sort == 'diff':
-            queryset = queryset.annotate(
-                diff_order=Case(
-                    When(diff='하', then=1),
-                    When(diff='중', then=2),
-                    When(diff='상', then=3),
-                    default=4
-                )
-            ).order_by('diff_order')
+        queryset = sort_courses(queryset, sort)
 
         return queryset
 
@@ -168,61 +122,28 @@ class CourseListView(LoginRequiredMixin, ListView):
 
 
 def course_all_list(request):
-    courses = Course.objects.all()
+    sido = request.GET.get('sido', '')
+    gugun = request.GET.get('gugun', '')
+    mountain = Mountain.objects.all()
 
-    if request.method == 'POST':
-        sido = request.POST.get('sido1', '')
-        gugun = request.POST.get('gugun1', '')
-
-        if sido and gugun:
-            if ('광역시' in sido) or ('특별시' in sido):
-                mountain = Mountain.objects.filter(Q(region__contains=sido))
-                courses = courses.filter(mntn_name__in=mountain)
-            else:
-                if '전체' in gugun:
-                    mountain = Mountain.objects.filter(Q(region__contains=sido))
-                    courses = courses.filter(mntn_name__in=mountain)
-                else:
-                    mountain = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
-                    courses = courses.filter(mntn_name__in=mountain)
-        # 필터링된 객체를 세션에 저장
-        request.session['filtered_courses'] = list(courses.values_list('pk', flat=True))
-
-    elif request.method == 'GET':
-        filtered_pks = request.session.get('filtered_courses', [])
-        if filtered_pks:
-            courses = Course.objects.filter(pk__in=filtered_pks)
+    if sido and gugun:
+        if ('광역시' in sido) or ('특별시' in sido):
+            mountain = Mountain.objects.filter(Q(region__contains=sido))
         else:
-            courses = Course.objects.all()
+            if '전체' in gugun:
+                mountain = Mountain.objects.filter(Q(region__contains=sido))
+            else:
+                mountain = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
 
-        sort = request.GET.get('sort', None)
-
-        if sort == 'bookmarks':
-            courses = courses.annotate(bookmarks_count=Count('bookmarks')).order_by('-bookmarks_count')
-
-        elif sort == 'hidden_time':
-            courses = courses.order_by('hidden_time')
-
-        elif sort == 'distance':
-            courses = courses.order_by('distance')            
-        
-        elif sort == 'id':
-            courses = courses.order_by('id') 
-
-        elif sort == 'diff':
-            courses = courses.annotate(
-                diff_order=Case(
-                    When(diff='하', then=1),
-                    When(diff='중', then=2),
-                    When(diff='상', then=3),
-                    default=4
-                )
-            ).order_by('diff_order')    
+    courses = Course.objects.filter(mntn_name__in=mountain)
+    sort = request.GET.get('sort', None)
+    courses = sort_courses(courses, sort) # 정렬된 코스 가져오기.
 
     page= request.GET.get('page', '1')
     per_page = 10
     paginator = Paginator(courses, per_page)
-    page_obj = paginator.get_page(page)        
+    page_obj = paginator.get_page(page)
+    
     context = {
         'page_obj': page_obj,
     }
@@ -255,14 +176,31 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
             'detail_data': detail_data,
         })
         return context
+    
+
+def sort_courses(courses, sort_option):
+    if sort_option == 'bookmarks':
+        return courses.annotate(bookmarks_count=Count('bookmarks')).order_by('-bookmarks_count')
+    elif sort_option == 'hidden_time':
+        return courses.order_by('hidden_time')
+    elif sort_option == 'distance':
+        return courses.order_by('distance')
+    elif sort_option == 'id':
+        return courses.order_by('id')
+    elif sort_option == 'diff':
+        return courses.annotate(
+            diff_order=Case(
+                When(diff='하', then=1),
+                When(diff='중', then=2),
+                When(diff='상', then=3),
+                default=4
+            )
+        ).order_by('diff_order')
+    else:
+        return courses    
 
 
 class gpxDownloadView(LoginRequiredMixin, View):
-    def dispatch(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            return self.post(request, *args, **kwargs)
-        return super().dispatch(request, *args, **kwargs)    
-    
     def post(self, request, mountain_pk, course_pk):
         course = Course.objects.get(pk=course_pk)
         geom = course.geom
