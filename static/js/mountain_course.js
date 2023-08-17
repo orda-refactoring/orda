@@ -175,7 +175,7 @@ const courseId = e.target.dataset.courseId;
 const mountainId = e.target.dataset.mountainId;
 axios({
   method: 'POST',
-  url: `/mountains/${mountainId}/course/${courseId}/bookmark/`,
+  url: `/mountains/${mountainId}/courses/${courseId}/bookmark/`,
   headers: {"X-CSRFToken" : bookmarkCsrftokenLike},
 }).then((response) => {
   const isBookmarked = response.data.is_bookmarked;
