@@ -7,6 +7,11 @@ urlpatterns = [
 
     path('', mountain_list, name='mountain_list'),
     path('<int:pk>/', MountainDetailView.as_view(), name='mountain_detail'),
+
+    path('<int:mountain_pk>/get_weather_forecast/', get_weather_forecast, name='get_weather_forecast'),
+    path('<int:mountain_pk>/get_air/', get_air, name='get_air'),
+    path('<int:mountain_pk>/get_news/', get_news, name='get_news'),
+
     path('<int:mountain_pk>/likes/', mountain_likes, name='mountain_likes'),
     path('<int:mountain_pk>/courses/', CourseListView.as_view(), name='course_list'),
     path('<int:mountain_pk>/courses/<int:course_pk>/bookmark/', bookmark, name='bookmark'),
