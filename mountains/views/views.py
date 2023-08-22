@@ -5,7 +5,7 @@ from mountains.forms import SearchForm
 from utils.weather import get_weather, get_direction
 from utils.distance import mountains_distance
 from utils.helpers import serialize_courses
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, When, Case, Q
 from django.core.paginator import Paginator
