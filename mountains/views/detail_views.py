@@ -34,7 +34,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             request.session[f'mountain_viewed_{self.object.pk}'] = True
 
         context = self.get_context_data(object=self.object)
-        context.update(self.get_news())
+
         return self.render_to_response(context)
     
     def get_context_data(self, **kwargs):
@@ -51,14 +51,6 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
         most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
 
-        # 날씨
-        now_weather_data = self.get_weather_forecast()
-        
-        # 미세 먼지 및 오존
-        air_data = self.get_air()
-        fine_dust, ozone = process_air_data(air_data)
-        region = self.get_formatted_region(mountain.region)
-
         context = {
             # 산 관련
             'mountain': mountain,
@@ -70,76 +62,23 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             'form': ReviewCreationForm(),
             'reviews': reviews,
             'most_liked_review': most_liked_review,
-
-            # 날씨
-            'tem': now_weather_data['기온'],
-            'hum': now_weather_data['습도'],
-            'sky': now_weather_data['하늘상태'],
-            'rain': now_weather_data['강수량'],
-            'vec': now_weather_data['풍향'],
-            'wsd': now_weather_data['풍속'],
-            'now_time': now_weather_data['현재시각'],
-            'sun': ['0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'],
-            'moon': ['2000', '2100', '2200', '2300', '0000', '0100', '0200', '0300', '0400', '0500', '0600'],
-
-            # 미세먼지, 오존
-            'region': region,
-            'fine_dust': fine_dust,
-            'ozone': ozone,
         }
         
         return context
-        
-    def get_formatted_region(self, region):
-        split_region = (region).split()
-        region = split_region[0]
 
-        special_chars = [',', '/']
-        for char in special_chars:
-            if region.endswith(char):
-                region = region[:-1]
-        return region
-        
-    def get_news(self):
-        client_id = os.environ['NAVER_NEWS_CLIENT_ID']
-        client_secret = os.environ['NAVER_NEWS_SECRET']
-        query = self.get_object().name
-        encText = urllib.parse.quote(query.encode('utf-8'))
-
-        result = []
-        for start in range(1, 6, 1):
-            url = f'https://openapi.naver.com/v1/search/news.json?query={encText}&display={start}&sort=sim'
-
-            request = urllib.request.Request(url)
-            request.add_header("X-Naver-Client-Id", client_id)
-            request.add_header("X-Naver-Client-Secret", client_secret)
-            response = urllib.request.urlopen(request)
-            rescode = response.getcode()
-
-            if rescode == 200:
-                response_body = response.read().decode("utf-8")
-                items = json.loads(response_body)["items"]
-                for item in items:
-                    item['title'] = item['title'].replace('&apos;', "'")
-                    item['title'] = item['title'].replace('&quot;', "\"")
-                    item['title'] = item['title'].replace('<b>', "")
-                    item['title'] = item['title'].replace('</b>', "")
-                result.extend(items)
-        
-        result = [dict(t) for t in {tuple(d.items()) for d in result}]
-
-        return {
-            'result': result,
-        }
     
-    def get_weather_forecast(self):
-        mountain = self.get_object()
+def get_weather_forecast(request, mountain_pk):
+    try:
+        mountain = Mountain.objects.get(pk=mountain_pk)
         # API 요청을 위한 URL과 파라미터 설정
         url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
 
         serviceKey = os.environ['WEATHER_KEY']
-        serviceKeyDecoded = unquote(serviceKey, 'UTF-8')
 
+        if not serviceKey:
+            raise Exception("날씨 API 환경변수가 설정되어 있지 않습니다.")
+        
+        serviceKeyDecoded = unquote(serviceKey, 'UTF-8')
         now = datetime.now()
         today = datetime.today().strftime("%Y%m%d")
         y = date.today() - timedelta(days=1)
@@ -217,20 +156,20 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             now_time = str(now.hour)+'0'+'0'
 
         queryParams = '?' + urlencode({ 
-              quote_plus('serviceKey') : serviceKeyDecoded,
-              quote_plus('base_date') : base_date,
-              quote_plus('base_time') : base_time,
-              quote_plus('nx') : nx,
-              quote_plus('ny') : ny,
-              quote_plus('dataType') : 'json',
-              quote_plus('numOfRows') : '1000'
-              })
+                quote_plus('serviceKey') : serviceKeyDecoded,
+                quote_plus('base_date') : base_date,
+                quote_plus('base_time') : base_time,
+                quote_plus('nx') : nx,
+                quote_plus('ny') : ny,
+                quote_plus('dataType') : 'json',
+                quote_plus('numOfRows') : '1000'
+                })
 
         # API 요청 보내기
         response = requests.get(url + queryParams, verify=False)
         items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
         now_weather_data = {}
-    
+
         for item in items['item']:
             # 기온
             if item['category'] == 'T1H' and item['fcstDate'] == today and item['fcstTime'] == now_time:
@@ -253,14 +192,32 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             # 현재시각
             if item['fcstDate'] == today and item['fcstTime'] == now_time:
                 now_weather_data['현재시각'] = now_time
-        return now_weather_data
 
-    def get_air(self):
+        return JsonResponse({
+                'tem': now_weather_data['기온'],
+                'hum': now_weather_data['습도'],
+                'sky': now_weather_data['하늘상태'],
+                'rain': now_weather_data['강수량'],
+                'vec': now_weather_data['풍향'],
+                'wsd': now_weather_data['풍속'],
+                'now_time': now_weather_data['현재시각'],
+                'sun': ['0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'],
+                'moon': ['2000', '2100', '2200', '2300', '0000', '0100', '0200', '0300', '0400', '0500', '0600'],
+        })
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_air(request, mountain_pk):
+    try: 
+        mountain = Mountain.objects.get(pk=mountain_pk)
         today = datetime.today().strftime("%Y-%m-%d")
         yesterday = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
 
         url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMinuDustFrcstDspth"
         serviceKey = os.environ['AIR_KEY']
+        if not serviceKey:
+                raise Exception("AIR_KEY 환경 변수가 설정되어 있지 않습니다.")
         serviceKeyDecoded = unquote(serviceKey, 'UTF-8')
 
         queryParams = '?' + urlencode({ 
@@ -272,6 +229,10 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             })
 
         response = requests.get(url + queryParams, verify=False)
+
+        if response.status_code != 200:
+            raise Exception(f"API 요청이 실패하였습니다. 상태 코드: {response.status_code}")
+        
         items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
 
         air_data = {}
@@ -283,9 +244,68 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
             if item['informCode'] == 'O3' and item['informData'] == today:
                 air_data['오존'] = item['informGrade']
 
-        return air_data
+        fine_dust, ozone = process_air_data(air_data)
+        region = get_formatted_region(mountain.region)
+
+        return JsonResponse({
+            'region': region,
+            'fine_dust': fine_dust,
+            'ozone': ozone,
+        })
     
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_formatted_region(region):
+    split_region = (region).split()
+    region = split_region[0]
+
+    special_chars = [',', '/']
+    for char in special_chars:
+        if region.endswith(char):
+            region = region[:-1]
+    return region
+
+def get_news(request, mountain_pk):
+    try:
+        mountain = Mountain.objects.get(pk=mountain_pk)
+        query = mountain.name
+        encText = urllib.parse.quote(query.encode('utf-8'))
+
+        client_id = os.environ['NAVER_NEWS_CLIENT_ID']
+        client_secret = os.environ['NAVER_NEWS_SECRET']
+
+        if not client_id or not client_secret:
+            raise Exception("네이버 뉴스 API 환경 변수가 설정되어 있지 않습니다.")
+
+        result = []
+        for start in range(1, 6, 1):
+            url = f'https://openapi.naver.com/v1/search/news.json?query={encText}&display={start}&sort=sim'
+
+            request = urllib.request.Request(url)
+            request.add_header("X-Naver-Client-Id", client_id)
+            request.add_header("X-Naver-Client-Secret", client_secret)
+            response = urllib.request.urlopen(request)
+            rescode = response.getcode()
+
+            if rescode == 200:
+                response_body = response.read().decode("utf-8")
+                items = json.loads(response_body)["items"]
+                for item in items:
+                    item['title'] = item['title'].replace('&apos;', "'")
+                    item['title'] = item['title'].replace('&quot;', "\"")
+                    item['title'] = item['title'].replace('<b>', "")
+                    item['title'] = item['title'].replace('</b>', "")
+                result.extend(items)
+        
+        result = [dict(t) for t in {tuple(d.items()) for d in result}]
+
+        return JsonResponse({'result': result})
     
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 @login_required
 def mountain_likes(request, mountain_pk):
     mountain = get_object_or_404(Mountain, pk=mountain_pk)

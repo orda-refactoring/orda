@@ -16,6 +16,7 @@ def get_direction(deg):
         return '남동'
     elif '157.5' <= deg < '202.5':
         return '남'
+    elif '202.5' <= deg < '247.5':
         return '남서'
     elif '247.5' <= deg < '292.5':
         return '서'
