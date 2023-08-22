@@ -21,6 +21,52 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+class MountainDetailView(LoginRequiredMixin, DetailView):
+    model = Mountain
+    template_name = 'mountains/mountain_detail.html'
+    context_object_name = 'mountain'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not request.session.get(f'mountain_viewed_{self.object.pk}', False):
+            Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
+            request.session[f'mountain_viewed_{self.object.pk}'] = True
+
+        context = self.get_context_data(object=self.object)
+
+        return self.render_to_response(context)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # 산
+        mountain = self.get_object()
+        courses = mountain.course_set.all()
+        data = serialize_courses(courses, 'geom')
+        distance = mountain_distance(user, mountain)
+
+        # 리뷰
+        reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
+        most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
+
+        context = {
+            # 산 관련
+            'mountain': mountain,
+            'mountain_distance': distance,
+            'courses': courses,
+            'courses_data': data,
+
+            # 리뷰 관련
+            'form': ReviewCreationForm(),
+            'reviews': reviews,
+            'most_liked_review': most_liked_review,
+        }
+        
+        return context
+
+    
 def get_weather_forecast(request, mountain_pk):
     mountain = Mountain.objects.get(pk=mountain_pk)
     # API 요청을 위한 URL과 파라미터 설정
@@ -142,7 +188,7 @@ def get_weather_forecast(request, mountain_pk):
         # 현재시각
         if item['fcstDate'] == today and item['fcstTime'] == now_time:
             now_weather_data['현재시각'] = now_time
-
+    print(now_weather_data['강수량'])
     return JsonResponse({
             'tem': now_weather_data['기온'],
             'hum': now_weather_data['습도'],
@@ -237,201 +283,6 @@ def get_news(request, mountain_pk):
     return JsonResponse({'result': result})
 
 
-class MountainDetailView(LoginRequiredMixin, DetailView):
-    model = Mountain
-    template_name = 'mountains/mountain_detail.html'
-    context_object_name = 'mountain'
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if not request.session.get(f'mountain_viewed_{self.object.pk}', False):
-            Mountain.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
-            request.session[f'mountain_viewed_{self.object.pk}'] = True
-
-        context = self.get_context_data(object=self.object)
-
-        return self.render_to_response(context)
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-
-        # 산
-        mountain = self.get_object()
-        courses = mountain.course_set.all()
-        data = serialize_courses(courses, 'geom')
-        distance = mountain_distance(user, mountain)
-
-        # 리뷰
-        reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
-        most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
-
-        # # 날씨
-        # now_weather_data = self.get_weather_forecast()
-        
-        context = {
-            # 산 관련
-            'mountain': mountain,
-            'mountain_distance': distance,
-            'courses': courses,
-            'courses_data': data,
-
-            # 리뷰 관련
-            'form': ReviewCreationForm(),
-            'reviews': reviews,
-            'most_liked_review': most_liked_review,
-
-            # # 날씨
-            # 'tem': now_weather_data['기온'],
-            # 'hum': now_weather_data['습도'],
-            # 'sky': now_weather_data['하늘상태'],
-            # 'rain': now_weather_data['강수량'],
-            # 'vec': now_weather_data['풍향'],
-            # 'wsd': now_weather_data['풍속'],
-            # 'now_time': now_weather_data['현재시각'],
-            # 'sun': ['0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'],
-            # 'moon': ['2000', '2100', '2200', '2300', '0000', '0100', '0200', '0300', '0400', '0500', '0600'],
-
-        }
-        
-        return context
-        
-    # def get_formatted_region(self, region):
-    #     split_region = (region).split()
-    #     region = split_region[0]
-
-    #     special_chars = [',', '/']
-    #     for char in special_chars:
-    #         if region.endswith(char):
-    #             region = region[:-1]
-    #     return region
-        
-    
-    # def get_weather_forecast(self):
-    #     mountain = self.get_object()
-    #     # API 요청을 위한 URL과 파라미터 설정
-    #     url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
-
-    #     serviceKey = os.environ['WEATHER_KEY']
-    #     serviceKeyDecoded = unquote(serviceKey, 'UTF-8')
-
-    #     now = datetime.now()
-    #     today = datetime.today().strftime("%Y%m%d")
-    #     y = date.today() - timedelta(days=1)
-    #     yesterday = y.strftime("%Y%m%d")
-
-    #     NX = 149            ## X축 격자점 수
-    #     NY = 253            ## Y축 격자점 수
-
-    #     Re = 6371.00877     ##  지도반경
-    #     grid = 5.0          ##  격자간격 (km)
-    #     slat1 = 30.0        ##  표준위도 1
-    #     slat2 = 60.0        ##  표준위도 2
-    #     olon = 126.0        ##  기준점 경도
-    #     olat = 38.0         ##  기준점 위도
-    #     xo = 210 / grid     ##  기준점 X좌표
-    #     yo = 675 / grid     ##  기준점 Y좌표
-    #     first = 0
-
-    #     if first == 0 :
-    #         PI = math.asin(1.0) * 2.0
-    #         DEGRAD = PI/ 180.0
-            
-    #         re = Re / grid
-    #         slat1 = slat1 * DEGRAD
-    #         slat2 = slat2 * DEGRAD
-    #         olon = olon * DEGRAD
-    #         olat = olat * DEGRAD
-
-    #         sn = math.tan(PI * 0.25 + slat2 * 0.5) / math.tan(PI * 0.25 + slat1 * 0.5)
-    #         sn = math.log(math.cos(slat1) / math.cos(slat2)) / math.log(sn)
-    #         sf = math.tan(PI * 0.25 + slat1 * 0.5)
-    #         sf = math.pow(sf, sn) * math.cos(slat1) / sn
-    #         ro = math.tan(PI * 0.25 + olat * 0.5)
-    #         ro = re * sf / math.pow(ro, sn)
-    #         first = 1
-
-    #     def mapToGrid(lat, lon, code = 0 ):
-    #         ra = math.tan(PI * 0.25 + lat * DEGRAD * 0.5)
-    #         ra = re * sf / pow(ra, sn)
-    #         theta = lon * DEGRAD - olon
-    #         if theta > PI :
-    #             theta -= 2.0 * PI
-    #         if theta < -PI :
-    #             theta += 2.0 * PI
-    #         theta *= sn
-    #         x = (ra * math.sin(theta)) + xo
-    #         y = (ro - ra * math.cos(theta)) + yo
-    #         x = int(x + 1.5)
-    #         y = int(y + 1.5)
-    #         return x, y
-        
-    #     nx, ny = mapToGrid(mountain.geom.y, mountain.geom.x)
-
-    #     if 0 < now.minute <= 59: # base_time와 base_date 구하는 함수
-    #         if now.hour==0:
-    #             base_time = "2330"
-    #             base_date = yesterday
-    #         else:
-    #             pre_hour = now.hour-1
-    #             if pre_hour < 10:
-    #                 base_time = "0" + str(pre_hour) + "30"
-    #             else:
-    #                 base_time = str(pre_hour) + "30"
-    #             base_date = today
-    #     else:
-    #         if now.hour < 10:
-    #             base_time = "0" + str(now.hour-1) + "30"
-    #         else:
-    #             base_time = str(now.hour-1) + "30"
-    #         base_date = today
-
-    #     if now.hour < 10:
-    #         now_time = '0'+str(now.hour)+'0'+'0'
-    #     else:
-    #         now_time = str(now.hour)+'0'+'0'
-
-    #     queryParams = '?' + urlencode({ 
-    #           quote_plus('serviceKey') : serviceKeyDecoded,
-    #           quote_plus('base_date') : base_date,
-    #           quote_plus('base_time') : base_time,
-    #           quote_plus('nx') : nx,
-    #           quote_plus('ny') : ny,
-    #           quote_plus('dataType') : 'json',
-    #           quote_plus('numOfRows') : '1000'
-    #           })
-
-    #     # API 요청 보내기
-    #     response = requests.get(url + queryParams, verify=False)
-    #     items = response.json().get('response').get('body').get('items') #데이터들 아이템에 저장
-    #     now_weather_data = {}
-    
-    #     for item in items['item']:
-    #         # 기온
-    #         if item['category'] == 'T1H' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['기온'] = item['fcstValue']
-    #         # 습도
-    #         if item['category'] == 'REH' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['습도'] = item['fcstValue']
-    #         # 하늘상태: 맑음(1) 구름많은(3) 흐림(4)
-    #         if item['category'] == 'SKY' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['하늘상태'] = item['fcstValue']
-    #         # 1시간 동안 강수량
-    #         if item['category'] == 'RN1' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['강수량'] = item['fcstValue']
-    #         # 풍향
-    #         if item['category'] == 'VEC' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['풍향'] = get_direction(item['fcstValue']) # utils 참조
-    #         # 풍속
-    #         if item['category'] == 'WSD' and item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['풍속'] = item['fcstValue']
-    #         # 현재시각
-    #         if item['fcstDate'] == today and item['fcstTime'] == now_time:
-    #             now_weather_data['현재시각'] = now_time
-    #     return now_weather_data
-    
-    
 @login_required
 def mountain_likes(request, mountain_pk):
     mountain = get_object_or_404(Mountain, pk=mountain_pk)

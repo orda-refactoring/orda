@@ -6,7 +6,7 @@ from utils.weather import get_weather, get_direction
 from utils.distance import mountains_distance
 from utils.helpers import serialize_courses
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, When, Case, Q
 from django.core.paginator import Paginator
 from django.core.mail import EmailMessage
@@ -259,7 +259,7 @@ def weather_forecast(request, pk):
         date_key = dt_txt.strftime('%d일')  # 날짜를 key로 사용
         forecast['dt_txt'] = dt_txt.strftime('%H시')
         forecast['pop'] = int(forecast['pop'] * 100)
-        forecast['wind']['deg'] = get_direction(forecast['wind']['deg'])
+        forecast['wind']['deg'] = get_direction(str(forecast['wind']['deg']))
 
         if date_key not in daily_data:
             daily_data[date_key] = []  # 새로운 날짜의 데이터를 빈 리스트로 초기화
