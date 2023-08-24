@@ -1,0 +1,140 @@
+@import 'style.scss';
+
+.select__form{
+  text-align: end;
+  .select__box{
+    border-bottom: 3px var(--main-color) solid;
+    padding: 10px 10px;
+  }
+}
+
+
+.mountains__grid--wrap {
+  @include grid(){
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.mountains--card {
+  max-width: 24rem;
+  width: 100%;
+  @include border(rgb(222, 226, 230));
+  border-radius: 8px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  &:hover .display{
+    opacity: 0.7;
+    background-color: black;
+    color:white;
+    padding-left: 10px;
+    }
+}
+
+.img--size {
+  height: 280px;
+  width: 382px;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.like__btn {
+  top:10px; 
+  right: 10px; 
+}
+
+.like__btn--style{
+  z-index: 1;
+  font: {
+    weight:bold;
+    size:24px;
+  }
+  color: var(--red-color)
+}
+
+.display {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  width: 100%;
+}
+
+.mountain--name{
+  margin-bottom: 8px;
+  font: {
+    size: 24px;
+    weight: bold;
+  }
+  letter-spacing: -0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+}
+
+.mountain--etc{
+  margin-bottom: 4px;
+  font: {
+    size: 14px;
+    weight: 400;
+  }
+  color: #374151;
+}
+
+.page__btn {
+  font-weight: bold; 
+  padding: 3px;
+  font-size: 20px;
+  &:hover {
+    color: var(--background-color);
+  }
+}
+
+.pagination__link--active{
+  color: var(--green-btn);
+}
+
+@mixin xl{
+  @media (max-width: 1280px){
+    @content;
+  }
+}
+
+@mixin lg{
+  @media (max-width: 988px){
+    @content;
+  }
+}
+
+@mixin md{
+  @media (max-width: 768px){
+    @content;
+  }
+}
+
+@mixin sm{
+  @media (max-width: 576px){
+    @content;
+  }
+}
+
+@include xl{
+  .mountains__grid--wrap{
+    @include grid{
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+@include lg{
+  .mountains__grid--wrap{
+    @include grid{
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+@include md{
+}
+@include sm{
+  .mountains__grid--wrap{
+    @include grid{
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+}

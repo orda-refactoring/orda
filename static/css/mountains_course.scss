@@ -1,0 +1,163 @@
+@import 'style.scss';
+
+@mixin font($size, $weight:400){
+  font: {
+    size: $size;
+    weight: $weight;
+  }
+  @content;
+}
+
+.title__box {
+  margin: 10px 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.select__form{
+  text-align: end;
+  
+  .select__box{
+    border-bottom: 3px var(--main-color) solid;
+    padding: 10px 10px;
+    &:focus { 
+      outline: none;
+    }
+  }
+}
+
+th {
+  @include flex(){
+    align-items: start;
+  }
+}
+
+.course--wrap{
+  @include flex();
+  background-color: white;
+  @include border($grayshadow-color);
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 16px 0px;
+  position: relative;
+  @include grid(){
+    grid-template-columns: 3fr 1fr;
+  }
+
+  &:hover{
+    background-color: #fffaed !important;
+    .course--map{
+      @include border(#fffaed , 10px);
+    }
+  }
+}
+
+.course--map {
+  @include border(white, 10px);
+  @include w-h(100%, 300px);
+}
+
+.course--infobox {
+  @include flex(column){
+    justify-content: $justify-between;
+  };
+  @include margin2(10px);
+  @include padding(10px, 25px);
+  
+  .coursetitle--font {
+    @include font(26px, bold);
+    margin-bottom: 10px;
+  }
+
+  table{
+    th{
+      width: 100%;
+    }
+  }
+
+  .download-form{
+    input{
+      @include font(16px, bold);
+      &:hover{
+        color: var(--green-btn);
+      }
+    }
+  }
+
+  .flex--row{
+    input{
+      margin-right: 16px;
+      margin-bottom: 8px;
+      accent-color: $main-color;
+    }
+    label{
+      @include font(16px);
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.btn--spot{
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 35px;
+  color: rgb(229, 89, 59);
+  z-index: 10;
+}
+
+/* 페이지네이션 */ 
+.page__btn {
+  font-weight: bold; 
+  padding: 3px;
+  font-size: 20px;
+
+  &:hover {
+    color: $back-color
+  }
+}
+
+.pagination__link--active{
+  color: var(--green-btn);
+}
+
+
+.arrow--rotate {
+  border: 3px solid ;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: var(--sub-color);
+  margin-bottom: 10px;
+  margin-left: 8px;
+  font-size: 20px;
+  align-self:flex-end;
+
+  &:hover {
+    transform: rotate(75deg);
+    transition: transform 0.75s ease;
+    color: #75a64a;
+  }
+}
+
+@mixin md{
+  @media(max-width: 760px){
+    @content;
+  }
+}
+
+@include md{
+  .course--wrap{
+    flex-direction: column;
+    @include grid(){
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .course--infobox {
+    .download-form{
+      input{
+        @include margin(8px, 0, 8px);
+      }
+    }
+  }
+}

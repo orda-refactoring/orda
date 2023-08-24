@@ -8,19 +8,19 @@
 {% endblock style %}
 
 {% block content %}
-<div class="mountain__search--wrap">
-  <div class="d-flex">
-    <img style="width:30px; height:30px; margin-right: 10px;" class="mountain__search--titleimg" src="{% static 'img/goal_1.png' %}" alt="">
+<div class="wrap">
+  <div class="flex--row">
+    <img class="mountain__search--titleimg" src="{% static 'img/goal_1.png' %}" alt="">
     <h1 class="mountain__search--title">원하는 산을 검색해보세요!</h1>
   </div>
   <form method="Post" action="{% url 'mountains:mountain_list' %}" class="select__form">
     {% csrf_token %}
-    <div class="mountain__search--content" style="position: relative; margin: 0 auto;">
+    <div class="mountain__search--content position--relative " style="margin: 0 auto;">
       {% include 'mountains/search_region.html' %}
-      <div class="d-flex flex-column" style="width: 100%; padding: 0 25px;">        
-        <section class="d-flex flex-column" style="width: 100%;">
-          <select class="select__box focus:outline-none" name="sido2" id="sido2"></select>
-          <select class="select__box focus:outline-none" name="gugun2" id="gugun2"></select>
+      <div class="flex--col" style="width: 100%; padding: 0 25px;">        
+        <section class="flex--col" style="width: 100%;">
+          <select class="select__box" name="sido2" id="sido2"></select>
+          <select class="select__box" name="gugun2" id="gugun2"></select>
         </section>
 
         <section>
