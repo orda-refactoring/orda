@@ -15,6 +15,11 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
 class SearchView(FormView):
     template_name = 'mountains/search.html'
     form_class = SearchForm
@@ -78,7 +83,6 @@ def mountain_list(request):
     }
     return render(request, 'mountains/mountain_list.html', context)
 
-
 class CourseListView(LoginRequiredMixin, ListView):
     template_name = 'mountains/course_list.html'
     context_object_name = 'courses'
@@ -104,12 +108,26 @@ class CourseListView(LoginRequiredMixin, ListView):
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        courses_data = serialize_courses(page_obj, 'geom')
-        detail_data = {}
-        for course in page_obj:
-            course_detail = CourseDetail.objects.filter(crs_name_detail=course)
-            detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
+        cache_key1 = f'course_list_{hash(mountain.name)}_course'
+        cache_key2 = f'course_list_{hash(mountain.name)}_detail'
 
+        cached_data1 = cache.get(cache_key1)
+        cached_data2 = cache.get(cache_key2)
+
+        if cached_data1 is not None:
+            if cached_data2 is not None:
+                print('Already Caching')
+                courses_data = cached_data1
+                detail_data = cached_data2    
+        else:
+            courses_data = serialize_courses(page_obj, 'geom')
+            detail_data = {}
+            for course in page_obj:
+                course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+                detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
+
+        cache.set(cache_key1, courses_data)
+        cache.set(cache_key2, detail_data)
         context.update({
             'mountain': mountain,
             'courses': page_obj,
@@ -275,3 +293,8 @@ def weather_forecast(request, pk):
     return render(request, 'mountains/weather_forecast.html', context)
 
 
+# CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
+# @cache_page(CACHE_TTL)
+# def test(request):
+#     text = 'hello REDIS'
+#     return render(request, 'mountains/test.html', {'text': text})

@@ -27,4 +27,6 @@ urlpatterns = [
     path('<int:pk>/review/<int:review_pk>/likes/', review_likes, name='review_likes'),
     
     path('weather_forecast/<int:pk>/', weather_forecast, name='weather_forecast'),
+
+    # path('test/', test, name='test'),
 ]

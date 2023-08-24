@@ -20,6 +20,7 @@ from django.views.generic import DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.core.cache import cache
 
 class MountainDetailView(LoginRequiredMixin, DetailView):
     model = Mountain
@@ -44,12 +45,23 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         # 산
         mountain = self.get_object()
         courses = mountain.course_set.all()
-        data = serialize_courses(courses, 'geom')
+
+        cache_key = f'mountain_detail_{hash(mountain.name)}'
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            print('Already Caching')
+            data = cached_data
+        else:
+            data = serialize_courses(courses, 'geom')
+        
         distance = mountain_distance(user, mountain)
 
         # 리뷰
         reviews = Review.objects.filter(mountain=mountain).order_by('-created_at')
         most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
+
+        cache.set(cache_key, data)
 
         context = {
             # 산 관련

@@ -28,4 +28,3 @@ def serialize_courses(obj_list, *fields, attach=True):
                 return course_data
             else:
                 return geojson_data    
-
