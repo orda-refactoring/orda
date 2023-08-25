@@ -475,4 +475,12 @@ Sass 공부
 
 - 최지원
 ```
+mountains_weather
+	- scss를 이용한 코드 재사용성 강화 및 유지보수
+	- 불필요한 부분 코드 삭제 및 코드 수정
+	- 모바일 유저들을 위한 반응형 웹 디자인
+	
+변경사항으로 수정해야할 부분 / 오류수정(예정)
+	- mountains-detail (review, air-img)
+	- mountains_weather (스크롤바, 세세한 레이아웃 수정)
 ```
