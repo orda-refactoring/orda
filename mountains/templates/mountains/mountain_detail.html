@@ -116,47 +116,27 @@
             <div class="weather--wrap">
               <div class="flex--row flex__align--center" style="height: 60%; margin-bottom: 14px;">
                 <div class="weather--sky">
-                  {% if now_time in sun %}
-                    {% if sky == '1' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/sunny.png' %}" alt="아침맑음" title="맑음">
-                    {% elif sky == '3' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/suncloudy.png' %}" alt="아침구름많음" title="구름많음">
-                    {% elif sky == '4' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/overcast.png' %}" alt="흐림" title="흐림">
-                    {% endif %}
-                  {% else %}
-                    {% if sky == '1' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/moon.png' %}" alt="저녁맑음" title="맑음">
-                    {% elif sky == '3' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/mooncloudy.png' %}" alt="저녁구름많음" title="구름많음">
-                    {% elif sky == '4' %}
-                      <img class="weather--skyimg" src="{% static 'img/weather/overcast.png' %}" alt="흐림" title="흐림">
-                    {% endif %}
-                  {% endif %}
+                    <img class="weather--skyimg">
                 </div>
                 <div class="d-flex flex-row">
-                  <p class="weather--tem">{{ tem }}</p>
+                  <p class="weather--tem"></p>
                   <p style="font-size: 2rem; line-height: 140px;">℃</p>
                 </div>
               </div>
               <div class="weather--detailwrap">
-                <div class="weather--hvwr">
+                <div class="weather--hvwr" data-type="hum">
                   <p>습도</p>
-                  <p>{{ hum }} %</p>
+                  <p></p>
                 </div>
                 <div style="border-right: 1px solid #DBDBDB;"></div>
-                <div class="weather--hvwr">
+                <div class="weather--hvwr" data-type="wsd">
                   <p>바람</p>
-                  <p>{{ vec }} {{ wsd }} m/s</p>
+                  <p></p>
                 </div>
                 <div style="border-right: 1px solid #DBDBDB;"></div>
-                <div class="weather--hvwr">
+                <div class="weather--hvwr" data-type="rain">
                   <p>1시간강수량</p>
-                  {% if rain == '0' %}
-                    <p>- mm</p>
-                  {% else %}
-                    <p>{{ rain }}</p>
-                  {% endif %}
+                  <p></p>
                 </div>
               </div>
             </a>
@@ -164,46 +144,17 @@
           <div class="air--warp">
             <div class="flex--col flex__align--between align-items-center">
               <div class="air--fine_dust">
-                {% for key, value in fine_dust.items %}
-                  {% if key == region %}
-                    <div class="air--imgbox">
-                      {% if value == '좋음' %}
-                        <img class="air--img" src="{% static 'img/air/smile.png' %}" alt="미세먼지좋음">
-                      {% elif value == '보통' %}
-                        <img class="air--img" src="{% static 'img/air/neutral.png' %}" alt="미세먼지보통">
-                      {% else %}
-                        <img class="air--img" src="{% static 'img/air/sad.png' %}" alt="미세먼지나쁨">
-                      {% endif %}
-                    </div>
-                    <p>미세먼지 {{ value }}</p>
-                  {% endif %}
-                {% endfor %}
+                {% comment %} 미세먼지 js {% endcomment %}
               </div>
               <div class="air--ozone">
-                {% for key, value in ozone.items %}
-                  {% if key == region %}
-                  <div class="air--imgbox">
-                    {% if value == '좋음' %}
-                      <img class="air--img" src="{% static 'img/air/smile.png' %}" alt="오존좋음">
-                    {% elif value == '보통' %}
-                      <img class="air--img" src="{% static 'img/air/neutral.png' %}" alt="오존보통">
-                    {% else %}
-                      <img class="air--img" src="{% static 'img/air/sad.png' %}" alt="오존나쁨">
-                    {% endif %}
-                  </div>
-                  <p>오존 {{ value }}</p>
-                  {% endif %}
-                {% endfor %}
+                {% comment %} 오존 js {% endcomment %}
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="mountains__detail--newslist">
-        <p class="mountains__detail--newstitle">관련 뉴스</p>
-        {% for item in result %}
-          <a class="mountains__detail--newsitem" href="{{ item.link }}"><p title="{{ item.title }}">{{ item.title }}</p></a>
-        {% endfor %}
+        {% comment %} 관련뉴스 js {% endcomment %}
       </div>
     </div>
   </section>
@@ -661,7 +612,7 @@ function initMap(courseId, course) {
         event.preventDefault(); // 폼의 기본 동작 중지
         const mountainPk = bookmarkBtn.getAttribute('data-mountain-pk');
         const coursePk = bookmarkBtn.getAttribute('data-course-pk');
-        fetch(`/mountains/${mountainPk}/course/${coursePk}/bookmark/`, {
+        fetch(`/mountains/${mountainPk}/courses/${coursePk}/bookmark/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -776,7 +727,7 @@ function initMap(courseId, course) {
       var reviewId = this.getAttribute("data-review-id");
       var mountainId = this.getAttribute("data-mountain-id");
 
-      var url = '/mountains/' + mountainId + '/review_update/' + reviewId;
+      var url = '/mountains/' + mountainId + '/review/' + reviewId + '/update/';
       var features = 'width=1000,height=380,resizable=yes';
       window.open(url, '_blank', features);
     });
@@ -887,7 +838,7 @@ function initMap(courseId, course) {
       const reviewId = event.target.dataset.reviewId;
       axios({
         method: 'post',
-        url: `/mountains/${mountainId}/review_likes/${reviewId}/`,
+        url: `/mountains/${mountainId}/review/${reviewId}/likes/`,
         headers: {'X-CSRFToken': rlcsrfToken},
       }).then((response) => {
         const isLiked = response.data.rl_is_liked
@@ -1030,6 +981,144 @@ function initMap(courseId, course) {
       }
       }
   )})
+</script>
+
+  $(document).ready(function() {
+    // 뉴스 데이터를 비동기적으로 가져옵니다
+    function fetchNewsData(mountainId) {
+        $.ajax({
+            url: `get_news/`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // 가져온 데이터로 HTML 엘리먼트를 업데이트합니다
+                const newsListContainer = $('.mountains__detail--newslist');
+                newsListContainer.empty(); // 기존 내용 지우기
+
+                // 뉴스 제목 부분 추가
+                const newsTitle = $('<p>').addClass('mountains__detail--newstitle').text('관련 뉴스');
+                  newsListContainer.append(newsTitle);
+
+                // 뉴스 아이템을 반복하여 추가합니다
+                data.result.forEach(function(item) {
+                    const newsItemLink = $('<a>').addClass('mountains__detail--newsitem').attr('href', item.link);
+                    const newsItemTitle = $('<p>').attr('title', item.title).text(item.title);
+
+                    newsItemLink.append(newsItemTitle);
+                    newsListContainer.append(newsItemLink);
+                });
+            },
+            error: function() {
+                console.error('뉴스 데이터를 가져오는데 에러가 발생했습니다.');
+            }
+        });
+    }
+
+    function fetchAirData(mountainId) {
+      $.ajax({
+          url: `get_air/`, // 실제 URL로 업데이트하세요
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+              // 가져온 데이터로 HTML 엘리먼트를 업데이트합니다
+              const region = data.region;
+              const fineDust = data.fine_dust;
+              const ozone = data.ozone;
+
+              // 미세먼지 엘리먼트 업데이트
+              const fineDustContainer = $('.air--fine_dust');
+              fineDustContainer.empty();
+              const fineDustTitle = $('<p>').text(`미세먼지 ${fineDust[region]}`);
+              fineDustContainer.append(fineDustTitle);
+
+              // 미세먼지 이미지 엘리먼트 업데이트
+              const fineDustImg = $('<img>').addClass('air--img').attr('src', fineDust[region] === '좋음' ? '{% static 'img/air/smile.png' %}' : (fineDust[region] === '보통' ? '{% static 'img/air/neutral.png' %}' : '{% static 'img/air/sad.png' %}')).attr('alt', `미세먼지${fineDust[region]}`);
+              fineDustContainer.prepend(fineDustImg);
+
+              // 오존 엘리먼트 업데이트
+              const ozoneContainer = $('.air--ozone');
+              ozoneContainer.empty();
+              const ozoneTitle = $('<p>').text(`오존 ${ozone[region]}`);
+              ozoneContainer.append(ozoneTitle);
+
+              // 오존 이미지 엘리먼트 업데이트
+              const ozoneImg = $('<img>').addClass('air--img').attr('src', ozone[region] === '좋음' ? '{% static 'img/air/smile.png' %}' : (ozone[region] === '보통' ? '{% static 'img/air/neutral.png' %}' : '{% static 'img/air/sad.png' %}')).attr('alt', `오존${ozone[region]}`);
+              ozoneContainer.prepend(ozoneImg);
+          },
+          error: function() {
+              console.error('대기 데이터를 가져오는데 에러가 발생했습니다.');
+          }
+      });
+  }
+  function fetchWeatherData(mountainId) {
+    $.ajax({
+        url: `get_weather_forecast/`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // 가져온 데이터로 HTML 엘리먼트를 업데이트합니다
+            const weatherContainer = $('.weather--wrap');
+            // 하늘상태 이미지 업데이트
+            const skyImg = weatherContainer.find('.weather--skyimg');
+            if (data.sun.indexOf(data.now_time) !== -1) {
+                if (data.sky === '1') {
+                    skyImg.attr('src', '{% static "img/weather/sunny.png" %}');
+                    skyImg.attr('alt', '아침맑음');
+                    skyImg.attr('title', '맑음');
+                } else if (data.sky === '3') {
+                    skyImg.attr('src', '{% static "img/weather/suncloudy.png" %}');
+                    skyImg.attr('alt', '아침구름많음');
+                    skyImg.attr('title', '구름많음');
+                } else if (data.sky === '4') {
+                    skyImg.attr('src', '{% static "img/weather/overcast.png" %}');
+                    skyImg.attr('alt', '흐림');
+                    skyImg.attr('title', '흐림');
+                }
+            } else {
+                if (data.sky === '1') {
+                    skyImg.attr('src', '{% static "img/weather/moon.png" %}');
+                    skyImg.attr('alt', '저녁맑음');
+                    skyImg.attr('title', '맑음');
+                } else if (data.sky === '3') {
+                    skyImg.attr('src', '{% static "img/weather/mooncloudy.png" %}');
+                    skyImg.attr('alt', '저녁구름많음');
+                    skyImg.attr('title', '구름많음');
+                } else if (data.sky === '4') {
+                    skyImg.attr('src', '{% static "img/weather/overcast.png" %}');
+                    skyImg.attr('alt', '흐림');
+                    skyImg.attr('title', '흐림');
+                }
+            }
+
+            // 기온 업데이트
+            weatherContainer.find('.weather--tem').text(data.tem);
+
+            // 습도 업데이트
+            weatherContainer.find('.weather--hvwr[data-type="hum"]').find('p:last-child').text(data.hum + ' %');
+
+            // 바람 업데이트
+            weatherContainer.find('.weather--hvwr[data-type="wsd"]').find('p:last-child').text(data.vec + ' ' + data.wsd + ' m/s');
+
+            // 1시간 강수량 업데이트
+            const rainContainer = weatherContainer.find('.weather--hvwr[data-type="rain"]').find('p:last-child');
+            if (data.rain === '강수없음') {
+                rainContainer.text('- mm');
+            } else {
+                rainContainer.text(data.rain);
+            }
+        },
+        error: function() {
+            console.error('날씨 데이터를 가져오는데 에러가 발생했습니다.');
+        }
+    });
+}
+
+    // 페이지 로딩 시 뉴스 데이터를 가져오는 함수를 호출합니다
+    const mountainId = {{ mountain.pk }}
+    fetchNewsData(mountainId);
+    fetchAirData(mountainId);
+    fetchWeatherData(mountainId);
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

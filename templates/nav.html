@@ -31,9 +31,8 @@
           <div class="hearder__search--box">
             <div class="search--wrap">
               <i class="bi bi-search align-self-center ps-3"></i>  
-              <form action="{% url 'mountains:mountain_list' %}" method="POST">
-                {% csrf_token %}
-                <input class="header__search--text"   type="text" name="search_query" placeholder="무엇을 찾으시나요?" >
+              <form action="{% url 'mountains:mountain_list' %}" method="GET">
+                <input class="header__search--text" type="text" name="search_query" placeholder="무엇을 찾으시나요?" >
                 <button type="submit" hidden></button>
               </form>
             </div>
@@ -185,7 +184,7 @@
   
   function markNotificationRead(notificationId) {
     $.ajax({
-      url: '/accounts/notification/check/' + notificationId + '/',
+      url: '/accounts/notification/' + notificationId + '/check/',
       type: 'POST',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success: function(response) {
@@ -201,7 +200,7 @@
   
   function deleteNotification(notificationId) {
     $.ajax({
-      url: '/accounts/notification/delete/' + notificationId + '/',
+      url: '/accounts/notification/' + notificationId + '/delete/',
       type: 'POST',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success: function(response) {

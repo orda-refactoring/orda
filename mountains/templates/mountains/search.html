@@ -13,14 +13,14 @@
     <img class="mountain__search--titleimg" src="{% static 'img/goal_1.png' %}" alt="">
     <h1 class="mountain__search--title">원하는 산을 검색해보세요!</h1>
   </div>
-  <form method="Post" action="{% url 'mountains:mountain_list' %}" class="select__form">
-    {% csrf_token %}
+
+  <form method="GET" action="{% url 'mountains:mountain_list' %}" class="select__form">
     <div class="mountain__search--content position--relative " style="margin: 0 auto;">
       {% include 'mountains/search_region.html' %}
       <div class="flex--col" style="width: 100%; padding: 0 25px;">        
         <section class="flex--col" style="width: 100%;">
-          <select class="select__box" name="sido2" id="sido2"></select>
-          <select class="select__box" name="gugun2" id="gugun2"></select>
+          <select class="select__box" name="sido" id="sido"></select>
+          <select class="select__box" name="gugun" id="gugun"></select>
         </section>
 
         <section>
