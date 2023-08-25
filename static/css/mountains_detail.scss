@@ -1,0 +1,815 @@
+@import 'style.scss';
+
+$deep-green : #198754;
+$light-gray : #DBDBDB;
+
+@mixin font($size, $weight:400){
+  font: {
+    size: $size;
+    weight: $weight;
+  }
+  @content;
+}
+
+th {
+  @include flex(){
+    align-items: start;
+  }
+  width: 50px;
+}
+
+.wrap{
+  position: relative;
+}
+
+.mountain__info--wrap{
+  margin-bottom: 50px;
+}
+
+/* section1 */
+
+.mountains__detail--titlebox {
+  margin-bottom: 15px;
+}
+
+.mountains__detail--title {
+  @include font(2rem, bold);
+  margin-bottom: 16px;
+}
+
+.mountains__detail--subtitle {
+  color: var(--sub-color);
+  margin-left: 8px;
+}
+
+.mountain__img--wrap {
+  box-sizing: border-box;
+  flex: 1 1 500px;
+  margin-right: 50px;
+}
+
+.mountains__detail--imgbox {
+  position: relative;
+  box-sizing: border-box;
+  @include w-h();
+}
+
+.mountains__detail--img {
+  // position: absolute;
+  top: 0;
+  left: 0;
+  @include w-h();
+  object-fit: cover;  
+}
+
+.mountain__detail--infotag{
+  position: absolute;
+  opacity: 0.7;
+  @include w-h(100%, 35px);
+  background-color: black;
+  color:white;
+  bottom: 0;
+  @include font(0.9rem);
+  @include flex(){
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.mountains__detail--infobox {
+  position: relative;
+  width: 100%;
+  @include flex(){
+    justify-content: center;
+  }
+}
+
+.mountains__detail--info {
+  position: relative;
+  flex: 1 1 500px;
+}
+
+.mountains__detail--stat {
+  @include font(1.1rem);
+  margin-bottom: 16px;
+}
+
+.mountain__detail--mapbtn {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.mountain__detail--bestreview {
+  @include flex(){
+    justify-content: center;
+    align-items: center;
+  }
+  @include font(2rem){
+    font-family: 'Nanum Pen Script', cursive;
+  };
+  
+  &:hover {
+    background-color: #DBDBDB;
+  }
+  }
+
+.modal-body {
+  @include flex(){
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+#mountain-map {
+  @include w-h();
+  aspect-ratio: 1/1;
+}
+
+/* section2 */
+.mountain__weather-news--wrap{
+  @include flex(){
+    justify-content: center;
+  }
+}
+
+.mountains__detail--weather {
+  margin-right: 50px;
+  flex: 1 1 500px;
+}
+
+.mountains__detail--weatherlink {
+  &:hover{
+    background-color: #DBDBDB;
+  }
+}
+
+.weather--wrap {
+  @include flex(column){
+    justify-content: center;
+  }
+  width: 70%;
+  .weather--sky {
+    position: relative;
+    width: 50%;
+    padding: 15px;
+    .weather--skyimg {
+      @include w-h();
+    }
+  }
+  .weather--tem {
+    @include flex(){
+      justify-content: center;
+      align-items: center;
+    }
+    @include font(4rem, bold);
+  }
+  
+  .weather--detailwrap{
+    @include flex(){
+      justify-content: $justify-between;
+    }
+    .weather--hvwr {
+      @include font(1.3rem);
+      text-align: center;
+    }
+  }
+}
+
+.air--warp {
+  width: 25%;
+
+  .air--fine_dust {
+    @include flex(column){
+      justify-content: center;
+    }
+    text-align: center;
+    @include w-h(100%, 47%);
+    
+  }
+  .air--ozone {
+    @include flex(column){
+      justify-content: center;
+    }
+    text-align: center;
+    @include w-h(100%, 47%);
+  }
+}
+
+.air--imgbox {
+  position: relative;
+  width:100%;
+  padding: 15px;
+
+  .air--img {
+    @include w-h();
+    object-fit: cover; 
+  }
+}
+
+.mountains__detail--newslist {
+  @include flex(column){
+    justify-content: center;
+  }
+  flex: 1 1 500px;
+  position: relative;
+  
+  .mountains__detail--newstitle {
+    @include font(1.5rem, bold);
+    margin-bottom: 10px;
+  }
+}
+
+.mountains__detail--newsitem {
+  p{
+    margin-bottom: 10px;
+    @include font(1.1rem);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+// /* section3 */
+.mountain__detail--coursetitle {
+  
+  font: {
+    size: 1.5rem;
+    weight: bold;
+  }
+  margin-bottom: 15px;
+}
+
+.mountain__detail--courselist {
+  position: relative;
+  @include flex(column);
+  width: 100%;
+}
+
+.mountain__detail--course {
+  flex-grow: 1;
+  width: 100%;
+  position: relative;
+}
+
+.bookmark--style{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 40px;
+  color: var(--main-color)
+}
+
+.bookmark--style:hover{
+  color: var(--green-btn);
+}
+
+.btn--spot{
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 35px;
+  color: var(--red-color);
+  z-index: 10;
+}
+
+.more--course {
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.more--course:hover {
+  color: var(--main-color)
+}
+
+/* section4-map */
+@import 'mountains_course.scss';
+
+/* section5-리뷰작성 */
+.mountain__reviewcrt--contbox {
+  width: 100%;
+  margin-left: 16px;
+  .mountain__reviewcrt--cont {
+    @include border(var(--sub-color));
+    @include w-h(100%, 160px);
+    padding: 10px;
+
+    &:focus{
+      @include border($deep-green, 2px);
+    }
+  }
+}
+
+#review-image{
+  position: relative;
+  height: 100%;
+
+  .mountain__reviewcrt--imgbox {
+    position: relative;
+    @include w-h(160px, 160px);
+    border: dashed 2px var(--sub-color);
+    overflow: hidden;
+
+    .img--plus{
+      position: absolute;
+      @include font(3rem, bold);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .preview-image {
+      object-fit: cover;
+      width: 100%;
+    }
+
+    input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      @include w-h();
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    &:hover .img--plus{
+      color: var(--green-btn);
+    }
+    &:hover{
+      border: dashed 2px var(--green-btn);
+    }
+  }
+  
+}
+
+.review__submit--btn {
+  @include flex(){
+    justify-content: end;
+  }
+  margin-top: 8px;
+}
+
+.mountain__reviewcrt--tag {
+  padding: 0 10px;
+  @include border($deep-green);
+  color: $deep-green;
+  border-radius: 8px;
+  cursor: pointer;
+  position:relative;
+  font-size: 14px;
+  text-align: center;
+  margin-right: 10px;
+  margin-bottom: 5px;
+
+  &:hover{
+      background-color: $deep-green;
+      color: white;
+  }
+}
+
+.mountain__reviewcrt--tagbox {
+  @include flex{
+    flex-wrap: wrap;
+  }
+  margin-bottom: 20px;
+  @include border(var(--green-btn), 1px);
+  position:relative;
+  height: 120px;
+  padding: 10px;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar{
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: $deep-green;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-track{
+    background-color: $back-color;
+    border-radius: 8px;
+  }
+}
+
+.fourtag{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #192530;
+  color: white;
+  z-index: 1;
+  padding: 10px 30px;
+  width: 277px;
+}
+
+.visually-hidden {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.selected {
+  background-color: #198754;
+  color: white;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  height: 30px;
+  margin: 0 10px;
+  border-bottom: solid 1px var(--sub-color);
+}
+
+/* section6-리뷰 */
+.mountain__detail--reviewtitle {
+  @include font(1.5rem, bold);
+  margin-bottom: 15px;
+
+  .mountain__detail--reviewtitle2 {
+    @include font(1.5rem, bold);
+    margin-bottom: 15px;
+    margin-left: 10px;
+    color : $main-color;
+  }
+}
+
+.mountain__bestreview {
+  margin-bottom: 30px;
+  background-color: #d2edae;
+
+  &:hover {
+    background-color: $light-gray;
+  }
+}
+
+.mountain__review {
+  margin-bottom: 30px;
+
+  &:hover {
+    background-color: $light-gray;
+  }
+}
+
+.mountain__detail--reviewbox {
+  position: relative;
+  padding: 10px;
+  @include flex();
+
+  .mountain__detail--reviewcontimgbtn {
+    @include flex(){
+      align-items: flex-start;
+    }
+
+    .mountain__detail--reviewcontimgbox {
+      position: relative;
+      @include w-h(160px, 160px);
+      margin-top: 5px;
+    }
+
+  }
+}
+
+.mountain__detail--reviewcontimg {
+  object-fit: cover;
+  @include w-h();
+}
+
+.mountain__detail--reviewmodalimgbox {
+  position: relative;
+  width: 100%;
+}
+
+.mountain__detail--contentbox {
+  width: 70%;
+  padding: 10px;
+
+  .mountain__detail--reviewinfo {
+    @include flex();
+    margin-bottom: 15px;
+
+    .mountain__detail--reviewimgbox {
+      position: relative;
+      width: 45px;
+      height: 45px;
+    }
+  }
+}
+
+.mountain__detail--reviewimg {
+  box-sizing: border-box;
+  @include border($light-gray, 1px);
+  border-radius: 100%;
+  object-fit: cover;
+  @include w-h();
+}
+
+.mountain__detail--reviewuserstat {
+  margin-left: 10px;
+
+  .mountain__detail--reviewuser {
+    font-weight: bold;
+  }
+}
+
+.like__hover{
+  &:hover{
+    color: $back-color !important;
+  }
+}
+
+.mountain__detail--reviewtagbox{
+  @include flex() {
+    flex-wrap: wrap;
+  }
+  @include margin2(0, 5px);
+  p{
+    color: var(--sub-color);
+    margin-right: 5px;
+  }
+}
+
+.mountain__detail--reviewcrt {
+  position: absolute;
+  @include flex();
+  top: 10px;
+  right: 10px;
+  color: var(--sub-color);
+}
+
+.mountain__detail--updatebox {
+  position: absolute;
+  @include flex();
+  bottom: 10px;
+  right: 10px;
+
+  button{
+    &:hover{
+      color: $main-color
+    }
+  }
+
+  form{
+    &:hover{
+      color: $main-color
+    }
+  }
+}
+
+.reviewBtnbox {
+  @include flex() {
+    justify-self: center;
+  }
+  margin: 20px 0;
+
+  .reviewloadMoreBtn {
+    @include font(1.1rem, bold);
+    color: $deep-green;
+  }
+
+  .reviewCloseBtn {
+    @include font(1.1rem, bold);
+    color: $deep-green;
+  }
+}
+
+/* section7 */
+.mountain__detail--atpoststitle {
+  @include font(1.5rem, bold);
+  margin-bottom: 15px;
+}
+
+.mountain__detail--atpoststitle2 {
+  @include font(1.5rem, bold);
+  @include margin(0, 0, 15px, 10px);
+  color : $main-color
+}
+
+.mountain__detail--atpostswrap {
+  position: relative;
+  @include border(var(--sub-color), 3px);
+  padding: 10px 20px;
+  border-radius: 0.25rem;
+}
+
+.mountain__detail--atpostsimgbox {
+  position: relative;
+  @include w-h(100%);
+  padding-bottom: 100%;
+  
+  .mountain__detail--atpostsimg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    @include w-h(100%, 100%);
+    border-radius: 8px;
+    object-fit: cover;
+  }
+}
+
+.title--wrap{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @include font(16px, bold);
+  margin-bottom: 4px;
+  letter-spacing: -0.025em;
+  color: rgb(17 24 39);
+}
+
+.mountain__detail--atpostsuser {
+  @include flex();
+  margin-bottom: 8px;
+  
+  .mountain__detail--atpostsuserimgbox {
+    position: relative;
+    @include w-h(35px, 35px);
+    @include margin(3px, 5px, 5px);
+    
+    .mountain__detail--atpostsuserimg {
+      object-fit: cover;
+      top: 50%;
+      left: 50%;
+      @include w-h(100%, 100%);
+      box-sizing: border-box;
+      @include border($light-gray, 1px);
+      border-radius: 100%;
+
+      .level5--img {
+        position: absolute;
+        @include w-h(18.9px, 18.9px);
+      }
+    }
+  }
+}
+
+.mountain__detail--atpostsusername {
+  @include flex() {
+    align-items: center;
+  }
+  margin-bottom: 4px;
+  color: rgb(55, 65, 81);
+  @include font(14px, 400)
+}
+
+.mountain__detail--atpostslikecount {
+  margin-right: 5px;
+}
+
+.mountain__detail--atpostsnonewrite {
+  height: 100%;
+  @include flex(column) {
+    justify-content: center;
+    align-items: center;
+  }
+  font-weight: bold;
+  color: var(--sub-color);
+  margin: 100px 0;
+}
+
+
+/* side btn */
+.mountain__btn__wrap{
+  position: fixed;
+  top:28%;
+  right:30px;
+  
+  .mountain__btn--style {
+    @include border(var(--sub-color), 1px);
+    background-color: rgba(255,255,255,0.5);
+    box-shadow: rgba(63, 71, 77, 0.25) 0px 2px 10px !important;
+    border-radius : 100%;
+    @include w-h(50px, 50px);
+    padding: 12px;
+    @include margin2(10px, 5px);
+  }
+}
+
+.heart--color {
+  color: var(--red-color);
+}
+
+.icon--size {
+  @include font(16px);
+}
+
+.icon--size1 {
+  @include font(20px);
+}
+
+
+// /* carousel */
+.owl-carousel {
+  position: relative;
+ }
+ 
+/* .owl-carousel .owl-stage-outer {
+  padding: 0 30px;
+ } */
+
+ .owl-carousel .owl-prev,
+ .owl-carousel .owl-next {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   margin: auto;
+   background-color: #000; /* 배경색 설정 */
+   color: #fff; /* 아이콘 색상 설정 */
+   width: 40px; /* 버튼의 너비 */
+   height: 40px; /* 버튼의 높이 */
+   font-size: 24px; /* 아이콘 크기 */
+   line-height: 40px; /* 버튼의 세로 중앙 정렬을 위한 line-height */
+   text-align: center;
+   border: solid 2px #777777 !important; 
+   border-radius: 50%; /* 버튼을 원형으로 만들기 위한 border-radius 설정 */
+ }
+ 
+ .owl-carousel .owl-prev {
+   left: -45px;
+ }
+ 
+ .owl-carousel .owl-next {
+  right: -45px;
+ }
+
+
+/* 반응형 */ 
+@mixin lg{
+  @media(max-width: 1080px){
+    @content;
+  }
+}
+
+@include lg{
+  /* section1 */ 
+  .mountains__detail--infobox{
+    flex-direction: column;
+  }
+  .mountain__img--wrap{
+    @include margin(0, 0, 50px)
+  }
+  .mountains__detail--info{
+    flex: 1 1;
+  }
+
+  /* section2 */ 
+  .mountain__weather-news--wrap{
+    flex-direction: column;
+  }
+  .mountains__detail--newslist{
+    margin-top: 30px;
+    flex: 1 1;
+  }
+  .mountains__detail--weather{
+    margin-right: 0;
+    flex: 1 1;
+  }
+
+  .weather--wrap{
+    .weather--sky{
+      .weather--skyimg {
+        width: 100px;
+      }
+    }
+    .weather--tem {
+      @include font(3rem, bold)
+    }
+    .weather--detailwrap{
+      justify-content: space-evenly;
+      .weather--hvwr{
+        @include font(0.8rem)
+      }
+    }
+  }
+  .air--imgbox{
+    .air--img {
+      width: 50px;
+      margin: auto;
+    }
+  }
+
+  /* section4 */ 
+  .course--wrap{
+    flex-direction: column;
+    @include grid(){
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* sidebar */
+  .mountain__btn__wrap{
+    position: sticky;
+    bottom: 0;
+    left:0;
+    width: 100%;
+    background-color: rgba(255,255,255,0.5);
+    box-shadow: rgba(63, 71, 77, 0.25) 0px 2px 10px !important;
+    @include flex(){
+      justify-content: center;
+    }
+    z-index: 5;
+  } 
+}

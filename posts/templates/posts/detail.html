@@ -248,7 +248,7 @@
 </div>
 </div>
 {% endblock content %}
-{% block ect %}
+{% block etc %}
 {% comment %} 창 줄이기 전 좋아요 + 댓글 위치 {% endcomment %}
 <div class="post__btn__wrap">
   <form class="like-form" data-post-id="{{ post.pk }}">
@@ -265,7 +265,7 @@
     <div class="text-center">{{ post.postcomment_set.count }}</div>
   </div>
   </div>
-{% endblock ect %}
+{% endblock etc %}
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{% static 'js/post_detail.js' %}"></script>

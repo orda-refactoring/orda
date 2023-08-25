@@ -1,57 +1,85 @@
-.course__wrap{
-  margin: 30px 5%;
-  padding: 0px 16px;
-  min-width: 375px;
-}
-
+@charset "UTF-8";
 .title__box {
   margin: 10px 10px;
   font-size: 30px;
   font-weight: bold;
 }
 
-.select__form{
+.select__form {
   text-align: end;
 }
-
-.select__box{
+.select__form .select__box {
   border-bottom: 3px var(--main-color) solid;
   padding: 10px 10px;
 }
-
-.li--textbox{
-  padding: 10px 25px;
-  margin: 10px 0px;
+.select__form .select__box:focus {
+  outline: none;
 }
 
-.coursetitle--font {
+th {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+}
+
+.course--wrap {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  border: solid rgb(222, 226, 230) 1px !important;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 16px 0px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+.course--wrap:hover {
+  background-color: #fffaed !important;
+}
+.course--wrap:hover .course--map {
+  border: solid #fffaed 10px !important;
+}
+
+.course--map {
+  border: solid white 10px !important;
+  width: 100%;
+  height: 300px;
+}
+
+.course--infobox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 10px 0;
+  padding: 10px 25px;
+}
+.course--infobox .coursetitle--font {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 10px;
 }
-
-.borderline {
-  border: 10px white solid;
+.course--infobox table th {
+  width: 100%;
+}
+.course--infobox .download-form input {
+  font-size: 16px;
+  font-weight: bold;
+}
+.course--infobox .download-form input:hover {
+  color: var(--green-btn);
+}
+.course--infobox .flex--row input {
+  margin-right: 16px;
+  margin-bottom: 8px;
+  accent-color: var(--main-color);
+}
+.course--infobox .flex--row label {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 8px;
 }
 
-.flex--row {
-  display: flex;
-}
-
-.flex--col {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex--align{
-  justify-content: space-between;
-}
-
-.li--relative{
-  position: relative;
-}
-
-.btn--spot{
+.btn--spot {
   position: absolute;
   right: 10px;
   top: 5px;
@@ -60,43 +88,44 @@
   z-index: 10;
 }
 
+/* 페이지네이션 */
 .page__btn {
-  font-weight: bold; 
+  font-weight: bold;
   padding: 3px;
   font-size: 20px;
 }
-
 .page__btn:hover {
   color: var(--background-color);
 }
 
-.pagination__link--active{
+.pagination__link--active {
   color: var(--green-btn);
 }
 
 .arrow--rotate {
-  border: 3px solid ;
+  border: 3px solid;
   border-radius: 50%;
   width: 35px;
   height: 35px;
   color: var(--sub-color);
   margin-bottom: 10px;
-  
+  margin-left: 8px;
+  font-size: 20px;
+  align-self: flex-end;
 }
-
 .arrow--rotate:hover {
   transform: rotate(75deg);
   transition: transform 0.75s ease;
   color: #75a64a;
 }
 
-@media (max-width:1080px) {
-  .course__wrap {
-    margin: 30px 0px;
-    padding: 0px;
+@media (max-width: 760px) {
+  .course--wrap {
+    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
   }
-
-  .flex--align{
-      justify-content: center;
-    }
-}
+  .course--infobox .download-form input {
+    margin: 8px 0 8px 0;
+  }
+}/*# sourceMappingURL=mountains_course.css.map */

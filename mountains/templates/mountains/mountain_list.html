@@ -8,7 +8,7 @@
 {% endblock style %}
 {% block content %}
 
-<div class="mountains__warp">
+<div class="wrap">
   <form id="sort-form" class="select__form">
     <select name="sort" id="sort-select" class="select__box focus:outline-none mb-3">
         <option value="">정렬</option>
@@ -23,12 +23,12 @@
     <button type="submit" class="bi bi-arrow-clockwise align-self-end ms-2 fs-5 arrow--rotate"></button>
   </form>
   
-  <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mb-4">
+  <div id="results" class="mountains__grid--wrap">
     {% for mountain, mountain_distance in mountain_data %}
-    <div  class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <a href="{% url 'mountains:mountain_detail' mountain.pk %}"  class="position--relative ">
+    <div  class="mountains--card">
+      <a href="{% url 'mountains:mountain_detail' mountain.pk %}"  class="position--relative">
         <div>
-          <img class="rounded-t-lg img--size"src="{% get_static_prefix %}img/mountains/{{ mountain.name }}.png" alt="{{ mountain.name }}">
+          <img class="img--size" src="{% get_static_prefix %}img/mountains/{{ mountain.name }}.png" alt="{{ mountain.name }}">
         </div>
         {% comment %} 좋아요 {% endcomment %}
         <div class="position--absolute like__btn">
@@ -46,13 +46,13 @@
             <span>#{{ tag }}</span>
           {% endfor %}
         </div>
-        <div class="p-4 flex--col flex__align--between" style="height: 180px;">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ mountain.name }}</h5>      
-          {% comment %} <p class="mb-1 font-normal text-sm text-gray-700 dark:text-gray-400">{{mountain.review_set.tags.all}}</p> {% endcomment %}
-          <p class="mb-1 font-normal text-sm text-gray-700">{{ mountain.region }}</p>
+      {% comment %} 산 정보 {% endcomment %}
+        <div class="flex--col flex__align--between" style="height: 180px; padding:24px">
+          <h5 class="mountain--name">{{ mountain.name }}</h5>      
+          <p class="mountain--etc">{{ mountain.region }}</p>
           <div class="flex--row flex__align--between">
-            <p class="mb-1 font-normal text-sm text-gray-700">{{ mountain.height }}m</p>
-            <p class="mb-1 font-normal text-sm text-gray-700">
+            <p class="mountain--etc">{{ mountain.height }}m</p>
+            <p class="mountain--etc">
               {% if mountain_distance is not None %}
                 🚗 {{ mountain_distance }}km
               {% else %}

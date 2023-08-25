@@ -164,6 +164,9 @@ function initMap(courseId, courseInfo, courseDetail) {
   };
 };
 
+
+
+
 // 북마크 비동기
 const forms = document.querySelectorAll(".bookmark-form");
 const bookmarkCsrftokenLike = document.querySelector("[name=csrfmiddlewaretoken]").value;
@@ -191,3 +194,41 @@ axios({
 })
 })
 })
+
+
+const downloadForms = document.querySelectorAll('.download-form');
+
+downloadForms.forEach(function(form) {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+    const gpxId = e.target.dataset.gpxId;
+    const mountainId = e.target.dataset.mountainId;
+    var confirmation = confirm("메일을 전송하시겠습니까?"); // 확인 창을 띄웁니다.
+
+    if (confirmation) {
+      axios({
+        method: 'post',
+        url: `/mountains/${mountainId}/courses/${gpxId}/download/`,
+        headers: {
+          'X-CSRFToken': this.querySelector('input[name="csrfmiddlewaretoken"]').value
+        }
+      })
+      .then(response => {
+        if (response.status === 200) {
+          // 성공적으로 응답을 받았을 때
+          alert("GPX 파일을 등록한 이메일로 전송했습니다.");
+        }
+      })
+      .catch(error => {
+        // 네트워크 오류 등의 문제로 실패했을 때
+        if (error.response) {
+          // 서버가 오류 응답을 반환한 경우
+          alert("이메일 전송에 실패했습니다. 이메일 등록 여부를 확인하고, 다시 시도해주세요.");
+        } else {
+          // 네트워크 오류 등의 문제로 실패한 경우
+          alert("요청을 처리하는 도중 오류가 발생했습니다.");
+        }
+      });
+    }
+    }
+)})

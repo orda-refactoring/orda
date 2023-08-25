@@ -1,0 +1,141 @@
+@import 'style.scss';
+
+$tag-green: #198754;
+
+.wrap{
+  @include flex(column){
+    justify-content: center;
+  }
+  @include margin2(0, auto);
+  width: 1000px;
+}
+
+.mountain__search--titleimg {
+  @include w-h(30px, 30px);
+  margin-right: 10px;
+}
+
+.mountain__search--title {
+  position: relative;
+  margin-bottom: 30px;
+  font: {
+    size: 1.5rem;
+    weight: bold;
+    family: sans-serif;
+  }
+}
+
+/* section1 */
+.mountain__search--mapbox {
+  position: relative;
+  @include w-h(450px, 450px);
+  @include border($main-color, 2px);
+  font-size: 13px;
+
+  .mountain__search--mapimg {
+    object-fit: cover;
+    @include w-h();
+  }
+
+  .mountain__search--mapsubimg {
+    position: absolute;
+    left:0;
+    bottom:0;
+    @include border($main-color);
+  }
+
+  .mountain__search--mapsubimg2 {
+    position: absolute;
+    left:0;
+    bottom:0;
+    @include border($main-color);
+  }
+}
+
+/* section2 */
+
+.mountain__reviewcrt--tag {
+  padding: 0 10px;
+  @include border($tag-green);
+  @include margin(0, 5px, 5px, 0);
+  border-radius: 8px;
+  color: $tag-green;
+  cursor: pointer;
+  position:relative;
+  font-size: 14px;
+  text-align: center;
+
+  &:hover {
+    background-color: $tag-green;
+    color: white;
+  }
+}
+
+.mountain__reviewcrt--tagbox {
+  @include flex(){
+    flex-wrap: wrap;
+  }
+  @include border(#777777);
+  position:relative;
+  height: 120px;
+  margin: 0 10px 10px 10px;
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+.visually-hidden {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.select__form{
+  text-align: end;
+
+  .mountain__search--content {
+    @include flex();
+  }
+}
+
+.select__box{
+  border-bottom: 3px $main-color solid;
+  padding: 10px 10px;
+  margin-bottom: 40px;
+  &:focus {
+    outline: none;
+  }
+}
+
+.selected {
+  background-color: $tag-green;
+  color: white;
+}
+
+.selected-tags {
+  @include flex(){
+    flex-wrap: wrap;
+  }
+  @include margin(0, 10px, 50px, 10px);
+  border-bottom: solid 1px #777777;
+}
+
+/* 반응형 */ 
+@media (max-width:930px) {
+  .wrap{
+    width: 100%;
+  }
+
+  .mountain__search--mapbox{
+    display: none !important;
+  }
+
+  .mountain__search--content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+
+

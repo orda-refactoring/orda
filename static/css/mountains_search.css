@@ -1,38 +1,24 @@
-.mountain__search--wrap {
+@charset "UTF-8";
+.wrap {
   display: flex;
-  width: 1000px;
   flex-direction: column;
   justify-content: center;
-  margin: 100px auto;
-  padding: 0px 16px;
+  margin: 0 auto;
+  width: 1000px;
+}
+
+.mountain__search--titleimg {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
 
 .mountain__search--title {
   position: relative;
+  margin-bottom: 30px;
   font-size: 1.5rem;
   font-weight: bold;
   font-family: sans-serif;
-  margin-bottom: 30px;
-}
-
-.mountain__search--titleimg {
-  width: 100%;
-  height: 100%;
-}
-
-.mountain__search--content {
-  display: flex;
-  flex-direction: row;
-}
-
-.select__form{
-  text-align: end;
-}
-
-.select__box{
-  border-bottom: 3px var(--main-color) solid;
-  padding: 10px 10px;
-  margin-bottom: 40px;
 }
 
 /* section1 */
@@ -40,44 +26,40 @@
   position: relative;
   width: 450px;
   height: 450px;
-  border: 2px solid var(--main-color);
+  border: solid var(--main-color) 2px !important;
   font-size: 13px;
 }
-
-.mountain__search--mapimg {
-  object-fit: cover;
+.mountain__search--mapbox .mountain__search--mapimg {
+  -o-object-fit: cover;
+     object-fit: cover;
   width: 100%;
   height: 100%;
 }
-
-.mountain__search--mapsubimg {
+.mountain__search--mapbox .mountain__search--mapsubimg {
   position: absolute;
-  left:0;
-  bottom:0;
-  border: 1px solid var(--main-color);
+  left: 0;
+  bottom: 0;
+  border: solid var(--main-color) 1px !important;
 }
-
-.mountain__search--mapsubimg2 {
+.mountain__search--mapbox .mountain__search--mapsubimg2 {
   position: absolute;
-  right:0;
-  top:0;
-  border: 1px solid var(--main-color);
+  left: 0;
+  bottom: 0;
+  border: solid var(--main-color) 1px !important;
 }
 
 /* section2 */
 .mountain__reviewcrt--tag {
   padding: 0 10px;
-  border: 1px solid #198754;
-  color: #198754;
+  border: solid #198754 1px !important;
+  margin: 0 5px 5px 0;
   border-radius: 8px;
+  color: #198754;
   cursor: pointer;
-  position:relative;
+  position: relative;
   font-size: 14px;
   text-align: center;
-  margin-right: 5px;
-  margin-bottom: 5px;
 }
-
 .mountain__reviewcrt--tag:hover {
   background-color: #198754;
   color: white;
@@ -87,11 +69,11 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  position:relative;
+  border: solid #777777 1px !important;
+  position: relative;
   height: 120px;
   margin: 0 10px 10px 10px;
   padding: 10px;
-  border: solid 1px #777777;
   overflow-y: scroll;
 }
 
@@ -101,6 +83,23 @@
   opacity: 0;
 }
 
+.select__form {
+  text-align: end;
+}
+.select__form .mountain__search--content {
+  display: flex;
+  flex-direction: row;
+}
+
+.select__box {
+  border-bottom: 3px var(--main-color) solid;
+  padding: 10px 10px;
+  margin-bottom: 40px;
+}
+.select__box:focus {
+  outline: none;
+}
+
 .selected {
   background-color: #198754;
   color: white;
@@ -108,35 +107,24 @@
 
 .selected-tags {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
-  height: 30px;
   margin: 0 10px 50px 10px;
   border-bottom: solid 1px #777777;
 }
 
-@media (max-width:930px) {
-  .mountain__search--wrap {
-    display: flex;
-    width: 630px;
-    flex-direction: column;
-    justify-content: center;
-    margin: 100px auto;
-    padding: 0px 16px;
+/* 반응형 */
+@media (max-width: 930px) {
+  .wrap {
+    width: 100%;
   }
-
+  .mountain__search--mapbox {
+    display: none !important;
+  }
   .mountain__search--content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-
-  .mountain__search--mapbox {
-    position: relative;
-    width: 450px;
-    height: 450px;
-    border: 2px solid var(--main-color);
-    font-size: 13px;
-    margin-bottom: 50px;
-  }
-}
+}/*# sourceMappingURL=mountains_search.css.map */

@@ -1,25 +1,49 @@
-.mountains__warp {
-  margin: 30px 5%;
-  padding: 0px 16px;
-  min-width: 370px;
-  position: relative;
+.select__form {
+  text-align: end;
+}
+.select__form .select__box {
+  border-bottom: 3px var(--main-color) solid;
+  padding: 10px 10px;
+}
+
+.mountains__grid--wrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.mountains--card {
+  max-width: 24rem;
+  width: 100%;
+  border: solid rgb(222, 226, 230) 1px !important;
+  border-radius: 8px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+.mountains--card:hover .display {
+  opacity: 0.7;
+  background-color: black;
+  color: white;
+  padding-left: 10px;
 }
 
 .img--size {
   height: 280px;
   width: 382px;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
 }
 
 .like__btn {
-  top:10px; 
-  right: 10px; 
+  top: 10px;
+  right: 10px;
 }
 
-.like__btn--style{
+.like__btn--style {
   z-index: 1;
-  font-weight:bold;
+  font-weight: bold;
   font-size: 24px;
-  color: var(--red-color)
+  color: var(--red-color);
 }
 
 .display {
@@ -28,55 +52,50 @@
   width: 100%;
 }
 
-.flex--row {
-  display: flex;
+.mountain--name {
+  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: -0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39/var(--tw-text-opacity));
 }
 
-.flex--col {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex__align--end {
-  justify-content: end;
-}
-
-.flex__align--between {
-  justify-content: space-between;
-}
-
-.position--relative {
-  position: relative;
-}
-
-.position--absolute {
-  position: absolute;  
+.mountain--etc {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
 }
 
 .page__btn {
-  font-weight: bold; 
+  font-weight: bold;
   padding: 3px;
   font-size: 20px;
 }
-
 .page__btn:hover {
   color: var(--background-color);
 }
 
-.position--relative:hover .display{
-  opacity: 0.7;
-  background-color: black;
-  color:white;
-  padding-left: 10px;
-}
-
-.pagination__link--active{
+.pagination__link--active {
   color: var(--green-btn);
 }
 
-@media (max-width:1080px) {
-  .mountains__warp  {
-    margin: 30px 0px;
-    padding: 0px;
+@media (max-width: 1280px) {
+  .mountains__grid--wrap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
+@media (max-width: 988px) {
+  .mountains__grid--wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .mountains__grid--wrap {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}/*# sourceMappingURL=mountains_list.css.map */
