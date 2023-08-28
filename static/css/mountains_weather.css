@@ -1,74 +1,61 @@
 .mountain__weather--wrap {
   display: flex;
-  width: 1080px;
   flex-direction: column;
   justify-content: center;
-  margin: 30px auto;
-  padding: 50px 16px;
+  margin: auto;
+  width: 1080px;
 }
 
 .mountain__weather--title {
-  position: relative;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   font-family: sans-serif;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 }
-
-.mountain__weather--title2 {
-  position: relative;
-  font-size: 1.5rem;
+.mountain__weather--title .mountain__weather--title2 {
+  font-size: 2rem;
   font-weight: bold;
   font-family: sans-serif;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   color: var(--main-color);
-}
-
-.weather__daybox--wrap {
-  margin: 0px 200px;
-  display: flex;
-  justify-content: start;
-  margin-top: 70px;
 }
 
 .weather__day--selectbtn {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
+  font-weight: bold;
+  font-family: sans-serif;
   width: 70px;
   height: 35px;
-  border: 1px solid #777777;
-  font-family: sans-serif;
-  font-weight: bold;
+  border: solid var(--sub-color) 1px !important;
   border-radius: 5px 5px 0 0;
 }
 
 .selected--btn {
-  border-bottom: none;
-  border: 1px solid var(--main-color);
+  border: var(--main-color) !important;
   background-color: var(--main-color);
   color: #FFFFFF;
-  border-radius: 5px 5px 0 0;
 }
 
 .weather__content {
-  border: 1px solid var(--main-color);
+  border: solid var(--main-color) 1px !important;
   padding: 20px;
   border-radius: 0 5px 5px 5px;
   background-color: var(--main-color);
 }
-
-.weather__content > table {
+.weather__content table {
   text-align: center;
-  border: 1px solid #777777;
-  background-color: #ffffff;
+  border: solid var(--sub-color) 1px !important;
+  background-color: #FFFFFF;
 }
 
 th, td {
   width: 113px;
   height: 30px;
+  border: solid var(--sub-color) 1px !important;
   text-align: center;
-  border: 1px solid #777777;
 }
 
 th {
@@ -76,48 +63,38 @@ th {
 }
 
 .weather__content--imgbox {
-  position: relative;
   display: flex;
+  flex-direction: row;
   justify-content: center;
 }
 
-
-@media (max-width:1080px) {
+@media (max-width: 1080px) {
   .mountain__weather--wrap {
-    display: flex;
     width: 720px;
-    flex-direction: column;
-    justify-content: center;
-    margin: 30px auto;
-    padding: 100px 16px;
   }
-
   .weather__content {
-    border: 1px solid var(--main-color);
-    padding: 20px;
-    border-radius: 0 5px 5px 5px;
-    background-color: var(--main-color);
     overflow-x: scroll;
     white-space: nowrap;
   }
+  .weather__content::-webkit-scrollbar {
+    width: 10px;
+  }
+  .weather__content::-webkit-scrollbar-thumb {
+    background-color: var(--green-btn);
+    border-radius: 10px;
+  }
+  .weather__content::-webkit-scrollbar-track {
+    background-color: var(--background-color);
+    border-radius: 8px;
+  }
 }
-
-@media (max-width:720px) {
+@media (max-width: 760px) {
   .mountain__weather--wrap {
-    display: flex;
     width: 460px;
-    flex-direction: column;
-    justify-content: center;
-    margin: 30px auto;
-    padding: 100px 16px;
-  }
-
-  .weather__content {
-    border: 1px solid var(--main-color);
-    padding: 20px;
-    border-radius: 0 5px 5px 5px;
-    background-color: var(--main-color);
-    overflow-x: scroll;
-    white-space: nowrap;
   }
 }
+@media (max-width: 576px) {
+  .mountain__weather--wrap {
+    width: 350px;
+  }
+}/*# sourceMappingURL=mountains_weather.css.map */

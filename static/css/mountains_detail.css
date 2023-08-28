@@ -194,9 +194,11 @@ th {
   width: 100%;
   padding: 15px;
 }
-.air--imgbox .air--img {
-  width: 100%;
-  height: 100%;
+
+.air--img {
+  width: 100px;
+  height: 100px;
+  margin: auto;
   -o-object-fit: cover;
      object-fit: cover;
 }
@@ -612,6 +614,11 @@ th {
   width: 45px;
   height: 45px;
 }
+.mountain__detail--contentbox .mountain__detail--reviewcontent {
+  word-wrap: break-word;
+  word-break: break-all;
+  padding: 0 16px;
+}
 
 .mountain__detail--reviewimg {
   box-sizing: border-box;
@@ -888,8 +895,9 @@ th {
     font-size: 0.8rem;
     font-weight: 400;
   }
-  .air--imgbox .air--img {
+  .air--img {
     width: 50px;
+    height: 50px;
     margin: auto;
   }
   /* section4 */
@@ -910,5 +918,17 @@ th {
     flex-direction: row;
     justify-content: center;
     z-index: 5;
+  }
+}
+@media (max-width: 512px) {
+  .mountain__detail--reviewbox {
+    display: flex;
+    flex-direction: column;
+  }
+  .mountain__detail--reviewbox .mountain__detail--reviewcontimgbox {
+    margin-left: 15px;
+  }
+  .mountain__detail--contentbox {
+    width: 100%;
   }
 }/*# sourceMappingURL=mountains_detail.css.map */

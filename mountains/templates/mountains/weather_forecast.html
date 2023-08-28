@@ -7,11 +7,11 @@
 {% endblock style %}
 
 {% block content %}
-<div class="mountain__weather--wrap">
+<div class="mountain__weather--wrap wrap">
   <h2 class="mountain__weather--title"><span class="mountain__weather--title2">{{ mountain.name }}</span> 중기예보</h2>
   <section>
-    <div class="mountain__daybox--wrap">
-      <ul class="d-flex flex-row">
+    <div class="weather__daybox--wrap">
+      <ul class="flex--row">
           {% for date, data in daily_data.items %}
               <li class="weather__day--selectbtn">
                   <button id="btn-{{date}}">{{ date }}</button>

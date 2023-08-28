@@ -255,13 +255,13 @@
       <li id="best-{{ review.pk }}" {% if forloop.counter > 5 %}style="display: none;"{% endif %} class="{% if review == most_liked_review %}mountain__bestreview{% else %}mountain__review{% endif %}">
         <div class="mountain__detail--reviewbox">
           <!-- Button trigger modal -->
-          <button type="button" class="mountain__detail--reviewcontimgbtn" data-bs-toggle="modal" data-bs-target="#reviewImg-{{ review.pk }}">
-            <div class="mountain__detail--reviewcontimgbox">
-              {% if review.image %}
-                <img class="mountain__detail--reviewcontimg" src="{{ review.image.url }}" alt="">
-              {% endif %}
-            </div>
-          </button> 
+          {% if review.image %}
+            <button type="button" class="mountain__detail--reviewcontimgbtn" data-bs-toggle="modal" data-bs-target="#reviewImg-{{ review.pk }}">
+              <div class="mountain__detail--reviewcontimgbox">
+                <img class="mountain__detail--reviewcontimg" src="{{ review.image.url }}" alt="">              
+              </div>
+            </button> 
+          {% endif %}
     
           <!-- Modal -->
           <div class="modal fade" id="reviewImg-{{ review.pk }}" tabindex="-1" aria-labelledby="reviewImgLabel-{{ review.pk }}" aria-hidden="true">
@@ -325,7 +325,7 @@
                 </div>
               </div>
             </div>
-            <p style="padding: 0 16px;">{{ review.content }}</p>
+            <p class="mountain__detail--reviewcontent">{{ review.content }}</p>
           </div>
           <div class="mountain__detail--reviewcrt">
             {% if review.created_at|date:"Y-m-d" >= now|date:"Y-m-d" %}
@@ -350,7 +350,6 @@
       {% endfor %}
     </ul>
     {% if reviews|length > 5 %}
-      <hr>
     {% endif %}
     <div class="reviewBtnbox">
       <button id="reviewloadMoreBtn" class="reviewloadMoreBtn" {% if reviews|length <= 5 %}style="display: none;"{% endif %}>더보기</button>
@@ -982,7 +981,7 @@ function initMap(courseId, course) {
       }
   )})
 </script>
-
+<script>
   $(document).ready(function() {
     // 뉴스 데이터를 비동기적으로 가져옵니다
     function fetchNewsData(mountainId) {

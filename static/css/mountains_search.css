@@ -76,6 +76,17 @@
   padding: 10px;
   overflow-y: scroll;
 }
+.mountain__reviewcrt--tagbox::-webkit-scrollbar {
+  width: 10px;
+}
+.mountain__reviewcrt--tagbox::-webkit-scrollbar-thumb {
+  background-color: #198754;
+  border-radius: 10px;
+}
+.mountain__reviewcrt--tagbox::-webkit-scrollbar-track {
+  background-color: var(--background-color);
+  border-radius: 8px;
+}
 
 .visually-hidden {
   position: absolute;

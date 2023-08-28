@@ -1,0 +1,132 @@
+@import 'style.scss';
+
+$ffffff-color: #FFFFFF;
+
+.mountain__weather--wrap {
+  @include flex(column){
+    justify-content: center;
+  }
+  margin: auto;
+  width: 1080px;
+}
+
+.mountain__weather--title {
+  font: {
+    size: 2rem;
+    weight: bold;
+    family: sans-serif;
+  }
+  margin-bottom: 30px;
+
+  .mountain__weather--title2 {
+    font: {
+      size: 2rem;
+      weight: bold;
+      family: sans-serif;
+    }
+    margin-bottom: 30px;
+    color: var(--main-color);
+  }
+}
+
+.weather__day--selectbtn {
+  @include flex(){
+    justify-content: center;
+    align-items: center;
+  }
+  font: {
+    weight: bold;
+    family: sans-serif;
+  }
+  @include w-h(70px, 35px);
+  @include border(var(--sub-color));
+  border-radius: 5px 5px 0 0;
+}
+
+.selected--btn {
+  border: $main-color !important;
+  background-color: $main-color;
+  color: $ffffff-color;
+}
+
+.weather__content {
+  @include border($main-color);
+  padding: 20px;
+  border-radius: 0 5px 5px 5px;
+  background-color: $main-color;
+
+  table{
+    text-align: center;
+    @include border(var(--sub-color));
+    background-color: $ffffff-color;
+  }
+}
+
+th, td {
+  @include w-h(113px, 30px);
+  @include border(var(--sub-color));
+  text-align: center;
+}
+
+th {
+  background-color: #DBDBDB;
+}
+
+.weather__content--imgbox {
+  @include flex(){
+    justify-content: center;
+  }
+}
+
+@mixin lg{
+  @media (max-width:1080px){
+    @content;
+  }
+};
+
+@mixin md{
+  @media (max-width:760px){
+    @content;
+  }
+};
+
+@mixin sm{
+  @media (max-width:576px){
+    @content;
+  }
+};
+
+@include lg{
+  .mountain__weather--wrap {
+    width: 720px;
+  }
+
+  .weather__content {
+    overflow-x: scroll;
+    white-space: nowrap;
+
+    &::-webkit-scrollbar{
+      width: 10px;
+    }
+    &::-webkit-scrollbar-thumb{
+      background-color: var(--green-btn);
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-track{
+      background-color: $back-color;
+      border-radius: 8px;
+    }
+  }
+}
+
+@include md {
+  .mountain__weather--wrap {
+    width: 460px;
+  }
+}
+
+@include sm {
+  .mountain__weather--wrap {
+    width: 350px;
+  }
+}
