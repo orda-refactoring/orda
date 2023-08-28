@@ -484,3 +484,17 @@ mountains_weather
 	- mountains-detail (review, air-img)
 	- mountains_weather (스크롤바, 세세한 레이아웃 수정)
 ```
+
+# 2023/08/28
+- 장하늬 
+```
+```
+
+- 최지원
+```
+- scss 작성 전 사용중이던 css 파일 삭제
+- mountains_detail, mountains_search, base 오류 및 레이아웃 수정
+- 코드 재사용성을 높이기 위한 scss 정리 & 모바일 유저들을 위한 반응형 디자인
+	- search_region
+	- mountains_weather
+```
