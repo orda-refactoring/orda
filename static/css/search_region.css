@@ -36,7 +36,6 @@
 .gwangju--mudeung {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 220px;
   left: 383px;
 }
@@ -100,7 +99,7 @@
 .kyeonggi--dobong {
   position: absolute;
   display: flex;
-  top: 178px;
+  top: 175px;
   left: 171px;
 }
 
@@ -129,7 +128,7 @@
   position: absolute;
   display: flex;
   top: 188px;
-  left: 121px;
+  left: 121x;
 }
 
 .kyeonggi--soyo {
@@ -156,7 +155,6 @@
 .kyeonggi--yumyeong {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 202px;
   left: 282px;
 }
@@ -165,7 +163,7 @@
   position: absolute;
   display: flex;
   top: 178px;
-  left: 245px;
+  left: 245x;
 }
 
 .kyeonggi--chuckryeong {
@@ -227,7 +225,7 @@
 .kangwon--gongjak {
   position: absolute;
   display: flex;
-  top: 215px;
+  top: 212px;
   left: 165px;
 }
 
@@ -255,7 +253,6 @@
 .kangwon--eungbong {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 346px;
   left: 377px;
 }
@@ -312,7 +309,6 @@
 .kangwon--yonghwa {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 156px;
   left: 115px;
 }
@@ -348,7 +344,6 @@
 .kangwon--hwaac {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 155px;
   left: 82px;
 }
@@ -468,7 +463,6 @@
 .chungnam--cheontae {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 330px;
   left: 386px;
 }
@@ -490,7 +484,6 @@
 .jeonbuk--baekam {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 287px;
   left: 125px;
 }
@@ -505,7 +498,6 @@
 .jeonbuk--chuweol {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 307px;
   left: 155px;
 }
@@ -534,7 +526,6 @@
 .jeonbuk--minjuji {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 105px;
   left: 388px;
 }
@@ -595,13 +586,6 @@
   left: 325px;
 }
 
-.jeonbuk--jiri {
-  position: absolute;
-  display: flex;
-  top: 318px;
-  left: 325px;
-}
-
 .jeonnam--gangcheon {
   position: absolute;
   display: flex;
@@ -619,7 +603,6 @@
 .jeonnam--chuweol {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 40px;
   left: 230px;
 }
@@ -655,7 +638,6 @@
 .jeonnam--baekun {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 120px;
   left: 380px;
 }
@@ -678,7 +660,7 @@
   position: absolute;
   display: flex;
   top: 67px;
-  left: 362px;
+  left: 362x;
 }
 
 .jeonnam--cheongwan {
@@ -713,7 +695,7 @@
   position: absolute;
   display: flex;
   top: 330px;
-  left: 206px;
+  left: 206x;
 }
 
 .kyeongbuk--unmun {
@@ -751,7 +733,7 @@
   left: 300px;
 }
 
-.kyeongbuk--naeyeon {
+.kyeongbuk--naeyeo {
   position: absolute;
   display: flex;
   top: 210px;
@@ -768,9 +750,9 @@
 .kyeongbuk--juheul {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 110px;
   left: 100px;
+  flex-direction: column;
 }
 
 .kyeongbuk--hwangjang {
@@ -790,17 +772,17 @@
 .kyeongbuk--minjuji {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 260px;
   left: 78px;
+  flex-direction: column;
 }
 
 .kyeongbuk--seongin {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 15px;
   left: 398px;
+  flex-direction: column;
 }
 
 .kyeongbuk--sobaek {
@@ -904,9 +886,9 @@
 .kyeongnam--cheonseong {
   position: absolute;
   display: flex;
-  flex-direction: column;
   top: 170px;
   left: 390px;
+  flex-direction: column;
 }
 
 .kyeongnam--deogyu {
@@ -970,4 +952,4 @@
   display: flex;
   top: 210px;
   left: 190px;
-}
+}/*# sourceMappingURL=search_region.css.map */

@@ -199,11 +199,12 @@ th {
   position: relative;
   width:100%;
   padding: 15px;
+}
 
-  .air--img {
-    @include w-h();
-    object-fit: cover; 
-  }
+.air--img {
+  @include w-h(100px, 100px);
+  margin: auto;
+  object-fit: cover; 
 }
 
 .mountains__detail--newslist {
@@ -497,6 +498,11 @@ th {
       height: 45px;
     }
   }
+  .mountain__detail--reviewcontent{
+    word-wrap: break-word;
+    word-break: break-all;
+    @include padding(0, 16px);
+  }
 }
 
 .mountain__detail--reviewimg {
@@ -742,6 +748,11 @@ th {
     @content;
   }
 }
+@mixin sm{
+  @media(max-width: 512px){
+    @content;
+  }
+}
 
 @include lg{
   /* section1 */ 
@@ -784,11 +795,10 @@ th {
       }
     }
   }
-  .air--imgbox{
-    .air--img {
-      width: 50px;
-      margin: auto;
-    }
+
+  .air--img {
+    @include w-h(50px, 50px);
+    margin: auto;
   }
 
   /* section4 */ 
@@ -812,4 +822,17 @@ th {
     }
     z-index: 5;
   } 
+}
+
+@include sm {
+  .mountain__detail--reviewbox{
+    @include flex(column);
+    .mountain__detail--reviewcontimgbox{
+      margin-left: 15px;
+    }
+  }
+
+  .mountain__detail--contentbox{
+    width: 100%;
+  }
 }
