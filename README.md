@@ -499,3 +499,17 @@ mountains_weather
 	- search_region
 	- mountains_weather
 ```
+
+# 2023/08/29
+- 장하늬 
+```
+- 쿼리 및 캐싱 최적화 진행
+```
+
+- 최지원
+```
+- mountains_search오류 수정
+- 코드 재사용성을 높이기 위한 scss 정리 & 모바일 유저들을 위한 반응형 디자인
+	- accounts_profile (진행중)
+	[코드를 100줄 이상 줄임]
+```
