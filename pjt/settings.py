@@ -228,15 +228,13 @@ SESSION_COOKIE_AGE = 259200 # 3일(259200초) 동안 세션 유지하도록 설�
 
 
 # REDIS
-
-CACHE_TTL = 15
+CACHE_TTL = 7 * 24 * 60 * 60
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://localhost:6379/1',  # Redis 서버 주소 및 포트
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'TIMEOUT': 5, # 캐시 만료 시간
         }
     }
 }

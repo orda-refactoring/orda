@@ -19,6 +19,9 @@ from django.conf import settings
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
+import hashlib
+from django.db.models import Prefetch
+
 
 class SearchView(FormView):
     template_name = 'mountains/search.html'
@@ -26,15 +29,33 @@ class SearchView(FormView):
     success_url = 'mountains/mountain_list.html'
 
 
+def generate_cache_key(filters, sort):
+    # 필터링 및 정렬 조건을 기반으로 캐시 키를 생성합니다.
+    key = hashlib.md5(str(filters).encode('utf-8') + str(sort).encode('utf-8')).hexdigest()
+    return f'mountain_list_{key}'
+
+
 def mountain_list(request):
-    mountains = Mountain.objects.all()
     user = request.user
-    
+    mountains = Mountain.objects.all().prefetch_related('likes', 'review_set', 'course_set')
+
     tags = request.GET.getlist('tags')
     sido = request.GET.get('sido')
     gugun = request.GET.get('gugun')
     search_query = request.GET.get('search_query')
     sort = request.GET.get('sort', None)
+
+    # 캐시 키 생성
+    # cache_key = generate_cache_key((tags, sido, gugun, search_query), sort)
+    # print(cache_key)
+
+    # 캐시에서 쿼리셋 가져오기
+    # mountains = cache.get(cache_key)
+
+    # if mountains is None:
+        # 필터링 및 정렬에 따른 다른 쿼리셋 생성
+    # else:
+    #     print('Already caching')
 
     filter_condition = Q()
 
@@ -70,6 +91,9 @@ def mountain_list(request):
     elif sort == 'height':
         mountains = mountains.order_by('height') # 고도순으로 정렬
 
+    # 생성한 쿼리셋을 캐시에 저장
+    # cache.set(cache_key, mountains, 3600)
+
     per_page = 12
     paginator = Paginator(mountains, per_page)
     page= request.GET.get('page', '1')
@@ -83,26 +107,34 @@ def mountain_list(request):
     }
     return render(request, 'mountains/mountain_list.html', context)
 
-class CourseListView(LoginRequiredMixin, ListView):
+
+class CourseListView(ListView): #Login기능 넣을 필요 있음
     template_name = 'mountains/course_list.html'
     context_object_name = 'courses'
     model = Course
     paginate_by = 5    
 
     def get_queryset(self):
-        mountain_pk = self.kwargs['mountain_pk']
-        mountain = Mountain.objects.get(pk=mountain_pk)
+        if hasattr(self, 'cached_queryset'):
+            print('queryset already caching')
+            return self.cached_queryset
+        
+        mountain = Mountain.objects.get(pk=self.kwargs['mountain_pk'])
+        self.mountain = mountain
+        
         sort = self.request.GET.get('sort', '')
         queryset = Course.objects.filter(mntn_name=mountain)
+        # .prefetch_related('bookmarks')
         queryset = sort_courses(queryset, sort)
+
+        self.cached_queryset = queryset
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        mountain_pk = self.kwargs['mountain_pk']
-        mountain = Mountain.objects.get(pk=mountain_pk)
         queryset = self.get_queryset()
+        mountain = self.mountain
             
         paginator = Paginator(queryset, self.paginate_by)
         page_number = self.request.GET.get('page')
@@ -128,6 +160,7 @@ class CourseListView(LoginRequiredMixin, ListView):
 
         cache.set(cache_key1, courses_data)
         cache.set(cache_key2, detail_data)
+
         context.update({
             'mountain': mountain,
             'courses': page_obj,
@@ -142,50 +175,67 @@ class CourseListView(LoginRequiredMixin, ListView):
 def course_all_list(request):
     sido = request.GET.get('sido', '')
     gugun = request.GET.get('gugun', '')
-    mountain = Mountain.objects.all()
+    sort = request.GET.get('sort', None)
+    page= request.GET.get('page', '1')
+    per_page = 10
+
+    # 캐싱 1
+    mountains = cache.get(f'course_all_list')
+
+    if mountains is None:
+        mountains = Mountain.objects.all()
+        cache.set(f'course_all_list', mountains)
 
     if sido and gugun:
         if ('광역시' in sido) or ('특별시' in sido):
-            mountain = Mountain.objects.filter(Q(region__contains=sido))
+            mountains = Mountain.objects.filter(Q(region__contains=sido))
         else:
             if '전체' in gugun:
-                mountain = Mountain.objects.filter(Q(region__contains=sido))
+                mountains = Mountain.objects.filter(Q(region__contains=sido))
             else:
-                mountain = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
+                mountains = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
 
-    courses = Course.objects.filter(mntn_name__in=mountain)
-    sort = request.GET.get('sort', None)
-    courses = sort_courses(courses, sort) # 정렬된 코스 가져오기.
+    courses = Course.objects.filter(mntn_name__in=mountains).select_related('mntn_name').prefetch_related('bookmarks')
 
-    page= request.GET.get('page', '1')
-    per_page = 10
+    courses = sort_courses(courses, sort)
+
     paginator = Paginator(courses, per_page)
     page_obj = paginator.get_page(page)
-    
+
+
     context = {
         'page_obj': page_obj,
     }
     return render(request, 'mountains/course_all_list.html', context)
 
 
-class CourseDetailView(LoginRequiredMixin, DetailView):
+class CourseDetailView(DetailView): # LoginRequiredMixin
     model = Course
     template_name = 'mountains/course_detail.html'
     context_object_name = 'course'
 
-    def get_object(self, queryset=None):
-        course_pk = self.kwargs['pk']
-        course = get_object_or_404(Course, pk=course_pk)
-        return course
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course = self.object
-        mountain = course.mntn_name
-        course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+        course_pk = self.kwargs['pk']
 
-        course_data = serialize_courses([course], 'geom')
-        detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
+        # 캐싱
+        course = cache.get(f'course_detail_{course_pk}')
+        course_data = cache.get(f'course_detail_{course_pk}_course')
+        detail_data = cache.get(f'course_detail_{course_pk}_detail')
+
+        if not course:
+            course = get_object_or_404(Course, pk=course_pk)
+            cache.set(f'course_detail_{course_pk}', course, 86,400)
+            
+        if not course_data or not detail_data:
+            course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+
+            course_data = serialize_courses([course], 'geom')
+            detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
+            cache.set(f'course_detail_{course_pk}_course', course_data)
+            cache.set(f'course_detail_{course_pk}_detail', detail_data)
+
+        mountain = course.mntn_name
 
         context.update({
             'mountain': mountain,
@@ -291,10 +341,3 @@ def weather_forecast(request, pk):
     }
 
     return render(request, 'mountains/weather_forecast.html', context)
-
-
-# CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
-# @cache_page(CACHE_TTL)
-# def test(request):
-#     text = 'hello REDIS'
-#     return render(request, 'mountains/test.html', {'text': text})

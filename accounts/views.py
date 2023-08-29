@@ -88,7 +88,7 @@ def profile(request, user_pk):
 
     liked_posts = person.like_posts.only('title').all()
     liked_mountains = person.liked_mountains.only('name').all()
-    bookmark_course = person.bookmarks.only('crs_name', 'crs_name_detail').all()
+    bookmark_course = person.bookmarks.only('crs_name_detail').all()
 
     score = posts.count() * 30 + reviews.count() * 20 + visited_courses * 10 + posts_comments * 5
     level = person.level
