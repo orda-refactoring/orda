@@ -513,3 +513,17 @@ mountains_weather
 	- accounts_profile (진행중)
 	[코드를 100줄 이상 줄임]
 ```
+
+# 2023/08/30
+- 장하늬 
+```
+```
+
+- 최지원
+```
+- main_index nav오류 수정
+- 코드 재사용성을 높이기 위한 scss 정리 & 모바일 유저들을 위한 반응형 디자인 & 오류 수정
+	- accounts_profile (완료)
+	[코드를 220줄 줄임]
+	- course_detail 작업 시작
+```
