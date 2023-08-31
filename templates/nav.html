@@ -15,7 +15,7 @@
             {% if user.is_authenticated %}
             href="{% url 'main' %}"
             {% else %}
-            href="{% url 'mountains:mountain_list' %}"
+            href="{% url 'index' %}"
             {% endif %}
             ><img class='header__logo--img' src="{% static 'img/logo_long.png' %}" alt="ordalogo"></a>
           </div>
@@ -38,8 +38,8 @@
             </div>
           </div>
         </div>
-          <div class="header__personalbox">
-            {% if user.is_authenticated %}
+        <div class="header__personalbox position--relative">
+          {% if user.is_authenticated %}
             <div class="personal--wrap">
               <div class="header__user--item small--hidden">
                 <button id="notification-button" onclick="toggleNotificationPopup()"><span id="notification-count">
@@ -56,8 +56,8 @@
                 </div>
               </div>
               <div class="dropdown header--profilebox header--profilebox__mainonly">
-                <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <div class="header__profilebox">
+                <button class="btn-outline-light"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div>
                     {% if request.user.profile_img  %}
                       <img class="header__profile {% if request.user.level == 2 %}level2 {% elif request.user.level == 3 %}level3 {% elif request.user.level == 4 %}level4 {% elif request.user.level == 5 %}level5 {% endif %}" src="{{ request.user.profile_img.url }}" alt="{{ post.user }}프로필">
                       {% if request.user.level == 5 %}
@@ -76,7 +76,7 @@
                   <li><a class="dropdown-item" href="{% url 'accounts:my_memories' %}">
                     오른기억</a></li>
                   <li> <a class="dropdown-item" href="#">
-                     {% include 'accounts/test_location.html' %} </a></li>
+                    {% include 'accounts/test_location.html' %} </a></li>
                   <li><a class="dropdown-item" href="#">            
                     <form action="{% url 'accounts:logout' %}" method="POST">
                       {% csrf_token %}
@@ -86,19 +86,18 @@
                 </ul>
               </div>
             </div>
-            {% else %}
-              <div class="dropdown header--profilebox">
-                <button class="btn-outline-light " style="width: 50px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="header__profile" src="{% static 'img/Noimage.png' %}" alt="no">
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a id="로그인" class="dropdown-item" href="{% url 'accounts:login' %}">로그인</a></li>
-                  <li><a id="회원가입" class="dropdown-item" href="{% url 'accounts:signup' %}">
-                    회원가입</a></li>
-                </ul>
-              </div>
-            {% endif %}
+          {% else %}
+            <div class="dropdown header--profilebox header--profilebox__mainonly">
+              <button class="btn-outline-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img class="header__profile" src="{% static 'img/Noimage.png' %}" alt="no">
+              </button>
+              <ul class="dropdown-menu">
+                <li><a id="로그인" class="dropdown-item" href="{% url 'accounts:login' %}">로그인</a></li>
+                <li><a id="회원가입" class="dropdown-item" href="{% url 'accounts:signup' %}">
+                  회원가입</a></li>
+              </ul>
             </div>
+          {% endif %}
           </div>
         </div>
       </div>

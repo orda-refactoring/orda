@@ -253,22 +253,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="{% static 'js/posts_index.js' %}"></script>
-<script>
-  window.addEventListener('resize', adjustCardLayout);
 
-function adjustCardLayout() {
-  var cards = document.querySelectorAll('.max-w-sm');
-  cards.forEach(function(card) {
-    if (card.offsetWidth > 250) {
-      card.querySelector('.likes__box').style.flexDirection = 'row-reverse';
-      card.querySelector('.likes__box').style.justifyContent = 'space-between';
-      card.querySelector('.likes__box').style.textAlign = 'start';
-    } else {
-      card.querySelector('.likes__box').style.flexDirection = 'column';
-      card.querySelector('.likes__box').style.textAlign = 'center';
-    }
-  });
-}
-//adjustCardLayout();
-</script>
 {% endblock javascript %}

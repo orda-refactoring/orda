@@ -128,7 +128,7 @@
   position: absolute;
   display: flex;
   top: 188px;
-  left: 121x;
+  left: 121px;
 }
 
 .kyeonggi--soyo {
@@ -143,6 +143,7 @@
   display: flex;
   top: 200px;
   left: 305px;
+  flex-direction: column;
 }
 
 .kyeonggi--unak {
@@ -163,7 +164,7 @@
   position: absolute;
   display: flex;
   top: 178px;
-  left: 245x;
+  left: 245px;
 }
 
 .kyeonggi--chuckryeong {
@@ -311,6 +312,7 @@
   display: flex;
   top: 156px;
   left: 115px;
+  flex-direction: column;
 }
 
 .kangwon--jeombong {
@@ -346,6 +348,7 @@
   display: flex;
   top: 155px;
   left: 82px;
+  flex-direction: column;
 }
 
 .chungbuk--gubyeong {
@@ -465,6 +468,7 @@
   display: flex;
   top: 330px;
   left: 386px;
+  flex-direction: column;
 }
 
 .chungnam--chilgab {
@@ -500,6 +504,7 @@
   display: flex;
   top: 307px;
   left: 155px;
+  flex-direction: column;
 }
 
 .jeonbuk--naejang {
@@ -507,6 +512,7 @@
   display: flex;
   top: 275px;
   left: 132px;
+  flex-direction: column;
 }
 
 .jeonbuk--daedun {
@@ -528,6 +534,7 @@
   display: flex;
   top: 105px;
   left: 388px;
+  flex-direction: column;
 }
 
 .jeonbuk--jeoksang {
@@ -598,6 +605,7 @@
   display: flex;
   top: 111px;
   left: 246px;
+  flex-direction: column;
 }
 
 .jeonnam--chuweol {
@@ -660,7 +668,7 @@
   position: absolute;
   display: flex;
   top: 67px;
-  left: 362x;
+  left: 362px;
 }
 
 .jeonnam--cheongwan {
@@ -695,7 +703,7 @@
   position: absolute;
   display: flex;
   top: 330px;
-  left: 206x;
+  left: 206px;
 }
 
 .kyeongbuk--unmun {
@@ -733,7 +741,7 @@
   left: 300px;
 }
 
-.kyeongbuk--naeyeo {
+.kyeongbuk--naeyeon {
   position: absolute;
   display: flex;
   top: 210px;

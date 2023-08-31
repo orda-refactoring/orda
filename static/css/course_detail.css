@@ -1,0 +1,87 @@
+.detail--wrap {
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px;
+  position: relative;
+}
+.detail--wrap h1 {
+  font-weight: bold;
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  text-align: center;
+  padding: 2.2rem 1rem;
+}
+.detail--wrap .map--wrap {
+  width: 100%;
+  height: 500px;
+}
+.detail--wrap .detail__box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 25px;
+  margin: 10px 0 0 0;
+}
+.detail--wrap .gpxbtn--wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 16px;
+}
+.detail--wrap .gpxbtn--wrap input {
+  border: solid #47A945 4px !important;
+  border-radius: 0.25rem;
+  padding: 8px 24px;
+  color: #888888;
+}
+.detail--wrap .gpxbtn--wrap input:hover {
+  color: white;
+  background-color: #47A945;
+}
+
+.text--wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-top: 16px;
+}
+.text--wrap div {
+  display: flex;
+  flex-direction: row;
+  margin: 8px;
+}
+.text--wrap div .text__title {
+  margin: 0 8px 0 0;
+  font-weight: bold;
+}
+.text--wrap div .text__detail {
+  margin: 0 8px 0 0;
+}
+
+.btn--spot {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 50px;
+  color: rgb(229, 89, 59);
+  z-index: 10;
+}
+
+@media (max-width: 680px) {
+  .detail--wrap h1 {
+    font-size: 2rem;
+  }
+  .map--wrap {
+    height: 300px !important;
+  }
+  .text--wrap {
+    font-size: 1rem;
+  }
+  .text--wrap div {
+    flex-direction: column;
+    text-align: center;
+  }
+}/*# sourceMappingURL=course_detail.css.map */

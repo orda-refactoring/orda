@@ -1,0 +1,110 @@
+@import 'style.scss';
+
+.detail--wrap{
+  @include flex(column);
+  @include padding(0, 24px);
+  position: relative;
+
+  h1 {
+    font: {
+      weight: bold;
+      size: 2.5rem;
+    }
+    line-height: 2.5rem;
+    text-align: center;
+    @include padding(2.2rem, 1rem);
+  }
+
+  .map--wrap{
+    width: 100%;
+    height: 500px;
+  }
+
+  .detail__box{
+    @include flex(column){
+      justify-content: $justify-between;
+    }
+    @include padding(10px, 25px);
+    @include margin(10px, 0);
+  }
+
+  .gpxbtn--wrap{
+    @include flex(){
+      justify-content: center;
+    }
+    font: {
+      size: 1.5rem;
+      weight: bold;
+    }
+    margin-top: 16px;
+    
+    input {
+      @include border(#47A945, 4px);
+      border-radius: 0.25rem;
+      @include padding(8px, 24px);
+      color: #888888;
+      
+      &:hover{
+        color: white;
+        background-color: #47A945;
+      }
+    }
+  }
+}
+
+.text--wrap{
+  @include flex(){
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  margin-top: 16px;
+
+  div {
+    @include flex();
+    margin: 8px;
+
+    .text__title{
+      @include margin(0, 8px);
+      font-weight: bold;
+    }
+
+    .text__detail{
+      @include margin(0, 8px);
+    }
+  }
+}
+
+.btn--spot{
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 50px;
+  color: rgb(229, 89, 59);
+  z-index: 10;
+}
+
+@mixin md{
+  @media(max-width:680px){
+    @content;
+  }
+}
+
+@include md{
+  .detail--wrap{
+    h1{
+      font-size: 2rem;
+    }
+  }
+  .map--wrap{
+    height: 300px !important;
+  }
+
+  .text--wrap{
+    font-size: 1rem;
+
+    div {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+}
