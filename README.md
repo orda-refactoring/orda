@@ -528,3 +528,20 @@ mountains_weather
 	[코드를 220줄 줄임]
 	- course_detail 작업 시작
 ```
+
+# 2023/08/31
+- 장하늬 
+```
+```
+
+- 최지원
+```
+- main_index nav오류 수정
+- 코드 재사용성을 높이기 위한 scss 정리 & 모바일 유저들을 위한 반응형 디자인
+	- course_detail
+- 레이아웃 / 오류 수정
+	- nav
+	- search_region
+	- post_index 로그아웃 시 js 일부가 적용이 안되는 오류 수정
+- coursesalllist, scss 경량화 작업 남음
+```
