@@ -19,10 +19,10 @@ class Mountain(models.Model):
     info = models.TextField(db_column='mntn_info')
     height = models.IntegerField()
     region = models.CharField(max_length=100)
+    emndn_name = models.TextField(db_column='emndn_nm')
     geom = models.GeometryField()
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_mountains', db_table='mountains_mountain_likes')
     views = models.PositiveIntegerField(default=0)
-    emndn_name = models.TextField(db_column='emndn_nm')
     
     class Meta:
         managed = False
@@ -74,7 +74,6 @@ class Mountain(models.Model):
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
     mntn_name = models.ForeignKey(Mountain, on_delete=models.CASCADE, to_field="name", db_column="mntn_name")
-    crs_name = models.CharField(max_length=100)
     crs_name_detail = models.CharField(max_length=255, unique=True)
     distance = models.FloatField(db_column='total_distance_km')
     duration = models.CharField(max_length = 255, db_column='total_interval')
@@ -94,7 +93,6 @@ class Course(models.Model):
 
 class CourseDetail(models.Model):
     id = models.AutoField(primary_key=True)
-    crs_name = models.CharField(max_length=100)  
     crs_name_detail = models.ForeignKey(Course, on_delete=models.CASCADE, to_field="crs_name_detail", db_column="crs_name_detail")  
     waypoint_name = models.CharField(max_length=50)
     waypoint_category = models.CharField(max_length=256, db_column='category')

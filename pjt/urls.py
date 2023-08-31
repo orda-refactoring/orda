@@ -32,6 +32,6 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^upload/$', login_required(views_ckeditor.upload), name='ckeditor_upload'),
     re_path(r'^browse/$', never_cache(login_required(views_ckeditor.browse)), name='ckeditor_browse'),
-    # path("__debug__/", include("debug_toolbar.urls")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

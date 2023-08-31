@@ -15,21 +15,29 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+import hashlib
+from django.db.models import Prefetch
+
+
 class SearchView(FormView):
     template_name = 'mountains/search.html'
     form_class = SearchForm
     success_url = 'mountains/mountain_list.html'
 
-
 def mountain_list(request):
-    mountains = Mountain.objects.all()
     user = request.user
-    
     tags = request.GET.getlist('tags')
     sido = request.GET.get('sido')
     gugun = request.GET.get('gugun')
     search_query = request.GET.get('search_query')
     sort = request.GET.get('sort', None)
+    page= request.GET.get('page', '1')
+
+    mountains = Mountain.objects.all().prefetch_related('likes', 'review_set', 'course_set')
 
     filter_condition = Q()
 
@@ -47,10 +55,10 @@ def mountain_list(request):
             top_tags_pk = filtered_mountain.top_tags_pk
             if any((tag_pk in top_tags_pk) for tag_pk in int_tags):
                 filtered_pks.append(filtered_mountain.pk)
-        mountains = mountains.filter(pk__in=filtered_pks)
+        filter_condition &= Q(pk__in=filtered_pks)
 
     if search_query:
-        mountains = mountains.filter(name__icontains=search_query)
+        filter_condition &= Q(name__icontains=search_query)
 
     mountains = mountains.filter(filter_condition)
         
@@ -67,7 +75,6 @@ def mountain_list(request):
 
     per_page = 12
     paginator = Paginator(mountains, per_page)
-    page= request.GET.get('page', '1')
     page_obj = paginator.get_page(page)
 
     distances = mountains_distance(user, page_obj)
@@ -86,29 +93,41 @@ class CourseListView(LoginRequiredMixin, ListView):
     paginate_by = 5    
 
     def get_queryset(self):
-        mountain_pk = self.kwargs['mountain_pk']
-        mountain = Mountain.objects.get(pk=mountain_pk)
         sort = self.request.GET.get('sort', '')
-        queryset = Course.objects.filter(mntn_name=mountain)
-        queryset = sort_courses(queryset, sort)
 
+        mountain = cache.get(f'mountain_{self.kwargs["mountain_pk"]}')
+        
+        if not mountain:
+            mountain = Mountain.objects.get(pk=self.kwargs['mountain_pk'])
+            cache.set(f'mountain_{self.kwargs["mountain_pk"]}', mountain)
+
+        queryset = Course.objects.filter(mntn_name=mountain).prefetch_related('bookmarks')
+        queryset = sort_courses(queryset, sort)
+        self.mountain = mountain
+    
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        mountain_pk = self.kwargs['mountain_pk']
-        mountain = Mountain.objects.get(pk=mountain_pk)
         queryset = self.get_queryset()
-            
-        paginator = Paginator(queryset, self.paginate_by)
+        mountain = self.mountain
+        
         page_number = self.request.GET.get('page')
+        paginator = Paginator(queryset, self.paginate_by)
         page_obj = paginator.get_page(page_number)
+            
+        courses_data = cache.get(f'course_list_{hash(mountain.name)}_course')
+        detail_data = cache.get(f'course_list_{hash(mountain.name)}_detail')
 
-        courses_data = serialize_courses(page_obj, 'geom')
-        detail_data = {}
-        for course in page_obj:
-            course_detail = CourseDetail.objects.filter(crs_name_detail=course)
-            detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
+        if not courses_data or not detail_data:
+            courses_data = serialize_courses(page_obj, 'geom')
+            detail_data = {}
+            for course in page_obj:
+                course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+                detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
+                
+                cache.set(f'course_list_{hash(mountain.name)}_course', courses_data)
+                cache.set(f'course_list_{hash(mountain.name)}_detail', detail_data)
 
         context.update({
             'mountain': mountain,
@@ -124,50 +143,66 @@ class CourseListView(LoginRequiredMixin, ListView):
 def course_all_list(request):
     sido = request.GET.get('sido', '')
     gugun = request.GET.get('gugun', '')
-    mountain = Mountain.objects.all()
+    sort = request.GET.get('sort', None)
+    page= request.GET.get('page', '1')
+    per_page = 10
+
+    mountains = cache.get(f'course_all_list')
+
+    if mountains is None:
+        mountains = Mountain.objects.all()
+        cache.set(f'course_all_list', mountains)
 
     if sido and gugun:
         if ('광역시' in sido) or ('특별시' in sido):
-            mountain = Mountain.objects.filter(Q(region__contains=sido))
+            mountains = Mountain.objects.filter(Q(region__contains=sido))
         else:
             if '전체' in gugun:
-                mountain = Mountain.objects.filter(Q(region__contains=sido))
+                mountains = Mountain.objects.filter(Q(region__contains=sido))
             else:
-                mountain = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
+                mountains = Mountain.objects.filter(Q(region__contains=sido) & Q(region__contains=gugun))
 
-    courses = Course.objects.filter(mntn_name__in=mountain)
-    sort = request.GET.get('sort', None)
-    courses = sort_courses(courses, sort) # 정렬된 코스 가져오기.
+    courses = Course.objects.filter(mntn_name__in=mountains).select_related('mntn_name').prefetch_related('bookmarks')
 
-    page= request.GET.get('page', '1')
-    per_page = 10
+    courses = sort_courses(courses, sort)
+
     paginator = Paginator(courses, per_page)
     page_obj = paginator.get_page(page)
-    
+
+
     context = {
         'page_obj': page_obj,
     }
     return render(request, 'mountains/course_all_list.html', context)
 
 
-class CourseDetailView(LoginRequiredMixin, DetailView):
+class CourseDetailView(DetailView): # LoginRequiredMixin
     model = Course
     template_name = 'mountains/course_detail.html'
     context_object_name = 'course'
 
-    def get_object(self, queryset=None):
-        course_pk = self.kwargs['pk']
-        course = get_object_or_404(Course, pk=course_pk)
-        return course
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course = self.object
-        mountain = course.mntn_name
-        course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+        course_pk = self.kwargs['pk']
 
-        course_data = serialize_courses([course], 'geom')
-        detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
+        # 캐싱
+        course = cache.get(f'course_detail_{course_pk}')
+        course_data = cache.get(f'course_detail_{course_pk}_course')
+        detail_data = cache.get(f'course_detail_{course_pk}_detail')
+
+        if not course:
+            course = get_object_or_404(Course, pk=course_pk)
+            cache.set(f'course_detail_{course_pk}', course, 86,400)
+            
+        if not course_data or not detail_data:
+            course_detail = CourseDetail.objects.filter(crs_name_detail=course)
+
+            course_data = serialize_courses([course], 'geom')
+            detail_data = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category')
+            cache.set(f'course_detail_{course_pk}_course', course_data)
+            cache.set(f'course_detail_{course_pk}_detail', detail_data)
+
+        mountain = course.mntn_name
 
         context.update({
             'mountain': mountain,
@@ -273,5 +308,3 @@ def weather_forecast(request, pk):
     }
 
     return render(request, 'mountains/weather_forecast.html', context)
-
-

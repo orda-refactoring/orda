@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 
     'django.contrib.gis',
 
-    # 'debug_toolbar',
+    'debug_toolbar',
 
     'allauth',
     'allauth.account',
@@ -76,7 +76,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'posts.notification_middleware.NotificationMiddleware',
     'accounts.notification_middleware.NotificationMiddleware',
@@ -202,11 +202,11 @@ CKEDITOR_IMAGE_BACKEND = 'pillow'
 
 
 # # debug_toolbar 관련
-# INTERNAL_IPS = [
-#     # ...
-#     "127.0.0.1",
-#     # ...
-# ]
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 
 # 이메일 관련
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -225,3 +225,19 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 # 세션 쿠키 관련
 SESSION_COOKIE_AGE = 259200 # 3일(259200초) 동안 세션 유지하도록 설정
+
+
+# REDIS
+CACHE_TTL = 7 * 24 * 60 * 60
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/1',  # Redis 서버 주소 및 포트
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
