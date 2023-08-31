@@ -1,3 +1,57 @@
+const viewBtn = document.querySelector('.viewlist__btn');
+const likeBtn = document.querySelector('.likelist__btn');
+
+const viewContent = document.querySelector('.view__content');
+const likeContent = document.querySelector('.like__content');
+
+viewBtn.addEventListener('click', ()=> {
+  likeContent.style.display = 'none'
+  viewContent.style.display = 'block'
+  viewBtn.style.backgroundColor = 'var(--main-color)'
+  viewBtn.style.border = 'var(--main-color) solid 5px'
+  likeBtn.style.backgroundColor = 'var(--background-color)'
+  likeBtn.style.border = 'var(--background-color) solid 5px'
+})
+
+likeBtn.addEventListener('click', ()=> {
+  viewContent.style.display = 'none'
+  likeContent.style.display = 'block'
+  likeBtn.style.backgroundColor = 'var(--main-color)'
+  likeBtn.style.border = 'var(--main-color) solid 5px'
+  viewBtn.style.backgroundColor = 'var(--background-color)'
+  viewBtn.style.border = 'var(--background-color) solid 5px'
+})
+
+$(document).ready(function() {
+  $(".owl-carousel").owlCarousel({
+    // OwlCarousel 옵션 설정
+    items: 4, // 한 번에 표시할 아이템 수
+    loop: false, // 무한 루프 여부
+    margin: 10, // 아이템 간의 간격
+    dots: true, // 도트 표시 여부
+    animateIn: 'fadeIn',
+    autoplay: true,
+    rewind: true,
+    autoplayTimeout: 3000,
+    smartSpeed: 500,
+    responsive: {
+      // 반응형 옵션 설정
+      0: {
+        items: 1 // 0px 이상일 때, 1개의 아이템 표시
+      },
+      720: {
+        items: 2
+      },
+      1080: {
+        items: 3
+      },
+      1280: {
+        items: 4
+      },
+    }
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   var loadMoreBtn = document.getElementById("loadMoreBtn");
   var postGrid = document.getElementById("postGrid");
@@ -33,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
 
 // 좋아요 비동기
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -76,66 +131,6 @@ if (forms) {
     });
   });
 }
-
-$(document).ready(function() {
-  $(".owl-carousel").owlCarousel({
-    // OwlCarousel 옵션 설정
-    items: 4, // 한 번에 표시할 아이템 수
-    loop: false, // 무한 루프 여부
-    margin: 10, // 아이템 간의 간격
-    dots: true, // 도트 표시 여부
-    animateIn: 'fadeIn',
-    autoplay: true,
-    rewind: true,
-    autoplayTimeout: 3000,
-    smartSpeed: 500,
-    responsive: {
-      // 반응형 옵션 설정
-      0: {
-        items: 1 // 0px 이상일 때, 1개의 아이템 표시
-      },
-      720: {
-        items: 2
-      },
-      1080: {
-        items: 3
-      },
-      1280: {
-        items: 4
-      },
-    }
-  });
-});
-
-
-const viewBtn = document.querySelector('.viewlist__btn');
-const likeBtn = document.querySelector('.likelist__btn');
-
-const viewContent = document.querySelector('.view__content');
-const likeContent = document.querySelector('.like__content');
-
-viewBtn.addEventListener('click', ()=> {
-  likeContent.style.display = 'none'
-  viewContent.style.display = 'block'
-  viewBtn.style.backgroundColor = 'var(--main-color)'
-  viewBtn.style.border = 'var(--main-color) solid 5px'
-  likeBtn.style.backgroundColor = 'var(--background-color)'
-  likeBtn.style.border = 'var(--background-color) solid 5px'
-})
-
-likeBtn.addEventListener('click', ()=> {
-  viewContent.style.display = 'none'
-  likeContent.style.display = 'block'
-  // likeContent.style.setProperty('display', 'block', 'important');
-  // likeContent.style = 'display: block !important'
-  likeBtn.style.backgroundColor = 'var(--main-color)'
-  likeBtn.style.border = 'var(--main-color) solid 5px'
-  viewBtn.style.backgroundColor = 'var(--background-color)'
-  viewBtn.style.border = 'var(--background-color) solid 5px'
-})
-
-
-
 
 
 // const page_elements = document.getElementsByClassName('page-link')

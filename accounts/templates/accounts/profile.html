@@ -27,28 +27,28 @@
                 <img class="level5--img-lg" src="{% static 'img/crown.png' %}" alt="level5">
               {% endif %}
             {% endif %}
-            </div>
-            <div class="profile__user--stat">
+          </div>
+          <div class="profile__user--stat">
             <div class="profile__user--name">{{ person.nickname }}</div>
             <div>
               {% if person.level == 1 %}
-                <div class="d-flex flex-row">
+                <div class="flex--row">
                   <img class="levelname--img" src="{% static 'img/level/level1.png' %}" alt=""><p class="levelname">등산새싹</p>
                 </div>
               {% elif person.level == 2 %}
-                <div class="d-flex flex-row">
+                <div class="flex--row">
                   <img class="levelname--img" src="{% static 'img/level/level2.png' %}" alt=""><p class="levelname">등산샛별</p>
                 </div>
               {% elif person.level == 3 %}
-              <div class="d-flex flex-row">
+              <div class="flex--row">
                 <img class="levelname--img" src="{% static 'img/level/level3.png' %}" alt=""><p class="levelname">등산인</p>
               </div>
               {% elif person.level == 4 %}
-              <div class="d-flex flex-row">
+              <div class="flex--row">
                 <img class="levelname--img" src="{% static 'img/level/level4.png' %}" alt=""><p class="levelname">등산고수</p>
               </div>
               {% elif person.level == 5 %}
-              <div class="d-flex flex-row">
+              <div class="flex--row">
                 <img class="levelname--img" src="{% static 'img/level/level5.png' %}" alt=""><p class="level5name">등산왕</p>
               </div>
               {% endif %}
@@ -65,7 +65,7 @@
             </div>
             <div class="profile__user--follow">
               <p class="profile__user--followtext">팔로워</p><button id="followers-count" class="profile__user--followercount">{{ person.followers.all|length }}</button>
-              <p style="font-size: 12px; line-height: 20px; margin: 0 5px;">|</p>
+              <p class="bar" style="margin: 0 5px;">|</p>
               <p class="profile__user--followtext">팔로잉</p><button id="followings-count" class="profile__user--followingcount">{{ person.followings.all|length }}</button>
             </div>
             {% if request.user == person %}
@@ -99,9 +99,9 @@
               <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
             </svg>
             <p>나의글</p>
-            <div class="d-flex flex-row profile__user--info2cnt">
+            <div class="flex--row profile__user--info2cnt">
               <span>0</span>
-              <span style="margin: 0 3px; font-size: 12px; line-height: 20px;">|</span>
+              <span class-"bar" style="margin: 0 3px;">|</span>
               <span>{{ posts|length }}</span>
             </div>
           </button>
@@ -121,7 +121,7 @@
             <p>좋아요</p>
             <div class="d-flex flex-row profile__user--info2cnt">
               <span>{{ liked_mountains|length }}</span>
-              <span style="margin: 0 3px; font-size: 12px; line-height: 20px;">|</span>
+              <span class="bar" style="margin: 0 3px;">|</span>
               <span>{{ liked_posts|length }}</span>
             </div>
           </button>
@@ -129,7 +129,6 @@
       </div>
     </article>
 
-    <article class="profile__article2"></article>
 
     {% comment %} 컨텐츠 {% endcomment %}
     <article class="profile__article3">
@@ -137,12 +136,12 @@
         {% comment %} 나의글 목록 {% endcomment %}
         <div class="profile__content1" style="display: block;">
           
-          <div class="profile__content1--review">
-            <div class="profile__content1--reviewtext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>내가 쓴 리뷰</p>
-              <span style="margin-left: 5px; color: var(--main-color);">{{ reviews.count }}</span>
+              <span>{{ reviews.count }}</span>
             </div>
-            <div class="profile__content1--reviewcontent">
+            <div class="profile__content--contentblock">
               {% if reviews %}
                 <div class="profile__content--postbox">
                   {% for review in reviews %}
@@ -165,12 +164,12 @@
           </div>
 
 
-          <div class="profile__content1--mycourse">
-            <div class="profile__content1--mycoursetext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>내가 쓴 마이코스</p>
-              <span style="margin-left: 5px; color: var(--main-color);">{{ posts|length }}</span>
+              <span>{{ posts|length }}</span>
             </div>
-            <div class="profile__content1--mycoursecontent">
+            <div class="profile__content--contentblock">
               {% if posts %}
                 <div class="profile__content--postbox">
                   {% for post in posts %}
@@ -199,12 +198,12 @@
 
         {% comment %} 북마크 목록 {% endcomment %}
         <div class="profile__content2" style="display: none;">
-          <div class="profile__content2--bookmark">
-            <div class="profile__content2--bookmarktext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>북마크</p>
-              <span style="margin-left: 5px; color: var(--main-color);">{{ bookmark_course|length }}</span>
+              <span>{{ bookmark_course|length }}</span>
             </div>
-            <div class="profile__content2--bookmarkcontent">
+            <div class="profile__content--contentblock">
               {% if bookmark_course %}
                 <div class="profile__content--postbox">
                   {% for course in bookmark_course %}
@@ -226,12 +225,12 @@
 
         {% comment %} 좋아요 목록 {% endcomment %}
         <div class="profile__content3" style="display: none;">
-          <div class="profile__content3--mountain">
-            <div class="profile__content3--mountaintext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>좋아요 한 산</p>
-              <span style="margin-left: 5px; color: var(--main-color);">{{ liked_mountains|length }}</span>
+              <span>{{ liked_mountains|length }}</span>
             </div>
-            <div class="profile__content3--mountaincontent">
+            <div class="profile__content--contentblock">
               {% if liked_mountains %}
                 <div class="profile__content--postbox">
                   {% for mountain in liked_mountains %}
@@ -248,12 +247,12 @@
               {% endif %}
             </div>
           </div>
-          <div class="profile__content3--mycourse">
-            <div class="profile__content3--mycoursetext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
                 <p>좋아요 한 마이코스</p>
-                <span style="margin-left: 5px; color: var(--main-color);">{{ liked_posts|length }}</span>
+                <span>{{ liked_posts|length }}</span>
             </div>
-            <div class="profile__content3--mycoursecontent">
+            <div class="profile__content--contentblock">
               {% if liked_posts %}
                 <div class="profile__content--postbox">
                   {% for post in liked_posts %}
@@ -280,11 +279,11 @@
 
         {% comment %} 팔로워 목록 {% endcomment %}
         <div class="profile__content4" style="display: none;">
-          <div class="profile__content4--follower">
-            <div class="profile__content4--followertext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>팔로워</p>
             </div>
-            <div class="profile__content4--followercontent">
+            <div class="profile__content--followcontent">
               {% if person.followers.all %}
                 <div class="profile__follows--list">
                   {% for follower in person.followers.all %}
@@ -334,11 +333,11 @@
 
         {% comment %} 팔로잉 목록 {% endcomment %}
         <div class="profile__content5" style="display: none;">
-          <div class="profile__content5--following">
-            <div class="profile__content5--followingtext">
+          <div class="profile__content--wrap">
+            <div class="profile__content--titletext">
               <p>팔로잉</p>
             </div>
-            <div class="profile__content5--followingcontent">
+            <div class="profile__content--followcontent">
               {% if person.followings.all %}
                 <div class="profile__follows--list">
                   {% for following in person.followings.all %}
@@ -390,110 +389,6 @@
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script type="text/javascript" src="{% static 'js/profile.js' %}"></script>
-
-<!-- 카카오맵 API 로드 -->
-{% comment %} <script>
-  function loadKakaoMapScript(callback) {
-      if (window.kakao) {
-          // 이미 카카오맵 API가 로드되어 있는 경우
-          callback();
-      } else {
-          console.log('로드하는중')
-          // 카카오맵 API 로드
-          var script = document.createElement("script");
-          script.type = "text/javascript";
-          script.src = "https://dapi.kakao.com/v2/maps/sdk.js?appkey=d39fcd60ffdc96ae99454337f5e45a16&libraries=services&autoload=false";
-          document.head.appendChild(script);
-          
-          script.onload = function () {
-              kakao.maps.load(function () {
-                  callback();
-              });
-          };
-      }
-  }
-  // 카카오맵 초기화 함수
-  function initMap(courseId, courseDetail) {
-    var container = document.getElementById('map3-' + courseId);
-    console.log(container)
-    var options = {
-      center: new kakao.maps.LatLng(37.5665, 126.9780), 
-      level: 6
-    };
-    var map = new kakao.maps.Map(container, options);
-  
-    var linePath = [];
-    var waypointPositions = [];
-    var waypointNames = [];
-
-    // 해당 코스의 CourseDetail들에 대해 위치 표시 및 linePath에 좌표 추가
-    courseDetail.features.forEach(function(feature) {
-      var coordinates = feature.geometry.coordinates;
-      var x = coordinates[0];
-      var y = coordinates[1];
-      var excludedNames = ['국가지점', '쉼터', '자연경관', '갈림길', '이정표', '표시', '벤치', '화장실', '주의', '현위치', '조망점', '계곡', '비석'];
-      if (!feature.properties.is_waypoint) {
-        linePath.push(new kakao.maps.LatLng(y, x));
-      } else if (!excludedNames.some(name => feature.properties.waypoint_name.includes(name))) {
-        waypointPositions.push(new kakao.maps.LatLng(y, x));
-        waypointNames.push(feature.properties.waypoint_name)
-        // 마커를 표시합니다
-        
-        waypointPositions.forEach(function (position, index) {
-          
-          var marker = new kakao.maps.Marker({
-            position: position,
-            map: map,
-            title: waypointNames[index]
-          });
-        });
-      
-      }
-    });
-    // 출발 좌표에 마커 표시
-    var startMarkerPosition = linePath[0];
-    var startMarker = new kakao.maps.Marker({
-      position: startMarkerPosition,
-      map: map,
-      title: "출발지"
-    });
-
-    // 도착 좌표에 마커 표시
-    var endMarkerPosition = linePath[linePath.length - 1];
-    var endMarker = new kakao.maps.Marker({
-      position: endMarkerPosition,
-      map: map,
-      title: "도착지"
-    });
-        
-    // 중간 인덱스 계산
-    var middleIndex = Math.floor(linePath.length / 2);
-    var center = linePath[middleIndex];
-  
-    // Polyline을 이용하여 선 그리기
-    var polyline = new kakao.maps.Polyline({
-      path: linePath, // linePath에 저장된 좌표들로 설정
-      strokeWeight: 3,
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.7,
-      strokeStyle: 'solid'
-    });
-    polyline.setMap(map);
-  
-    // 부드럽게 마커가 위치한 곳으로 이동합니다
-    map.panTo(center);
-  }
-
-  // 카카오맵 API 로드 후 초기화 함수 호출
-  loadKakaoMapScript(function () {
-    {% for course in bookmark_course %}
-      var courseId = {{ course.pk }};
-      var courseDetails = {{ course_details|safe }};
-      var courseDetail = JSON.parse(courseDetails[courseId]);
-      initMap(courseId, courseDetail);
-    {% endfor %}
-  });
-</script> {% endcomment %}
 
 <script>
   function bookmark(courseId) {

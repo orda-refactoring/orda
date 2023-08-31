@@ -60,13 +60,14 @@
   @include region_dot(62px, 276px)
 }
 .kyeonggi--bukhan{
-  @include region_dot(188px, 121x)
+  @include region_dot(188px, 121px)
 }
 .kyeonggi--soyo{
   @include region_dot(32px, 190px)
 }
 .kyeonggi--yongmun{
-  @include region_dot(200px, 305px)
+  @include region_dot(200px, 305px);
+  flex-direction: column;
 }
 .kyeonggi--unak{
   @include region_dot(120px, 280px)
@@ -75,7 +76,7 @@
   @include region_dot(202px, 282px)
 }
 .kyeonggi--cheonma{
-  @include region_dot(178px, 245x)
+  @include region_dot(178px, 245px)
 }
 .kyeonggi--chuckryeong{
   @include region_dot(156px, 245px)
@@ -138,7 +139,8 @@
   @include region_dot(95px, 230px)
 }
 .kangwon--yonghwa{
-  @include region_dot(156px, 115px)
+  @include region_dot(156px, 115px);
+  flex-direction: column;
 }
 .kangwon--jeombong{
   @include region_dot(118px, 185px)
@@ -153,7 +155,8 @@
   @include region_dot(340px, 220px)
 }
 .kangwon--hwaac{
-  @include region_dot(155px, 82px)
+  @include region_dot(155px, 82px);
+  flex-direction: column;
 }
 .chungbuk--gubyeong{
   @include region_dot(262px, 190px)
@@ -204,7 +207,8 @@
   @include region_dot(293px, 374px)
 }
 .chungnam--cheontae{
-  @include region_dot(330px, 386px)
+  @include region_dot(330px, 386px);
+  flex-direction: column;
 }
 .chungnam--chilgab{
   @include region_dot(238px, 201px)
@@ -219,10 +223,12 @@
   @include region_dot(273px, 40px)
 }
 .jeonbuk--chuweol{
-  @include region_dot(307px, 155px)
+  @include region_dot(307px, 155px);
+  flex-direction: column;
 }
 .jeonbuk--naejang{
-  @include region_dot(275px, 132px)
+  @include region_dot(275px, 132px);
+  flex-direction: column;
 }
 .jeonbuk--daedun{
   @include region_dot(77px, 252px)
@@ -231,7 +237,8 @@
   @include region_dot(150px, 370px)
 }
 .jeonbuk--minjuji{
-  @include region_dot(105px, 388px)
+  @include region_dot(105px, 388px);
+  flex-direction: column;
 }
 .jeonbuk--jeoksang{
   @include region_dot(128px, 315px)
@@ -261,7 +268,8 @@
   @include region_dot(35px, 246px)
 }
 .jeonnam--mudeung{
-  @include region_dot(111px, 246px)
+  @include region_dot(111px, 246px);
+  flex-direction: column;;
 }
 .jeonnam--chuweol{
   @include region_dot(40px, 230px)
@@ -288,7 +296,7 @@
   @include region_dot(135px, 310px)
 }
 .jeonnam--jiri{
-  @include region_dot(67px, 362x)
+  @include region_dot(67px, 362px)
 }
 .jeonnam--cheongwan{
   @include region_dot(265px, 220px)
@@ -303,7 +311,7 @@
   @include region_dot(360px, 271px)
 }
 .kyeongbuk--biseul{
-  @include region_dot(330px, 206x)
+  @include region_dot(330px, 206px)
 }
 .kyeongbuk--unmun{
   @include region_dot(345px, 266px)
@@ -320,7 +328,7 @@
 .kyeongbuk--nam{
   @include region_dot(328px, 300px)
 }
-.kyeongbuk--naeyeo{
+.kyeongbuk--naeyeon{
   @include region_dot(210px, 310px)
 }
 .kyeongbuk--daeya{

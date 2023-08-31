@@ -146,7 +146,6 @@ a {
 
 .header__personalbox {
   @include navflex();
-
   .personal--wrap {
     font-size: 1.25rem;
     @include flex()
@@ -212,7 +211,13 @@ a {
   }
 }
 
-  
+.header--profilebox{
+  button{
+    width: 50px;
+    padding: 0;
+    font-weight: 400;
+  }
+}  
 /* footer */
 #wrapper{
   height: auto;
@@ -371,10 +376,11 @@ a {
 
   .header--profilebox {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: -155px;
+    right: -180px;
   }
 }
+
 
 @include base-md{
   .wrap {
