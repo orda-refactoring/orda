@@ -28,7 +28,6 @@ class SearchView(FormView):
     form_class = SearchForm
     success_url = 'mountains/mountain_list.html'
 
-
 def mountain_list(request):
     user = request.user
     tags = request.GET.getlist('tags')
@@ -87,13 +86,14 @@ def mountain_list(request):
     return render(request, 'mountains/mountain_list.html', context)
 
 
-class CourseListView(ListView): #Login기능 넣을 필요 있음
+class CourseListView(LoginRequiredMixin, ListView):
     template_name = 'mountains/course_list.html'
     context_object_name = 'courses'
     model = Course
     paginate_by = 5    
 
     def get_queryset(self):
+        sort = self.request.GET.get('sort', '')
 
         mountain = cache.get(f'mountain_{self.kwargs["mountain_pk"]}')
         
@@ -102,7 +102,6 @@ class CourseListView(ListView): #Login기능 넣을 필요 있음
             cache.set(f'mountain_{self.kwargs["mountain_pk"]}', mountain)
 
         queryset = Course.objects.filter(mntn_name=mountain).prefetch_related('bookmarks')
-        sort = self.request.GET.get('sort', '')
         queryset = sort_courses(queryset, sort)
         self.mountain = mountain
     
@@ -129,8 +128,6 @@ class CourseListView(ListView): #Login기능 넣을 필요 있음
                 
                 cache.set(f'course_list_{hash(mountain.name)}_course', courses_data)
                 cache.set(f'course_list_{hash(mountain.name)}_detail', detail_data)
-        # else:
-        #     print('ok')
 
         context.update({
             'mountain': mountain,
@@ -150,7 +147,6 @@ def course_all_list(request):
     page= request.GET.get('page', '1')
     per_page = 10
 
-    # 캐싱 1
     mountains = cache.get(f'course_all_list')
 
     if mountains is None:
