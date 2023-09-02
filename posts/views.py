@@ -10,21 +10,21 @@ from django.http import JsonResponse
 def index(request):
     query = request.GET.get('q')
     search_option = request.GET.get('search_option')
-
-    view_posts = Post.objects.order_by('-view_count')
-    like_posts = Post.objects.annotate(like_count=Count('like_users')).order_by('-like_count')
+    posts = Post.objects.select_related('user').prefetch_related('postcomment_set', 'like_users').annotate(like_count=Count('like_users'))
+    view_posts = posts.order_by('-view_count')
+    like_posts = posts.order_by('-like_count')
 
     if query and search_option:
         if search_option == 'title':
-            filtered_posts = Post.objects.filter(title__contains=query)
+            filtered_posts = posts.filter(title__contains=query)
         elif search_option == 'author':
-            filtered_posts = Post.objects.filter(user__nickname__contains=query)
+            filtered_posts = posts.filter(user__nickname__contains=query)
         elif search_option == 'content':
-            filtered_posts = Post.objects.filter(content__contains=query)
+            filtered_posts = posts.filter(content__contains=query)
         elif search_option == 'title_content':
-            filtered_posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
+            filtered_posts = posts.filter(Q(title__contains=query) | Q(content__contains=query))
     else:
-        filtered_posts = Post.objects.order_by('-created_at')
+        filtered_posts = posts.order_by('-created_at')
 
     context = {
         'view_posts': view_posts,
@@ -40,7 +40,7 @@ def index(request):
 
 
 def detail(request, post_pk):
-    post = Post.objects.get(pk=post_pk)
+    post = Post.objects.select_related('user').prefetch_related('postcomment_set__dislike_users', 'postcomment_set__like_users').get(pk=post_pk)
     postcomment_form = PostCommentForm()
     postcomments = post.postcomment_set.order_by('-id')
 
