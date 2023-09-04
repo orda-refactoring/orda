@@ -532,6 +532,51 @@ mountains_weather
 # 2023/08/31
 - 장하늬 
 ```
+- 앱 Mountains 쿼리 최적화 및 캐싱(Redis) 완료
+	- mountain_list
+		- 개선 전(쿼리 62개, 65.47ms)
+		Mean latency:        444.8 ms
+		Effective rps:       2
+		 
+		- 개선 후(쿼리 17개, 39.33ms)
+		Mean latency:        282.4 ms
+		Effective rps:       4
+	
+	- mountain_detail
+		- 개선 전(쿼리13개, 39.28ms)
+		Mean latency:        420.6 ms
+		Effective rps:       2
+		 
+		- 개선 후(쿼리 12개, 37.48ms) / N+1문제 해결
+		Mean latency:        307.5 ms
+		Effective rps:       3
+		 
+	- course_list
+		- 개선 전(쿼리 15개, 65.24ms)
+		Mean latency:        362.8 ms
+		Effective rps:       3
+	
+		- 개선 후(쿼리 4개, 18.27ms)
+		Mean latency:        217.9 ms
+		Effective rps:       5
+	
+	-course_all_list
+		- 개선 전(쿼리 22개, 33.25ms)
+		Mean latency:        284.1 ms
+		Effective rps:       4
+	
+		- 개선 후(쿼리 3개, 21.42ms)
+		Mean latency:        213.1 ms
+		Effective rps:       5
+	
+	-course_detail
+		- 개선 전(쿼리 6개, 31.62ms)
+		Mean latency:        223 ms
+		Effective rps:       4
+	
+		- 개선 후(쿼리 4개, 20.76ms)
+		Mean latency:        203 ms
+		Effective rps:       5
 ```
 
 - 최지원
@@ -545,3 +590,26 @@ mountains_weather
 	- post_index 로그아웃 시 js 일부가 적용이 안되는 오류 수정
 - coursesalllist, scss 경량화 작업 남음
 ```
+
+# 2023/09/04
+- 장하늬 
+```
+- 앱 Posts 쿼리 최적화
+	-post_list(index)
+		- 개선 전(쿼리 121개, 88.11ms)
+		Mean latency:        716.4 ms
+		Effective rps:       1
+	
+		- 개선 후(쿼리 11개, 23.16ms)
+		Mean latency:        244 ms
+		Effective rps:       4
+	-post_detail
+		- 개선 전(쿼리 75개, 76.32ms)
+		Mean latency:        536.2 ms
+		Effective rps:       2
+		
+		- 개선 후(쿼리 15개, 41.48ms)
+		Mean latency:        274.1 ms
+		Effective rps:       4
+```
+
