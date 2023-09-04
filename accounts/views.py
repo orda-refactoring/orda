@@ -80,15 +80,15 @@ def check_username(request):
 
 def profile(request, user_pk):
     User = get_user_model()
-    person = User.objects.get(pk=user_pk)
+    person = User.objects.prefetch_related('followings', 'followers', 'liked_mountains', 'post_set', 'review_set', 'postcomment_set', 'visitedcourse_set', 'like_posts', 'bookmarks').get(pk=user_pk)
     posts = person.post_set.all().order_by('-created_at')
-    reviews = person.review_set.all().order_by('-created_at')
+    reviews = person.review_set.select_related('mountain').all().order_by('-created_at')
     posts_comments = person.postcomment_set.count()
     visited_courses = person.visitedcourse_set.count()
 
-    liked_posts = person.like_posts.only('title').all()
-    liked_mountains = person.liked_mountains.only('name').all()
-    bookmark_course = person.bookmarks.only('crs_name_detail').all()
+    liked_posts = person.like_posts.all()
+    liked_mountains = person.liked_mountains.all()
+    bookmark_course = person.bookmarks.all()
 
     score = posts.count() * 30 + reviews.count() * 20 + visited_courses * 10 + posts_comments * 5
     level = person.level
