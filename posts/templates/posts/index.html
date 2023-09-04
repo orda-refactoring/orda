@@ -62,7 +62,7 @@
                   <div class="flex--row">
                     <div class="flex--row pe-3">
                       <i class="bi bi-heart-fill pe-1" style="color:var(--red-color)"></i>
-                      <p class="postindex__post--likecount" data-like={{ post.pk }}>{{post.like_users.count}}</p>
+                      <p class="postindex__post--likecount" data-like={{ post.pk }}>{{post.like_count}}</p>
                     </div>
                     <div class="flex--row pe-3">
                       <i class="bi bi-chat-dots-fill pe-1" style="color:var(--green-btn)"></i>
@@ -232,7 +232,7 @@
 
 <section>
   <div class="postindex__searchbar">
-    <form method="GET" action="{% url 'posts:search' %}">
+    <form method="GET" action="{% url 'posts:index' %}">
       <div class="input-group">
         <select name="search_option" class="form-control" style="width: 20%;">
           <option value="title">제목</option>

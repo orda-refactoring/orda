@@ -53,7 +53,7 @@ class MountainDetailView(LoginRequiredMixin, DetailView):
         distance = mountain_distance(user, mountain)
 
         # 리뷰
-        reviews = Review.objects.filter(mountain=mountain).order_by('-created_at').select_related('user').prefetch_related('like_users', 'tags',)
+        reviews = Review.objects.filter(mountain=mountain).order_by('-created_at').select_related('user', 'mountain').prefetch_related('like_users', 'tags',)
         most_liked_review = reviews.annotate(num_likes=Count('like_users')).order_by('-num_likes').first()
 
         context.update({

@@ -10,27 +10,29 @@ from django.http import JsonResponse
 def index(request):
     query = request.GET.get('q')
     search_option = request.GET.get('search_option')
-
-    view_posts = Post.objects.order_by('-view_count')
-    like_posts = Post.objects.annotate(like_count=Count('like_users')).order_by('-like_count')
+    
+    posts = Post.objects.select_related('user').prefetch_related('postcomment_set', 'like_users').annotate(like_count=Count('like_users'))
+    view_posts = posts.order_by('-view_count')
+    like_posts = posts.order_by('-like_count')
 
     if query and search_option:
         if search_option == 'title':
-            filtered_posts = Post.objects.filter(title__contains=query)
+            filtered_posts = posts.filter(title__contains=query)
         elif search_option == 'author':
-            filtered_posts = Post.objects.filter(user__nickname__contains=query)
+            filtered_posts = posts.filter(user__nickname__contains=query)
         elif search_option == 'content':
-            filtered_posts = Post.objects.filter(content__contains=query)
+            filtered_posts = posts.filter(content__contains=query)
         elif search_option == 'title_content':
-            filtered_posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
+            filtered_posts = posts.filter(Q(title__contains=query) | Q(content__contains=query))
     else:
-        filtered_posts = Post.objects.order_by('-created_at')
+        filtered_posts = posts.order_by('-created_at')
 
     context = {
         'view_posts': view_posts,
         'like_posts': like_posts,
         'posts': filtered_posts,
         'query': query,
+        'search_option': search_option,
     }
 
     if query:
@@ -40,13 +42,15 @@ def index(request):
 
 
 def detail(request, post_pk):
-    post = Post.objects.get(pk=post_pk)
-    postcomment_form = PostCommentForm()
-    postcomments = post.postcomment_set.order_by('-id')
+    post = Post.objects.select_related('user').prefetch_related('postcomment_set').get(pk=post_pk)
 
-    prev_posts = Post.objects.filter(pk__lt=post_pk).order_by('-pk')[:2]
-    next_posts = Post.objects.filter(pk__gt=post_pk).order_by('pk')[:2]
+    postcomment_form = PostCommentForm()
+    postcomments = post.postcomment_set.select_related('user').prefetch_related('dislike_users', 'like_users').order_by('-id')
+
+    prev_posts = Post.objects.filter(pk__lt=post_pk).select_related('user').prefetch_related('postcomment_set', 'like_users').order_by('-pk')[:2]
+    next_posts = Post.objects.filter(pk__gt=post_pk).select_related('user').prefetch_related('postcomment_set', 'like_users').order_by('pk')[:2]
     posts = list(prev_posts)  + list(next_posts)
+    
     session_key = f'post_viewed_{post_pk}'
 
     if not request.session.get(session_key):
@@ -214,36 +218,6 @@ def comment_dislikes(request, post_pk, comment_pk):
         'cd_likes_count' : cd_likes_count,
     }
     return JsonResponse(context)
-
-
-def search(request):
-    query = request.GET.get('q')
-    search_option = request.GET.get('search_option')
-
-    view_posts = Post.objects.order_by('-view_count')
-    like_posts = Post.objects.annotate(like_count=Count('like_users')).order_by('-like_count')
-
-    if query and search_option:
-        if search_option == 'title':
-            filtered_posts = Post.objects.filter(title__contains=query)
-        elif search_option == 'author':
-            filtered_posts = Post.objects.filter(user__nickname__contains=query)
-        elif search_option == 'content':
-            filtered_posts = Post.objects.filter(content__contains=query)
-        elif search_option == 'title_content':
-            filtered_posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
-    else:
-        filtered_posts = Post.objects.order_by('-created_at')
-
-    context = {
-        'view_posts': view_posts,
-        'like_posts': like_posts,
-        'posts': filtered_posts,
-        'query': query,
-        'search_option': search_option,
-    }
-
-    return render(request, 'posts/search.html', context)
 
 
 def proofshot(request):
