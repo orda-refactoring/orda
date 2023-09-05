@@ -613,3 +613,25 @@ mountains_weather
 		Effective rps:       4
 ```
 
+# 2023/09/05
+- 장하늬 
+```
+- 앱 Accounts 쿼리 최적화
+	- profile
+		- 개선 전(쿼리 30개, 54.78ms)
+		Mean latency:        309.7 ms
+		Effective rps:       3
+		
+		- 개선 후(쿼리 18개, 40.32ms)
+		Mean latency:        251.4 ms
+		Effective rps:       4
+		
+	- my_memories
+		- 개선 전(쿼리 111개, 188.80ms)
+		Mean latency:        1354.8 ms
+		Effective rps:       1
+		
+		- 개선 후(쿼리 6개, 78. 09ms)
+		Mean latency:        465.1 ms
+		Effective rps:       2
+```
