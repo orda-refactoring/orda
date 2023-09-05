@@ -5,6 +5,7 @@ from mountains.models import *
 from accounts.models import *
 from utils.distance import mountains_distance
 import random
+from django.core.cache import cache
 
 def index(request):
     return render(request, 'pjt/mainindex.html')
@@ -17,6 +18,11 @@ class MainView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        mountains = cache.get('all_mountains')
+
+        if not mountains:
+            mountains = Mountain.objects.prefetch_related('course_set').all()
+            cache.set('all_mountains', mountains)
 
         # 1. 랜덤 유저의 좋아요 산 리스트
         all_users = User.objects.exclude(pk=user.pk)
@@ -25,7 +31,7 @@ class MainView(ListView):
 
         while all_users:
             random_user = random.choice(all_users)
-            user_like_mountains = Mountain.objects.filter(likes=random_user)
+            user_like_mountains = mountains.filter(likes=random_user)
             
             if user_like_mountains.exists():
                 if len(user_like_mountains) < 6:
@@ -42,7 +48,7 @@ class MainView(ListView):
 
         # 2. 초보/고수 추천 산 리스트
         tags = [14, 15, 16, 18]
-        filtered_mountains = Mountain.objects.filter(review__tags__pk__in=tags).distinct()
+        filtered_mountains = mountains.filter(review__tags__pk__in=tags).distinct()
 
         ## top_tags에 [14, 15] 태그가 있는 산을 필터링합니다.
         low_lv_mountains = [mountain for mountain in filtered_mountains if any(tag in mountain.top_tags_pk for tag in [14, 15])]
@@ -61,7 +67,7 @@ class MainView(ListView):
 
         # 3. 로그인한 유저가 방문하지 않은 산 리스트
         visited_mountain_ids = VisitedCourse.objects.filter(user=user).values('mountain_id')
-        not_visited_mountains = Mountain.objects.exclude(id__in=visited_mountain_ids)
+        not_visited_mountains = mountains.exclude(id__in=visited_mountain_ids)
         if len(not_visited_mountains) < 12:
             random_not_visited_mountains = not_visited_mountains
         else:

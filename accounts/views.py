@@ -12,11 +12,11 @@ from django.utils.safestring import mark_safe
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model, update_session_auth_hash, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-
+from django.core.cache import cache
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect('mountains:mountain_list')
+        return redirect('main')
     
     if request.method == 'POST':
         form = CustomUserAuthenticationForm(request, request.POST)
@@ -29,7 +29,7 @@ def login(request):
                 del request.session['previous_page']
                 return redirect(previous_page)
             else:
-                return redirect('mountains:mountain_list')
+                return redirect('main')
     else:
         form = CustomUserAuthenticationForm()
     context = {
@@ -88,9 +88,9 @@ def profile(request, user_pk):
 
     liked_posts = person.like_posts.all()
     liked_mountains = person.liked_mountains.all()
-    bookmark_course = person.bookmarks.all()
-
-    score = posts.count() * 30 + reviews.count() * 20 + visited_courses * 10 + posts_comments * 5
+    bookmark_course = person.bookmarks.prefetch_related('mntn_name').all()
+    print(bookmark_course[0].mntn_name)
+    score = len(posts) * 30 + len(reviews) * 20 + visited_courses * 10 + posts_comments * 5
     level = person.level
 
     if level_dict[level]['max_score'] == 'MAX':
@@ -241,7 +241,7 @@ def kakao_callback(request):
                 return redirect('accounts:update')
             else:
                 auth_login(request, user)
-                return redirect('mountains:mountain_list')
+                return redirect('main')
     return redirect('accounts:login')
 
 
@@ -295,7 +295,7 @@ def naver_callback(request):
                 return redirect('accounts:update')
             else:
                 auth_login(request, user)
-                return redirect('mountains:mountain_list')
+                return redirect('main')
     return redirect('accounts:login')
 
 
@@ -311,7 +311,12 @@ def get_first_image_from_content(content):
 
 @login_required
 def my_memories(request):
-    mountains = Mountain.objects.all()
+    mountains = cache.get('all_mountains')
+
+    if not mountains:
+        mountains = Mountain.objects.prefetch_related('course_set').all()
+        cache.set('all_mountains', mountains)
+
     visited_courses = request.user.visited_courses.all()
     visited_mountains = (
         VisitedCourse.objects.filter(user=request.user)
