@@ -14,13 +14,7 @@ from django.views.generic import ListView, FormView, View, DetailView
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.conf import settings
-from django.core.cache.backends.base import DEFAULT_TIMEOUT
-from django.views.decorators.cache import cache_page
 from django.core.cache import cache
-import hashlib
-from django.db.models import Prefetch
 
 
 class SearchView(FormView):

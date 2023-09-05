@@ -65,6 +65,7 @@ class ReviewCreationForm(forms.ModelForm):
     )
 
     tags = forms.ModelMultipleChoiceField(
+        required=False,
         queryset=Tag.objects.all(),
         widget=ButtonSelectMultiple(
             queryset=Tag.objects.all(),
