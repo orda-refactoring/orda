@@ -6,6 +6,7 @@ from django.contrib.gis.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from math import radians, sin, cos, sqrt, atan2
+from django.core.cache import cache
 
 # Create your models here.
 class Mountain(models.Model):
@@ -53,19 +54,38 @@ class Mountain(models.Model):
 
         return None
     
+    # 추후 교체 필요 (삭제 요망)
     @property
     def reviews_count(self):
         return self.review_set.count()    
     
     @property
     def top_tags(self):
+        cache_key = f'top_tags_{self.pk}'
+        result = cache.get(cache_key)
+        
+        if result:
+            return result
+        
         tags = self.review_set.values('tags__name').annotate(tag_count=Count('tags__name')).order_by('-tag_count')[:3]
-        return [tag['tags__name'] for tag in tags]
+        result = [tag['tags__name'] for tag in tags]
+        cache.set(cache_key, result, timeout=3600)
+
+        return result
     
     @property
     def top_tags_pk(self):
+        cache_key = f'top_tags_pk_{self.pk}'
+        result = cache.get(cache_key)
+        
+        if result:
+            return result
+        
         tags = self.review_set.values('tags__pk').annotate(tag_count=Count('tags__pk')).order_by('-tag_count')[:3]
-        return [tag['tags__pk'] for tag in tags]
+        result = [tag['tags__pk'] for tag in tags]
+        cache.set(cache_key, result, timeout=3600)
+        
+        return result
     
     def __str__(self):
         return self.name

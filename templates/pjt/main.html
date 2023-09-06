@@ -16,7 +16,7 @@
            <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
            <div class="mnt--info-1">
              <p class="mtnname">{{ mountain.name }}</p>
-             <p class="course--cnt">{{mountain.course_set.count}}개의 코스</p>
+             <p class="course--cnt">{{mountain.course_cnt}}개의 코스</p>
             </div>
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
@@ -49,7 +49,7 @@
           <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
           <div class="mnt--info-1">
             <p class="mtnname">{{ mountain.name }}</p>
-            <p class="course--cnt">{{mountain.course_set.count}}개의 코스</p>
+            <p class="course--cnt">{{mountain.course_cnt}}개의 코스</p>
             </div>
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
@@ -75,7 +75,7 @@
           <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
           <div class="mnt--info-1">
             <p class="mtnname">{{ mountain.name }}</p>
-            <p class="course--cnt">{{ mountain.course_set.count}}개의 코스</p>
+            <p class="course--cnt">{{ mountain.course_cnt}}개의 코스</p>
             </div>
             <div class="mnt--info-2">
               <p class="emndnname">{{ mountain.emndn_name }}</p>
@@ -101,7 +101,7 @@
           <img src="{% get_static_prefix %}img/mountains/{{mountain.name}}.png" alt="{{mountain.name}}">
           <div class="mnt--info-1">
             <p class="mtnname">{{ mountain.name }}</p>
-            <p class="course--cnt">{{ mountain.course_set.count}}개의 코스</p>
+            <p class="course--cnt">{{ mountain.course_cnt}}개의 코스</p>
           </div>
           <div class="mnt--info-2">
             <p class="emndnname">{{ mountain.emndn_name }}</p>

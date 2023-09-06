@@ -6,9 +6,11 @@ from accounts.models import *
 from utils.distance import mountains_distance
 import random
 from django.core.cache import cache
+from django.db.models import OuterRef, Subquery, Count
 
 def index(request):
     return render(request, 'pjt/mainindex.html')
+
 
 class MainView(ListView):
     template_name = 'pjt/main.html'
@@ -18,11 +20,18 @@ class MainView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        mountains = cache.get('all_mountains')
-
-        if not mountains:
-            mountains = Mountain.objects.prefetch_related('course_set').all()
-            cache.set('all_mountains', mountains)
+        mountains = cache.get('main_mountains')
+        
+        if not mountains:   
+            mountains = Mountain.objects.annotate(
+                course_cnt=Subquery(
+                    Course.objects.filter(mntn_name=OuterRef('name'))
+                    .values('mntn_name')
+                    .annotate(course_count=Count('mntn_name'))
+                    .values('course_count')
+                )
+            )
+            cache.set('main_mountains', mountains)
 
         # 1. 랜덤 유저의 좋아요 산 리스트
         all_users = User.objects.exclude(pk=user.pk)
