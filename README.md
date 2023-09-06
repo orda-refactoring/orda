@@ -648,4 +648,6 @@ mountains_weather
 	Effective rps:       3
 - 캐싱 키 수정(course list)
 	- 페이지네이션까지 고려하여 캐싱 키 생성되도록 수정함
+- Mountain 모델의 top_tag관련 property 캐싱
+	- 매번 불러낼 때마다 손실되는 쿼리 호출 개수를 줄이기위해 캐싱 도입(1시간 마다 만료되도록 함)
 ```
