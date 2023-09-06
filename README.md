@@ -635,3 +635,17 @@ mountains_weather
 		Mean latency:        465.1 ms
 		Effective rps:       2
 ```
+
+# 2023/09/06
+- 장하늬 
+```
+- MainPage View 쿼리 최적화
+	- 개선 전(쿼리 58개 ~ 70개, 약 70ms)
+	Mean latency:        443.1 ms
+	Effective rps:       2
+	- 개선 후(쿼리 8개 ~ 22개, 약 65ms)
+	Mean latency:        328.1 ms
+	Effective rps:       3
+- 캐싱 키 수정(course list)
+	- 페이지네이션까지 고려하여 캐싱 키 생성되도록 수정함
+```
