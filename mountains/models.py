@@ -63,14 +63,19 @@ class Mountain(models.Model):
     def top_tags(self):
         cache_key = f'top_tags_{self.pk}'
         result = cache.get(cache_key)
-        
-        if result:
+
+        if result and result != 'No_Tag':
             return result
+        elif result == 'No_Tag':
+            return
         
         tags = self.review_set.values('tags__name').annotate(tag_count=Count('tags__name')).order_by('-tag_count')[:3]
-        result = [tag['tags__name'] for tag in tags]
+        
+        if tags:
+            result = [tag['tags__name'] for tag in tags]
+        else:
+            result = 'No_Tag'
         cache.set(cache_key, result, timeout=3600)
-
         return result
     
     @property
@@ -89,7 +94,7 @@ class Mountain(models.Model):
     
     def __str__(self):
         return self.name
-        
+    
 
 class Course(models.Model):
     id = models.AutoField(primary_key=True)

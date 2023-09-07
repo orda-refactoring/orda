@@ -43,7 +43,9 @@
       {% comment %} 태그 {% endcomment %}
         <div class="display position--absolute" style="bottom: 39%;">
           {% for tag in mountain.top_tags  %}
-            <span>#{{ tag }}</span>
+            {% if tag %}
+              <span>#{{ tag }}</span>
+            {% endif %}
           {% endfor %}
         </div>
       {% comment %} 산 정보 {% endcomment %}
@@ -67,11 +69,11 @@
             </div>
             <div class="flex--row pe-3">
               <i class="bi bi-chat-dots-fill pe-1" style="color:var(--green-btn)"></i>
-              <p>{{mountain.reviews_count}}</p>
+              <p>{{mountain.review_cnt}}</p>
             </div>
             <div class="flex--row">
               <i class="bi bi-signpost-2-fill pe-1" style="color: #5e3b34"></i>
-              <p>{{mountain.course_set.count}}</p>
+              <p>{{mountain.course_cnt}}</p>
             </div>
           </div>
         </div>
