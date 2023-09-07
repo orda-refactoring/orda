@@ -77,7 +77,7 @@ class ReviewCreationForm(forms.ModelForm):
     )
 
     def clean_tags(self):
-        selected_tags = self.cleaned_data.get('tags', [])
+        selected_tags = self.cleaned_data.get('tags', '')
         if len(selected_tags) > 4:
             raise forms.ValidationError("태그는 4개까지 선택할 수 있습니다.")
 
@@ -102,6 +102,3 @@ class SearchForm(forms.Form):
         ),
         label='태그 선택'
     )
-        
-    # sido2 = forms.CharField(label='시도', max_length=100, widget=forms.HiddenInput())
-    # gugun2 = forms.CharField(label='시군구', max_length=100, widget=forms.HiddenInput())

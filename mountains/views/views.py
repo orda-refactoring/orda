@@ -7,7 +7,8 @@ from utils.distance import mountains_distance
 from utils.helpers import serialize_courses
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Count, When, Case, Q
+from django.db.models import Count, When, Case, Q, OuterRef, Subquery, Value, IntegerField
+from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.core.mail import EmailMessage
 from django.views.generic import ListView, FormView, View, DetailView
@@ -31,8 +32,15 @@ def mountain_list(request):
     sort = request.GET.get('sort', None)
     page= request.GET.get('page', '1')
 
-    mountains = Mountain.objects.all().prefetch_related('likes', 'review_set', 'course_set')
+    course_subquery = Course.objects.filter(mntn_name=OuterRef('name')).values('mntn_name').annotate(course_count=Count('mntn_name')).values('course_count')
 
+    review_subquery = Review.objects.filter(mountain=OuterRef('pk')).values('mountain').annotate(review_count=Count('mountain')).values('review_count')
+
+    mountains = Mountain.objects.all().annotate(
+        course_cnt = Coalesce(Subquery(course_subquery), Value(0), output_field=IntegerField()),
+        review_cnt = Coalesce(Subquery(review_subquery), Value(0), output_field=IntegerField()),
+    ).prefetch_related('likes')
+    
     filter_condition = Q()
 
     if sido and gugun:
@@ -59,7 +67,7 @@ def mountain_list(request):
     if sort== 'likes':
         mountains = mountains.annotate(likes_count=Count('likes')).order_by('-likes_count')  # 좋아요순으로 정렬
     elif sort == 'reviews':
-        mountains = mountains.annotate(reviews_count2=Count('review')).order_by('-reviews_count2') # 리뷰순으로 정렬
+        mountains = mountains.order_by('-review_cnt') # 리뷰순으로 정렬
     elif sort == 'id':
         mountains = mountains.order_by('id')  # 가나다순으로 정렬
     elif sort== 'views':
@@ -110,8 +118,8 @@ class CourseListView(LoginRequiredMixin, ListView):
         paginator = Paginator(queryset, self.paginate_by)
         page_obj = paginator.get_page(page_number)
             
-        courses_data = cache.get(f'course_list_{hash(mountain.name)}_course')
-        detail_data = cache.get(f'course_list_{hash(mountain.name)}_detail')
+        courses_data = cache.get(f'course_list_{hash(mountain.name)}_{page_obj}_course')
+        detail_data = cache.get(f'course_list_{hash(mountain.name)}_{page_obj}_detail')
 
         if not courses_data or not detail_data:
             courses_data = serialize_courses(page_obj, 'geom')
@@ -120,8 +128,8 @@ class CourseListView(LoginRequiredMixin, ListView):
                 course_detail = CourseDetail.objects.filter(crs_name_detail=course)
                 detail_data[course.pk] = serialize_courses(course_detail, 'geom', 'waypoint_name', 'waypoint_category', attach=False)
                 
-                cache.set(f'course_list_{hash(mountain.name)}_course', courses_data)
-                cache.set(f'course_list_{hash(mountain.name)}_detail', detail_data)
+                cache.set(f'course_list_{hash(mountain.name)}_{page_obj}_course', courses_data)
+                cache.set(f'course_list_{hash(mountain.name)}_{page_obj}_detail', detail_data)
 
         context.update({
             'mountain': mountain,
