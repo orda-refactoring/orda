@@ -651,3 +651,18 @@ mountains_weather
 - Mountain 모델의 top_tag관련 property 캐싱
 	- 매번 불러낼 때마다 손실되는 쿼리 호출 개수를 줄이기위해 캐싱 도입(1시간 마다 만료되도록 함)
 ```
+
+# 2023/09/07
+- 장하늬 
+```
+- Main 최적화
+  	- 개선 전(쿼리 58개 ~ 70개, 약 70ms)
+	Mean latency:        443.1 ms
+	Effective rps:       2
+	- 개선 후(쿼리 8개 ~ 22개, 약 65ms)
+	Mean latency:        328.1 ms
+	Effective rps:       3
+- Mountain.top_pks 프로퍼티 캐싱 도입
+- Mountain_list와 main에 서브쿼리 도입하여 필요한 개수 데이터만 도출
+- 개발/배포로 환경 분리(settings.py)
+```
