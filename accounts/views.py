@@ -14,6 +14,12 @@ from django.contrib.auth import get_user_model, update_session_auth_hash, login 
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 
+load_dotenv()
+REDIRECT_URI = os.getenv('REDIRECT_URI')
+KAKAO_CLIENT_ID = os.environ.get('KAKAO_CLIENT_ID')
+NAVER_CLIENT_ID = os.environ.get('NAVER_CLIENT_ID')
+NAVER_CLIENT_SECRET = os.environ.get('NAVER_CLIENT_SECRET')
+
 def login(request):
     if request.user.is_authenticated:
         return redirect('main')
@@ -186,15 +192,9 @@ def follow(request, user_pk):
     return redirect('accounts:profile', person.pk)
 
 
-load_dotenv()
-KAKAO_CLIENT_ID = os.environ.get('KAKAO_CLIENT_ID')
-NAVER_CLIENT_ID = os.environ.get('NAVER_CLIENT_ID')
-NAVER_CLIENT_SECRET = os.environ.get('NAVER_CLIENT_SECRET')
-
-
 def kakao_login(request):
     client_id = KAKAO_CLIENT_ID
-    redirect_uri = 'http://127.0.0.1:8000/accounts/kakao/callback/'
+    redirect_uri = f'{REDIRECT_URI}accounts/kakao/callback/'
     url = f'https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code'
     return redirect(url)
 
@@ -207,7 +207,7 @@ def kakao_callback(request):
         data = {
             'grant_type': 'authorization_code',
             'client_id': KAKAO_CLIENT_ID,
-            'redirect_uri': 'http://127.0.0.1:8000/accounts/kakao/callback/',
+            'redirect_uri': f'{REDIRECT_URI}accounts/kakao/callback/',
             'code': code,
         }
         response = requests.post(url, data=data)
@@ -247,7 +247,7 @@ def kakao_callback(request):
 
 def naver_login(request):
     client_id = NAVER_CLIENT_ID
-    redirect_uri = 'http://127.0.0.1:8000/accounts/naver/callback/'
+    redirect_uri = f'{REDIRECT_URI}accounts/naver/callback/'
     url = f'https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&state=STATE_STRING'
     return redirect(url)
 
@@ -261,7 +261,7 @@ def naver_callback(request):
             'grant_type': 'authorization_code',
             'client_id': NAVER_CLIENT_ID,
             'client_secret': NAVER_CLIENT_SECRET,
-            'redirect_uri': 'http://127.0.0.1:8000/accounts/naver/callback/',
+            'redirect_uri': f'{REDIRECT_URI}accounts/naver/callback/',
             'code': code,
         }
         response = requests.post(url, data=data)
