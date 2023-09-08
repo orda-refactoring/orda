@@ -110,10 +110,10 @@ WSGI_APPLICATION = 'pjt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'orda_db',
+        'NAME': os.environ['DB_NAME'],
         'USER': os.environ['DB_USERNAME'],
         'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': 'localhost',
+        'HOST': os.environ['DB_HOST'],
         'PORT': '5432',
     }
 }
