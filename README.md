@@ -666,3 +666,12 @@ mountains_weather
 - Mountain_list와 main에 서브쿼리 도입하여 필요한 개수 데이터만 도출
 - 개발/배포로 환경 분리(settings.py)
 ```
+
+# 2023/09/07
+- 장하늬 
+```
+- 배포 진행
+	- AWS EC2 서버
+	- AWS RDS 연결
+	- Gunicorn + Nginx 연결 완료
+```
