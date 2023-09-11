@@ -675,3 +675,10 @@ mountains_weather
 	- AWS RDS 연결
 	- Gunicorn + Nginx 연결 완료
 ```
+
+# 2023/09/11
+- 장하늬 
+```
+- 배포 진행
+	- AWS Elasticache(Redis) 연결
+```
