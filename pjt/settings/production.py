@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -227,12 +228,12 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 SESSION_COOKIE_AGE = 259200 # 3일(259200초) 동안 세션 유지하도록 설정
 
 
-# REDIS
+# Elasticache-redis
 CACHE_TTL = 7 * 24 * 60 * 60
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379/1',  # Redis 서버 주소 및 포트
+        'LOCATION': f'redis://{os.getenv("REDIS_ENDPOINT")}/1',  # Redis 서버 주소 및 포트
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
