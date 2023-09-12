@@ -73,10 +73,12 @@ class Mountain(models.Model):
         
         if tags:
             result = [tag['tags__name'] for tag in tags]
+            cache.set(cache_key, result, timeout=3600)
+            return result
         else:
             result = 'No_Tag'
-        cache.set(cache_key, result, timeout=3600)
-        return result
+            cache.set(cache_key, result, timeout=3600)
+            return
     
     @property
     def top_tags_pk(self):
