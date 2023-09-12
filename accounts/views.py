@@ -52,7 +52,7 @@ def logout(request):
 
 def signup(request):
     if request.user.is_authenticated:
-        return redirect('mountains:mountain_list')
+        return redirect('main')
     
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
@@ -62,10 +62,7 @@ def signup(request):
 
             UserLocation.objects.create(user=user)
 
-            return redirect('mountains:mountain_list')
-        else:
-            for key, error in list(form.errors.items()):
-                print(key, error)
+            return redirect('main')
     else:   
         form = CustomUserCreationForm()
 
@@ -95,7 +92,7 @@ def profile(request, user_pk):
     liked_posts = person.like_posts.all()
     liked_mountains = person.liked_mountains.all()
     bookmark_course = person.bookmarks.prefetch_related('mntn_name').all()
-    print(bookmark_course[0].mntn_name)
+
     score = len(posts) * 30 + len(reviews) * 20 + visited_courses * 10 + posts_comments * 5
     level = person.level
 
