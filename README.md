@@ -682,3 +682,14 @@ mountains_weather
 - 배포 진행
 	- AWS Elasticache(Redis) 연결
 ```
+
+# 2023/09/12
+- 장하늬 
+```
+- 배포 진행
+	- 도메인 발급 및 연결(route53)
+	- SSL 적용(HTTP)
+	- 배포 사이트: https://orda.jhn-devs.com
+- 아키텍쳐 그리기
+```
+
